@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function StudentDetailPage() {
 
   const { student, entries, loading, error, getInitials, refetch } = useStudentDetail(studentId);
   const { filters, setFilters, hasActiveFilters, resetFilters } = useFilters();
-  const { expandedDates, toggleDate, isExpanded } = useExpandedDates();
+  const { expandedDates, toggleDate, isExpanded, expandAll, collapseAll } = useExpandedDates();
   const { loading: mutationLoading, updateItem, updateDateEntries, deleteItem, deleteDateEntries } = useEntryMutations(studentId, refetch);
 
   const [editItemModal, setEditItemModal] = useState(null);
@@ -29,9 +29,42 @@ export default function StudentDetailPage() {
   const [deleteItemModal, setDeleteItemModal] = useState(null);
   const [deleteDateModal, setDeleteDateModal] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [lastAddedDate, setLastAddedDate] = useState(null);
+
+  const handleAddSuccess = (addedDate) => {
+    setLastAddedDate(addedDate);
+  };
+
+  useEffect(() => {
+    if (lastAddedDate && !loading && entries.length > 0) {
+      const dateExists = Object.keys(
+        entries.reduce((acc, entry) => {
+          const entryDate = entry.date?.toDate ? entry.date.toDate() : new Date(entry.date);
+          const key = entryDate.toISOString().split('T')[0];
+          acc[key] = true;
+          return acc;
+        }, {})
+      ).includes(lastAddedDate);
+
+      if (dateExists) {
+        expandAll([lastAddedDate]);
+        setLastAddedDate(null);
+      }
+    }
+  }, [entries, lastAddedDate, loading, expandAll]);
 
   const filteredEntries = useMemo(() => filterEntries(entries, filters), [entries, filters]);
   const dateGroups = useMemo(() => groupEntriesByDate(filteredEntries), [filteredEntries]);
+  
+  const filteredTotals = useMemo(() => {
+    return filteredEntries.reduce(
+      (acc, entry) => ({
+        totalWeight: acc.totalWeight + (entry.weight || 0),
+        totalEarnings: acc.totalEarnings + (entry.amount || 0),
+      }),
+      { totalWeight: 0, totalEarnings: 0 }
+    );
+  }, [filteredEntries]);
 
   const handleEditItem = async (updates) => {
     if (!editItemModal) return;
@@ -80,10 +113,17 @@ export default function StudentDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Link to="/students" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
-        <ArrowLeft className="w-4 h-4" />
-        {t('studentDetail.backToStudents')}
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link to="/students" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
+          <ArrowLeft className="w-4 h-4" />
+          {t('studentDetail.backToStudents')}
+        </Link>
+      </div>
+
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Student Waste History</h1>
+        <p className="text-gray-500 mt-1">Detailed view of student waste collection and earnings</p>
+      </div>
 
       <StudentHeader student={student} getInitials={getInitials} onAddEntry={() => setShowAddModal(true)} />
 
@@ -97,13 +137,16 @@ export default function StudentDetailPage() {
         onDeleteDate={(dg) => setDeleteDateModal({ dateGroup: dg })}
         onEditItem={(entry, dg) => setEditItemModal({ entry, dateGroup: dg })}
         onDeleteItem={(entry, dg) => setDeleteItemModal({ entry, dateGroup: dg })}
+        filteredTotalWeight={filteredTotals.totalWeight}
+        filteredTotalEarnings={filteredTotals.totalEarnings}
+        hasActiveFilters={hasActiveFilters}
       />
 
       <EditItemModal entry={editItemModal?.entry} isOpen={!!editItemModal} onClose={() => setEditItemModal(null)} onSave={handleEditItem} loading={mutationLoading} />
       <EditDateModal dateGroup={editDateModal?.dateGroup} isOpen={!!editDateModal} onClose={() => setEditDateModal(null)} onSave={handleEditDate} loading={mutationLoading} />
       <DeleteItemModal entry={deleteItemModal?.entry} isOpen={!!deleteItemModal} onClose={() => setDeleteItemModal(null)} onConfirm={handleDeleteItem} loading={mutationLoading} />
       <DeleteDateModal dateGroup={deleteDateModal?.dateGroup} isOpen={!!deleteDateModal} onClose={() => setDeleteDateModal(null)} onConfirm={handleDeleteDate} loading={mutationLoading} />
-      <AddWasteEntryModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} student={student} refetch={refetch} />
+      <AddWasteEntryModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} student={student} refetch={refetch} onSuccess={handleAddSuccess} />
     </div>
   );
 }

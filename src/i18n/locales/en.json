@@ -53,6 +53,9 @@
     "backToStudents": "Back to Students",
     "totalWaste": "Total Waste",
     "totalEarnings": "Total Earnings",
+    "filteredSummary": "Filtered Results",
+    "totalWeightLabel": "Total Weight",
+    "totalEarningsLabel": "Total Earnings",
     "averagePerEntry": "Average per Entry",
     "addWasteEntry": "+ Add Waste Entry",
     "allWasteTypes": "All Waste Types",
@@ -186,6 +189,7 @@
     "error": "Something went wrong. Please try again.",
     "success": "Success",
     "kg": "kg",
-    "rollNoLabel": "Roll No:"
+    "rollNoLabel": "Roll No:",
+    "total": "Total"
   }
 }

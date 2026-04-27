@@ -53,6 +53,9 @@
     "backToStudents": "Kembali ke Siswa",
     "totalWaste": "Total Sampah",
     "totalEarnings": "Total Pendapatan",
+    "filteredSummary": "Hasil Filter",
+    "totalWeightLabel": "Total Berat",
+    "totalEarningsLabel": "Total Pendapatan",
     "averagePerEntry": "Rata-rata per Entri",
     "addWasteEntry": "+ Tambah Entri Sampah",
     "allWasteTypes": "Semua Jenis Sampah",
@@ -186,6 +189,7 @@
     "error": "Terjadi kesalahan. Silakan coba lagi.",
     "success": "Berhasil",
     "kg": "kg",
-    "rollNoLabel": "No. Absen:"
+    "rollNoLabel": "No. Absen:",
+    "total": "Total"
   }
 }

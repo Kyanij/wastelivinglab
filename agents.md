@@ -389,7 +389,7 @@ Overview dashboard showing system-wide stats and highlights.
 - [ ] Stat cards (top row):
   - Total Students
   - Total Waste Collected (kg)
-  - Total Earnings (₹)
+  - Total Earnings (Rp)
   - Entries This Month
 - [ ] Recent Activity table — last 10 waste entries across all students
 - [ ] Top 5 Students by Total Waste — simple leaderboard list

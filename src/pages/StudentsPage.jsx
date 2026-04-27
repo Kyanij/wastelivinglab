@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, Plus, Loader2, ChevronLeft, ChevronRight, Users, Pencil, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -100,22 +100,26 @@ export default function StudentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
+  const [firstVisible, setFirstVisible] = useState(null);
 
-  const loadStudents = useCallback(async (reset = false) => {
+  const loadStudents = useCallback(async (reset = false, newPageSize = null) => {
     setLoading(true);
     try {
+      const size = newPageSize || pageSize;
       const cursor = reset ? null : lastVisible;
-      const result = await getStudents(pageSize, cursor);
+      const result = await getStudents(size, cursor);
       setStudents(result.students);
       setLastVisible(result.lastVisible);
+      setFirstVisible(reset ? null : firstVisible);
       setHasMore(result.hasMore);
+      setCurrentPage(reset ? 1 : currentPage);
     } catch (err) {
       console.error('Error loading students:', err);
     } finally {
       setLoading(false);
     }
-  }, [lastVisible, pageSize]);
+  }, [lastVisible, firstVisible, pageSize, currentPage]);
 
   const loadClasses = useCallback(async () => {
     const uniqueClasses = await getUniqueClasses();
@@ -154,6 +158,20 @@ export default function StudentsPage() {
       setCurrentPage(currentPage - 1);
       loadStudents(true);
     }
+  };
+
+  const handlePageSizeChange = (e) => {
+    const newSize = parseInt(e.target.value, 10);
+    setPageSize(newSize);
+    setCurrentPage(1);
+    setLoading(true);
+    getStudents(newSize, null).then((result) => {
+      setStudents(result.students);
+      setLastVisible(result.lastVisible);
+      setFirstVisible(null);
+      setHasMore(result.hasMore);
+      setLoading(false);
+    });
   };
 
   const handleEditSuccess = () => {
@@ -261,9 +279,25 @@ export default function StudentsPage() {
       </div>
 
       <div className="flex items-center justify-between mt-6">
-        <p className="text-gray-500 text-sm">
-          {t('students.showing', { from: fromNum, to: toNum, total: totalStudents })} • {recordsCount} {t('students.recordsOnPage')}
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-gray-500 text-sm">
+            {t('students.showing', { from: fromNum, to: toNum, total: totalStudents })} • {recordsCount} {t('students.recordsOnPage')}
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500 text-sm">Show</span>
+            <select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              className="px-2 py-1 rounded border border-gray-300 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+            <span className="text-gray-500 text-sm">per page</span>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrevPage}

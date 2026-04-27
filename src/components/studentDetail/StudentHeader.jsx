@@ -69,13 +69,13 @@ export default function StudentHeader({ student, getInitials, onAddEntry }) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <div className="bg-gray-50 rounded-lg px-4 py-3 min-w-[140px]">
-            <p className="text-gray-500 text-sm">{t('studentDetail.totalWaste')}</p>
-            <p className="text-xl font-bold text-gray-900">{formatWeight(student.totalWaste)} kg</p>
+          <div className="bg-blue-50 rounded-lg px-4 py-3 min-w-[140px] border border-blue-100">
+            <p className="text-blue-600 text-sm font-medium">{t('studentDetail.totalWaste')}</p>
+            <p className="text-xl font-bold text-blue-700">{formatWeight(student.totalWaste)} kg</p>
           </div>
-          <div className="bg-gray-50 rounded-lg px-4 py-3 min-w-[140px]">
-            <p className="text-gray-500 text-sm">{t('studentDetail.totalEarnings')}</p>
-            <p className="text-xl font-bold text-green-600">Rp{formatCurrency(student.totalEarnings)}</p>
+          <div className="bg-green-50 rounded-lg px-4 py-3 min-w-[140px] border border-green-100">
+            <p className="text-green-600 text-sm font-medium">{t('studentDetail.totalEarnings')}</p>
+            <p className="text-xl font-bold text-green-700">Rp{formatCurrency(student.totalEarnings)}</p>
           </div>
           <button
             onClick={onAddEntry}

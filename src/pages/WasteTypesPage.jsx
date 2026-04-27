@@ -180,11 +180,11 @@ export default function WasteTypesPage() {
                       <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
                         <Recycle className="w-5 h-5 text-primary-light" />
                       </div>
-                      <span className="font-medium text-white">{type.name}</span>
+                      <span className="font-medium text-gray-900">{type.name}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-green-400 font-semibold">Rp{type.defaultRate?.toFixed(2)}</span>
+                    <span className="text-green-600 font-semibold">Rp{type.defaultRate?.toFixed(2)}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button

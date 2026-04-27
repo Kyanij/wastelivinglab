@@ -64,7 +64,33 @@ export function useStudentDetail(studentId) {
     return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
   };
 
-  return { student, entries, loading, error, getInitials, refetch: null };
+  const refetch = async () => {
+    if (!studentId) return;
+    setLoading(true);
+    try {
+      const studentData = await getStudentById(studentId);
+      if (!studentData) {
+        setError('Student not found');
+        setLoading(false);
+        return;
+      }
+      setStudent(studentData);
+
+      const entriesList = await getEntriesByStudentId(studentId);
+      const sortedEntries = (entriesList || []).sort((a, b) => {
+        const dateA = a.date?.toDate ? a.date.toDate() : new Date(a.date || 0);
+        const dateB = b.date?.toDate ? b.date.toDate() : new Date(b.date || 0);
+        return dateB - dateA;
+      });
+      setEntries(sortedEntries);
+    } catch (err) {
+      setError(err.message || 'Error reloading data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { student, entries, loading, error, getInitials, refetch };
 }
 
 export function useFilters() {

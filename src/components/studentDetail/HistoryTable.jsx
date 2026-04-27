@@ -10,6 +10,9 @@ export default function HistoryTable({
   onDeleteDate,
   onEditItem,
   onDeleteItem,
+  filteredTotalWeight,
+  filteredTotalEarnings,
+  hasActiveFilters,
 }) {
   const { t } = useTranslation();
 
@@ -56,6 +59,31 @@ export default function HistoryTable({
           />
         ))}
       </div>
+
+      {hasActiveFilters && (
+        <div className="bg-orange-50 border-t border-orange-100 px-4 py-3">
+          <div className="flex items-center">
+            <div className="w-[10%]"></div>
+            <div className="w-[20%]">
+              <span className="text-base font-bold text-orange-700">
+                {t('common.total')}
+              </span>
+            </div>
+            <div className="w-[20%] text-right">
+              <span className="text-base font-bold text-gray-900">
+                {(filteredTotalWeight || 0).toFixed(2)} kg
+              </span>
+            </div>
+            <div className="w-[20%] text-right">
+              <span className="text-base font-bold text-green-600">
+                Rp{(filteredTotalEarnings || 0).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+            <div className="w-[20%]"></div>
+            <div className="w-[10%]"></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
