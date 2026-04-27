@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
+import LoginPage from '../pages/LoginPage';
 
 export default function Router() {
   return (
     <Routes>
-      <Route path="/login" element={<div>Login Page</div>} />
+      <Route path="/login" element={<LoginPage />} />
       
       <Route element={<ProtectedRoute><AppLayout><Outlet /></AppLayout></ProtectedRoute>}>
         <Route path="/dashboard" element={<div>Dashboard</div>} />

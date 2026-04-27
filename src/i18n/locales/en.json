@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "wasteEntries": "Waste Entries",
+    "wasteTypes": "Waste Types",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "students": {
+    "title": "Students List",
+    "addStudent": "Add Student",
+    "searchPlaceholder": "Search student by name or roll no...",
+    "allClasses": "All Classes",
+    "allStatus": "All Status",
+    "tableHeaders": {
+      "student": "Student",
+      "class": "Class",
+      "totalWaste": "Total Waste (kg)",
+      "totalEarnings": "Total Earnings (₹)",
+      "lastEntry": "Last Entry",
+      "actions": "Actions"
+    },
+    "viewDetails": "View Details",
+    "edit": "Edit",
+    "showing": "Showing {{from}} to {{to}} of {{total}} students"
+  },
+  "wasteEntry": {
+    "addTitle": "Add Waste Entry",
+    "step": "Step {{current}} of {{total}}",
+    "selectStudent": "Select Student *",
+    "searchStudent": "Search by name, roll no...",
+    "selectDate": "Select Date *",
+    "pastDateNote": "You can select any past date.",
+    "wasteType": "Waste Type",
+    "weight": "Weight (kg)",
+    "rate": "Rate (₹/kg)",
+    "amount": "Amount (₹)",
+    "addAnotherType": "+ Add Another Type",
+    "totalWeight": "Total Weight",
+    "totalEarnings": "Total Earnings",
+    "reviewConfirm": "Review & Confirm",
+    "saveEntry": "Save Entry",
+    "successTitle": "Waste entry added successfully!",
+    "viewHistory": "View Student History",
+    "back": "Back",
+    "next": "Next"
+  },
+  "studentDetail": {
+    "backToStudents": "← Back to Students",
+    "totalWaste": "Total Waste",
+    "totalEarnings": "Total Earnings",
+    "averagePerEntry": "Average per Entry",
+    "addWasteEntry": "+ Add Waste Entry",
+    "allWasteTypes": "All Waste Types",
+    "export": "Export",
+    "date": "Date",
+    "entries": "Entries",
+    "editEntry": "Edit Entry",
+    "deleteEntry": "Delete Entry"
+  },
+  "modals": {
+    "editStudent": "Edit Student",
+    "fullName": "Full Name *",
+    "class": "Class *",
+    "rollNo": "Roll No. *",
+    "gender": "Gender",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "cancel": "Cancel",
+    "updateStudent": "Update Student",
+    "updateItem": "Update Item",
+    "updateEntry": "Update Entry",
+    "deleteConfirm": "Are you sure?",
+    "deleteItemMsg": "This will delete only this waste item.",
+    "deleteDateMsg": "This will delete ALL entries for this date.",
+    "confirmDelete": "Yes, Delete",
+    "editDateEntry": "Edit Date Entry",
+    "deleteDateEntry": "Delete Date Entry"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalStudents": "Total Students",
+    "totalWaste": "Total Waste Collected",
+    "totalEarnings": "Total Earnings",
+    "entriesThisMonth": "Entries This Month",
+    "recentActivity": "Recent Activity",
+    "topStudents": "Top Students by Waste"
+  },
+  "wasteTypes": {
+    "title": "Waste Types",
+    "addWasteType": "Add Waste Type",
+    "name": "Name",
+    "defaultRate": "Default Rate (₹/kg)",
+    "delete": "Delete"
+  },
+  "auth": {
+    "login": "Login",
+    "loginError": "Login failed. Please check your credentials.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "adminPanel": "Admin Panel"
+  },
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "loading": "Loading...",
+    "noData": "No data found",
+    "joinedOn": "Joined: {{date}}"
+  }
+}

@@ -467,6 +467,375 @@ Global layout: sidebar navigation, page wrapper, glassmorphism design system.
 - [ ] `AppLayout` component wraps all protected pages: `Sidebar + main content area`
 - [ ] Content area scrollable, sidebar fixed
 
+---
+
+## AGT-11 — Language Toggle Agent (i18n)
+
+### Goal
+Global English ↔ Indonesian language toggle, fixed in header, persists across 
+entire application via localStorage.
+
+### Tasks
+
+#### Setup
+- [ ] Install i18n library:
+```bash
+      npm install i18next react-i18next
+```
+- [ ] Create `/src/i18n/index.js` — initialize i18next with:
+  - Default language: `en`
+  - Persist chosen language in `localStorage` key: `gc_lang`
+  - Load from localStorage on app start
+- [ ] Wrap `<App>` with `<I18nextProvider>`
+
+#### Translation Files
+- [ ] Create `/src/i18n/locales/en.json` — all English strings
+- [ ] Create `/src/i18n/locales/id.json` — all Indonesian strings
+- [ ] Every UI string in the app must use `t('key')` — NO hardcoded text
+
+#### Language Toggle Component
+- [ ] Create `LanguageToggle` component:
+  - Position: top-right of the top header bar, always visible
+  - Two pill buttons side by side: `EN` | `ID`
+  - Active language: green filled pill
+  - Inactive: gray outline pill
+  - On click: call `i18n.changeLanguage()` + save to localStorage
+- [ ] Place `LanguageToggle` inside `AppLayout` header so it appears on EVERY page
+- [ ] Also show on `LoginPage` (top-right corner)
+
+#### Translation Keys Structure
+```json
+// en.json
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "students": "Students",
+    "wasteEntries": "Waste Entries",
+    "wasteTypes": "Waste Types",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "students": {
+    "title": "Students List",
+    "addStudent": "Add Student",
+    "searchPlaceholder": "Search student by name or roll no...",
+    "allClasses": "All Classes",
+    "allStatus": "All Status",
+    "tableHeaders": {
+      "student": "Student",
+      "class": "Class",
+      "totalWaste": "Total Waste (kg)",
+      "totalEarnings": "Total Earnings (₹)",
+      "lastEntry": "Last Entry",
+      "actions": "Actions"
+    },
+    "viewDetails": "View Details",
+    "edit": "Edit",
+    "showing": "Showing {{from}} to {{to}} of {{total}} students"
+  },
+  "wasteEntry": {
+    "addTitle": "Add Waste Entry",
+    "step": "Step {{current}} of {{total}}",
+    "selectStudent": "Select Student *",
+    "searchStudent": "Search by name, roll no...",
+    "selectDate": "Select Date *",
+    "pastDateNote": "You can select any past date.",
+    "wasteType": "Waste Type",
+    "weight": "Weight (kg)",
+    "rate": "Rate (₹/kg)",
+    "amount": "Amount (₹)",
+    "addAnotherType": "+ Add Another Type",
+    "totalWeight": "Total Weight",
+    "totalEarnings": "Total Earnings",
+    "reviewConfirm": "Review & Confirm",
+    "saveEntry": "Save Entry",
+    "successTitle": "Waste entry added successfully!",
+    "viewHistory": "View Student History",
+    "back": "Back",
+    "next": "Next"
+  },
+  "studentDetail": {
+    "backToStudents": "← Back to Students",
+    "totalWaste": "Total Waste",
+    "totalEarnings": "Total Earnings",
+    "averagePerEntry": "Average per Entry",
+    "addWasteEntry": "+ Add Waste Entry",
+    "allWasteTypes": "All Waste Types",
+    "export": "Export",
+    "date": "Date",
+    "entries": "Entries",
+    "editEntry": "Edit Entry",
+    "deleteEntry": "Delete Entry"
+  },
+  "modals": {
+    "editStudent": "Edit Student",
+    "fullName": "Full Name *",
+    "class": "Class *",
+    "rollNo": "Roll No. *",
+    "gender": "Gender",
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "cancel": "Cancel",
+    "updateStudent": "Update Student",
+    "updateItem": "Update Item",
+    "updateEntry": "Update Entry",
+    "deleteConfirm": "Are you sure?",
+    "deleteItemMsg": "This will delete only this waste item.",
+    "deleteDateMsg": "This will delete ALL entries for this date.",
+    "confirmDelete": "Yes, Delete",
+    "editDateEntry": "Edit Date Entry",
+    "deleteDateEntry": "Delete Date Entry"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalStudents": "Total Students",
+    "totalWaste": "Total Waste Collected",
+    "totalEarnings": "Total Earnings",
+    "entriesThisMonth": "Entries This Month",
+    "recentActivity": "Recent Activity",
+    "topStudents": "Top Students by Waste"
+  },
+  "wasteTypes": {
+    "title": "Waste Types",
+    "addWasteType": "Add Waste Type",
+    "name": "Name",
+    "defaultRate": "Default Rate (₹/kg)",
+    "delete": "Delete"
+  },
+  "auth": {
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign In",
+    "adminPanel": "Admin Panel"
+  },
+  "common": {
+    "search": "Search",
+    "filter": "Filter",
+    "reset": "Reset",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "loading": "Loading...",
+    "noData": "No data found",
+    "joinedOn": "Joined: {{date}}"
+  }
+}
+```
+
+```json
+// id.json
+{
+  "nav": {
+    "dashboard": "Dasbor",
+    "students": "Siswa",
+    "wasteEntries": "Entri Sampah",
+    "wasteTypes": "Jenis Sampah",
+    "reports": "Laporan",
+    "settings": "Pengaturan"
+  },
+  "students": {
+    "title": "Daftar Siswa",
+    "addStudent": "Tambah Siswa",
+    "searchPlaceholder": "Cari siswa berdasarkan nama atau no. absen...",
+    "allClasses": "Semua Kelas",
+    "allStatus": "Semua Status",
+    "tableHeaders": {
+      "student": "Siswa",
+      "class": "Kelas",
+      "totalWaste": "Total Sampah (kg)",
+      "totalEarnings": "Total Pendapatan (₹)",
+      "lastEntry": "Entri Terakhir",
+      "actions": "Aksi"
+    },
+    "viewDetails": "Lihat Detail",
+    "edit": "Edit",
+    "showing": "Menampilkan {{from}} hingga {{to}} dari {{total}} siswa"
+  },
+  "wasteEntry": {
+    "addTitle": "Tambah Entri Sampah",
+    "step": "Langkah {{current}} dari {{total}}",
+    "selectStudent": "Pilih Siswa *",
+    "searchStudent": "Cari berdasarkan nama, no. absen...",
+    "selectDate": "Pilih Tanggal *",
+    "pastDateNote": "Anda dapat memilih tanggal yang lalu.",
+    "wasteType": "Jenis Sampah",
+    "weight": "Berat (kg)",
+    "rate": "Tarif (₹/kg)",
+    "amount": "Jumlah (₹)",
+    "addAnotherType": "+ Tambah Jenis Lain",
+    "totalWeight": "Total Berat",
+    "totalEarnings": "Total Pendapatan",
+    "reviewConfirm": "Tinjau & Konfirmasi",
+    "saveEntry": "Simpan Entri",
+    "successTitle": "Entri sampah berhasil ditambahkan!",
+    "viewHistory": "Lihat Riwayat Siswa",
+    "back": "Kembali",
+    "next": "Lanjut"
+  },
+  "studentDetail": {
+    "backToStudents": "← Kembali ke Siswa",
+    "totalWaste": "Total Sampah",
+    "totalEarnings": "Total Pendapatan",
+    "averagePerEntry": "Rata-rata per Entri",
+    "addWasteEntry": "+ Tambah Entri Sampah",
+    "allWasteTypes": "Semua Jenis Sampah",
+    "export": "Ekspor",
+    "date": "Tanggal",
+    "entries": "Entri",
+    "editEntry": "Edit Entri",
+    "deleteEntry": "Hapus Entri"
+  },
+  "modals": {
+    "editStudent": "Edit Siswa",
+    "fullName": "Nama Lengkap *",
+    "class": "Kelas *",
+    "rollNo": "No. Absen *",
+    "gender": "Jenis Kelamin",
+    "genderOptions": {
+      "male": "Laki-laki",
+      "female": "Perempuan",
+      "other": "Lainnya"
+    },
+    "cancel": "Batal",
+    "updateStudent": "Perbarui Siswa",
+    "updateItem": "Perbarui Item",
+    "updateEntry": "Perbarui Entri",
+    "deleteConfirm": "Apakah Anda yakin?",
+    "deleteItemMsg": "Ini hanya akan menghapus item sampah ini.",
+    "deleteDateMsg": "Ini akan menghapus SEMUA entri untuk tanggal ini.",
+    "confirmDelete": "Ya, Hapus",
+    "editDateEntry": "Edit Entri Tanggal",
+    "deleteDateEntry": "Hapus Entri Tanggal"
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "totalStudents": "Total Siswa",
+    "totalWaste": "Total Sampah Terkumpul",
+    "totalEarnings": "Total Pendapatan",
+    "entriesThisMonth": "Entri Bulan Ini",
+    "recentActivity": "Aktivitas Terbaru",
+    "topStudents": "Siswa Terbaik berdasarkan Sampah"
+  },
+  "wasteTypes": {
+    "title": "Jenis Sampah",
+    "addWasteType": "Tambah Jenis Sampah",
+    "name": "Nama",
+    "defaultRate": "Tarif Default (₹/kg)",
+    "delete": "Hapus"
+  },
+  "auth": {
+    "login": "Masuk",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "signIn": "Masuk",
+    "adminPanel": "Panel Admin"
+  },
+  "common": {
+    "search": "Cari",
+    "filter": "Filter",
+    "reset": "Reset",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "close": "Tutup",
+    "loading": "Memuat...",
+    "noData": "Data tidak ditemukan",
+    "joinedOn": "Bergabung: {{date}}"
+  }
+}
+```
+
+#### LanguageToggle Component Code
+```jsx
+// src/components/layout/LanguageToggle.jsx
+import { useTranslation } from 'react-i18next';
+
+export default function LanguageToggle() {
+  const { i18n } = useTranslation();
+  const current = i18n.language;
+
+  const toggle = (lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('gc_lang', lang);
+  };
+
+  return (
+    <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+      <button
+        onClick={() => toggle('en')}
+        className={`px-3 py-1 rounded-full text-sm font-medium transition-all
+          ${current === 'en' 
+            ? 'bg-green-600 text-white shadow-sm' 
+            : 'text-gray-500 hover:text-gray-700'}`}
+      >
+        EN
+      </button>
+      <button
+        onClick={() => toggle('id')}
+        className={`px-3 py-1 rounded-full text-sm font-medium transition-all
+          ${current === 'id' 
+            ? 'bg-green-600 text-white shadow-sm' 
+            : 'text-gray-500 hover:text-gray-700'}`}
+      >
+        ID
+      </button>
+    </div>
+  );
+}
+```
+
+#### i18n Init File
+```js
+// src/i18n/index.js
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import en from './locales/en.json';
+import id from './locales/id.json';
+
+const savedLang = localStorage.getItem('gc_lang') || 'en';
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources: { en: { translation: en }, id: { translation: id } },
+    lng: savedLang,
+    fallbackLng: 'en',
+    interpolation: { escapeValue: false }
+  });
+
+export default i18n;
+```
+
+#### Import in `main.jsx`
+```js
+import './i18n/index.js'  // must be before App import
+import App from './App'
+```
+
+### Output Files
+```
+src/
+  i18n/
+    index.js
+    locales/
+      en.json
+      id.json
+  components/layout/
+    LanguageToggle.jsx
+```
+
+### Definition of Done
+- [ ] Toggle visible on LoginPage top-right
+- [ ] Toggle visible on all protected pages top-right in header
+- [ ] Switching EN→ID changes ALL text instantly, no page reload
+- [ ] Choice persists after browser refresh (localStorage)
+- [ ] No hardcoded English/Indonesian strings anywhere in components
+
 #### Design System (Tailwind config)
 ```js
 // tailwind.config.js

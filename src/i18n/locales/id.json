@@ -1,0 +1,120 @@
+{
+  "nav": {
+    "dashboard": "Dasbor",
+    "students": "Siswa",
+    "wasteEntries": "Entri Sampah",
+    "wasteTypes": "Jenis Sampah",
+    "reports": "Laporan",
+    "settings": "Pengaturan"
+  },
+  "students": {
+    "title": "Daftar Siswa",
+    "addStudent": "Tambah Siswa",
+    "searchPlaceholder": "Cari siswa berdasarkan nama atau no. absen...",
+    "allClasses": "Semua Kelas",
+    "allStatus": "Semua Status",
+    "tableHeaders": {
+      "student": "Siswa",
+      "class": "Kelas",
+      "totalWaste": "Total Sampah (kg)",
+      "totalEarnings": "Total Pendapatan (₹)",
+      "lastEntry": "Entri Terakhir",
+      "actions": "Aksi"
+    },
+    "viewDetails": "Lihat Detail",
+    "edit": "Edit",
+    "showing": "Menampilkan {{from}} hingga {{to}} dari {{total}} siswa"
+  },
+  "wasteEntry": {
+    "addTitle": "Tambah Entri Sampah",
+    "step": "Langkah {{current}} dari {{total}}",
+    "selectStudent": "Pilih Siswa *",
+    "searchStudent": "Cari berdasarkan nama, no. absen...",
+    "selectDate": "Pilih Tanggal *",
+    "pastDateNote": "Anda dapat memilih tanggal yang lalu.",
+    "wasteType": "Jenis Sampah",
+    "weight": "Berat (kg)",
+    "rate": "Tarif (₹/kg)",
+    "amount": "Jumlah (₹)",
+    "addAnotherType": "+ Tambah Jenis Lain",
+    "totalWeight": "Total Berat",
+    "totalEarnings": "Total Pendapatan",
+    "reviewConfirm": "Tinjau & Konfirmasi",
+    "saveEntry": "Simpan Entri",
+    "successTitle": "Entri sampah berhasil ditambahkan!",
+    "viewHistory": "Lihat Riwayat Siswa",
+    "back": "Kembali",
+    "next": "Lanjut"
+  },
+  "studentDetail": {
+    "backToStudents": "← Kembali ke Siswa",
+    "totalWaste": "Total Sampah",
+    "totalEarnings": "Total Pendapatan",
+    "averagePerEntry": "Rata-rata per Entri",
+    "addWasteEntry": "+ Tambah Entri Sampah",
+    "allWasteTypes": "Semua Jenis Sampah",
+    "export": "Ekspor",
+    "date": "Tanggal",
+    "entries": "Entri",
+    "editEntry": "Edit Entri",
+    "deleteEntry": "Hapus Entri"
+  },
+  "modals": {
+    "editStudent": "Edit Siswa",
+    "fullName": "Nama Lengkap *",
+    "class": "Kelas *",
+    "rollNo": "No. Absen *",
+    "gender": "Jenis Kelamin",
+    "genderOptions": {
+      "male": "Laki-laki",
+      "female": "Perempuan",
+      "other": "Lainnya"
+    },
+    "cancel": "Batal",
+    "updateStudent": "Perbarui Siswa",
+    "updateItem": "Perbarui Item",
+    "updateEntry": "Perbarui Entri",
+    "deleteConfirm": "Apakah Anda yakin?",
+    "deleteItemMsg": "Ini hanya akan menghapus item sampah ini.",
+    "deleteDateMsg": "Ini akan menghapus SEMUA entri untuk tanggal ini.",
+    "confirmDelete": "Ya, Hapus",
+    "editDateEntry": "Edit Entri Tanggal",
+    "deleteDateEntry": "Hapus Entri Tanggal"
+  },
+  "dashboard": {
+    "title": "Dasbor",
+    "totalStudents": "Total Siswa",
+    "totalWaste": "Total Sampah Terkumpl",
+    "totalEarnings": "Total Pendapatan",
+    "entriesThisMonth": "Entri Bulan Ini",
+    "recentActivity": "Aktivitas Terbaru",
+    "topStudents": "Siswa Terbaik berdasarkan Sampah"
+  },
+  "wasteTypes": {
+    "title": "Jenis Sampah",
+    "addWasteType": "Tambah Jenis Sampah",
+    "name": "Nama",
+    "defaultRate": "Tarif Default (₹/kg)",
+    "delete": "Hapus"
+  },
+  "auth": {
+    "login": "Masuk",
+    "loginError": "Masuk gagal. Silakan periksa kredensial Anda.",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "signIn": "Masuk",
+    "adminPanel": "Panel Admin"
+  },
+  "common": {
+    "search": "Cari",
+    "filter": "Filter",
+    "reset": "Reset",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "close": "Tutup",
+    "loading": "Memuat...",
+    "noData": "Data tidak ditemukan",
+    "joinedOn": "Bergabung: {{date}}"
+  }
+}
