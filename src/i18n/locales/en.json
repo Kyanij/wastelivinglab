@@ -17,13 +17,16 @@
       "student": "Student",
       "class": "Class",
       "totalWaste": "Total Waste (kg)",
-      "totalEarnings": "Total Earnings (₹)",
+      "totalEarnings": "Total Earnings (Rp)",
       "lastEntry": "Last Entry",
       "actions": "Actions"
     },
     "viewDetails": "View Details",
     "edit": "Edit",
-    "showing": "Showing {{from}} to {{to}} of {{total}} students"
+    "showing": "Showing {{from}} to {{to}} of {{total}} students",
+    "recordsOnPage": "records on this page",
+    "successAdded": "Student added successfully!",
+    "successUpdated": "Student updated successfully!"
   },
   "wasteEntry": {
     "addTitle": "Add Waste Entry",
@@ -34,8 +37,8 @@
     "pastDateNote": "You can select any past date.",
     "wasteType": "Waste Type",
     "weight": "Weight (kg)",
-    "rate": "Rate (₹/kg)",
-    "amount": "Amount (₹)",
+    "rate": "Rate (Rp/kg)",
+    "amount": "Amount (Rp)",
     "addAnotherType": "+ Add Another Type",
     "totalWeight": "Total Weight",
     "totalEarnings": "Total Earnings",
@@ -47,7 +50,7 @@
     "next": "Next"
   },
   "studentDetail": {
-    "backToStudents": "← Back to Students",
+    "backToStudents": "Back to Students",
     "totalWaste": "Total Waste",
     "totalEarnings": "Total Earnings",
     "averagePerEntry": "Average per Entry",
@@ -57,7 +60,42 @@
     "date": "Date",
     "entries": "Entries",
     "editEntry": "Edit Entry",
-    "deleteEntry": "Delete Entry"
+    "deleteEntry": "Delete Entry",
+    "totalWeightHeader": "Total Weight (kg)",
+    "totalEarningsHeader": "Total Earnings (Rp)",
+    "emptyState": "No waste entries found",
+    "emptyStateHint": "Try adjusting your filters or add a new entry.",
+    "editItemTitle": "Edit Waste Item",
+    "editingItemSubtitle": "Editing {{type}} on {{date}}",
+    "editDateTitle": "Edit Date Entry",
+    "editingDateSubtitle": "Editing all items on {{date}}",
+    "deleteItemTitle": "Delete Waste Item?",
+    "deleteItemWarning": "You are about to delete:",
+    "deleteItemDetails": "{{type}} — {{weight}} kg — Rp{{amount}}",
+    "deleteItemFrom": "from {{date}}",
+    "deleteItemNote": "This action cannot be undone.",
+    "deleteDateTitle": "Delete Entire Date Entry?",
+    "deleteDateWarning": "You are about to delete ALL entries for {{date}}",
+    "deleteDateDetails": "This will remove:",
+    "deleteDateItems": "{{count}} waste items",
+    "deleteDateWeight": "{{weight}} kg total",
+    "deleteDateEarnings": "Rp{{earnings}} total earnings",
+    "deleteDateNote": "This action cannot be undone.",
+    "weightRequired": "Weight is required",
+    "weightPositive": "Weight must be greater than 0",
+    "weightMax": "Maximum weight is 999 kg",
+    "rateRequired": "Rate is required",
+    "rateNonNegative": "Rate must be 0 or greater",
+    "wasteTypeRequired": "Please select a waste type",
+    "entryUpdated": "Entry updated successfully!",
+    "dateEntryUpdated": "Date entry updated successfully!",
+    "itemDeleted": "Item deleted successfully!",
+    "dateEntriesDeleted": "All entries for {{date}} deleted",
+    "resetFilters": "Reset Filters",
+    "from": "From",
+    "to": "To",
+    "atLeastOneRow": "At least one entry is required",
+    "confirmDelete": "Yes, Delete"
   },
   "modals": {
     "editStudent": "Edit Student",
@@ -79,7 +117,13 @@
     "deleteDateMsg": "This will delete ALL entries for this date.",
     "confirmDelete": "Yes, Delete",
     "editDateEntry": "Edit Date Entry",
-    "deleteDateEntry": "Delete Date Entry"
+    "deleteDateEntry": "Delete Date Entry",
+    "errors": {
+      "fullNameRequired": "Full name is required",
+      "classRequired": "Class is required",
+      "rollNoRequired": "Roll number is required",
+      "rollNoDuplicate": "Roll number already exists in this class"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -94,8 +138,15 @@
     "title": "Waste Types",
     "addWasteType": "Add Waste Type",
     "name": "Name",
-    "defaultRate": "Default Rate (₹/kg)",
-    "delete": "Delete"
+    "defaultRate": "Default Rate (Rp/kg)",
+    "delete": "Delete",
+    "successAdded": "Waste type added successfully!",
+    "successDeleted": "Waste type deleted successfully!",
+    "deleteWarning": "This will remove the waste type. Are you sure?",
+    "errors": {
+      "nameRequired": "Name is required",
+      "rateRequired": "Rate must be greater than 0"
+    }
   },
   "auth": {
     "login": "Login",
@@ -131,6 +182,10 @@
     "close": "Close",
     "loading": "Loading...",
     "noData": "No data found",
-    "joinedOn": "Joined: {{date}}"
+    "joinedOn": "Joined: {{date}}",
+    "error": "Something went wrong. Please try again.",
+    "success": "Success",
+    "kg": "kg",
+    "rollNoLabel": "Roll No:"
   }
 }

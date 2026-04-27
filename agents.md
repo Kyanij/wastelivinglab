@@ -245,7 +245,7 @@ Manage waste types (used as dropdown options when adding waste entries).
 ### Tasks
 - [ ] Create `WasteTypesPage` at `/waste-types`
 - [ ] List all waste types in a simple card/table layout:
-  - Name | Default Rate (₹/kg) | Actions
+  - Name | Default Rate (indonesian currency /kg) | Actions
 - [ ] "Add Waste Type" button → inline form or modal:
   - Fields: Name, Default Rate per kg
 - [ ] Delete button → confirmation → `deleteDoc`

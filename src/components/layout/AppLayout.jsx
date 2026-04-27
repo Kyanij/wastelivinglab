@@ -4,7 +4,7 @@ import LanguageToggle from './LanguageToggle';
 
 export default function AppLayout() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
       <main className="flex-1 ml-60 p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">

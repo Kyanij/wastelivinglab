@@ -30,29 +30,11 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
-  background: linear-gradient(135deg, var(--color-bg-dark) 0%, var(--color-bg-light) 100%);
+  background: #f9fafb;
   min-height: 100vh;
-  color: #fff;
+  color: #111827;
 }
 
 #root {
   min-height: 100vh;
-}
-
-@layer base {
-  input, select, textarea {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-  
-  input::placeholder, textarea::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
-}
-
-/* Login page specific input overrides */
-.login-input, input[type="email"], input[type="password"] {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-  color: #fff !important;
 }
