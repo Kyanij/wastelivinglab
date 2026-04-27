@@ -100,10 +100,26 @@
   "auth": {
     "login": "Login",
     "loginError": "Login failed. Please check your credentials.",
+    "username": "Username",
     "email": "Email",
     "password": "Password",
     "signIn": "Sign In",
-    "adminPanel": "Admin Panel"
+    "adminPanel": "Admin Panel",
+    "errors": {
+      "usernameRequired": "Username is required",
+      "usernameTooShort": "Username must be at least 3 characters",
+      "usernameInvalid": "Username can only contain letters, numbers, and underscores",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "userNotFound": "User not found. Please check your username.",
+      "wrongPassword": "Incorrect password. Please try again.",
+      "invalidEmail": "Invalid email format.",
+      "invalidCredentials": "Invalid username or password.",
+      "tooManyRequests": "Too many login attempts. Please try again later.",
+      "networkError": "Network error. Please check your connection.",
+      "internalError": "Something went wrong. Please try again.",
+      "loginFailed": "Login failed. Please try again."
+    }
   },
   "common": {
     "search": "Search",

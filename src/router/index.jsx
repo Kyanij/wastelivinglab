@@ -2,11 +2,13 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
 import LoginPage from '../pages/LoginPage';
+import SeedPage from '../pages/SeedPage';
 
 export default function Router() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/dev/seed" element={<SeedPage />} />
       
       <Route element={<ProtectedRoute><AppLayout><Outlet /></AppLayout></ProtectedRoute>}>
         <Route path="/dashboard" element={<div>Dashboard</div>} />

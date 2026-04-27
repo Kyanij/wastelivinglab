@@ -4,25 +4,100 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import LanguageToggle from '../components/layout/LanguageToggle';
-import { Leaf, Mail, Lock, Loader2 } from 'lucide-react';
+import { Leaf, User, Lock, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({ username: '', password: '', general: '' });
+
+  const validateForm = () => {
+    const newErrors = { username: '', password: '', general: '' };
+    let isValid = true;
+
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password;
+
+    if (!trimmedUsername) {
+      newErrors.username = t('auth.errors.usernameRequired');
+      isValid = false;
+    } else if (trimmedUsername.length < 3) {
+      newErrors.username = t('auth.errors.usernameTooShort');
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9_]+$/.test(trimmedUsername)) {
+      newErrors.username = t('auth.errors.usernameInvalid');
+      isValid = false;
+    }
+
+    if (!trimmedPassword) {
+      newErrors.password = t('auth.errors.passwordRequired');
+      isValid = false;
+    } else if (trimmedPassword.length < 6) {
+      newErrors.password = t('auth.errors.passwordTooShort');
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const getFirebaseErrorMessage = (errorCode) => {
+    switch (errorCode) {
+      case 'auth/user-not-found':
+        return t('auth.errors.userNotFound');
+      case 'auth/wrong-password':
+        return t('auth.errors.wrongPassword');
+      case 'auth/invalid-email':
+        return t('auth.errors.invalidEmail');
+      case 'auth/invalid-credential':
+        return t('auth.errors.invalidCredentials');
+      case 'auth/too-many-requests':
+        return t('auth.errors.tooManyRequests');
+      case 'auth/network-request-failed':
+        return t('auth.errors.networkError');
+      case 'auth/internal-error':
+        return t('auth.errors.internalError');
+      default:
+        return t('auth.errors.loginFailed');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({ username: '', password: '', general: '' });
+
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     try {
+      const email = username.includes('@') ? username : `${username}@greenchamps.com`;
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
     } catch (error) {
-      alert(t('auth.loginError') || 'Login failed');
+      const errorCode = error.code;
+      const errorMessage = getFirebaseErrorMessage(errorCode);
+      setErrors({ ...errors, general: errorMessage });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+    if (errors.username) {
+      setErrors({ ...errors, username: '' });
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (errors.password) {
+      setErrors({ ...errors, password: '' });
     }
   };
 
@@ -73,21 +148,30 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-green-100/80 mb-2 ml-1">
-                  {t('auth.email')}
+                  {t('auth.username')}
                 </label>
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-green-400/60">
-                    <Mail className="w-5 h-5" />
+                    <User className="w-5 h-5" />
                   </div>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@greenchamps.com"
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all"
-                    required
+                    type="text"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    placeholder="admin"
+                    className={`w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border text-white placeholder-gray-400/50 focus:outline-none focus:ring-2 transition-all ${
+                      errors.username
+                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
+                        : 'border-white/10 focus:ring-green-500/50 focus:border-green-500/50'
+                    }`}
                   />
                 </div>
+                {errors.username && (
+                  <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.username}
+                  </p>
+                )}
               </div>
               
               <div>
@@ -101,13 +185,31 @@ export default function LoginPage() {
                   <input
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all"
-                    required
+                    className={`w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border text-white placeholder-gray-400/50 focus:outline-none focus:ring-2 transition-all ${
+                      errors.password
+                        ? 'border-red-500/50 focus:ring-red-500/50 focus:border-red-500/50'
+                        : 'border-white/10 focus:ring-green-500/50 focus:border-green-500/50'
+                    }`}
                   />
                 </div>
+                {errors.password && (
+                  <p className="mt-2 text-sm text-red-400 flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.password}
+                  </p>
+                )}
               </div>
+
+              {errors.general && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30">
+                  <p className="text-sm text-red-400 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    {errors.general}
+                  </p>
+                </div>
+              )}
               
               <button
                 type="submit"

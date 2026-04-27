@@ -100,10 +100,26 @@
   "auth": {
     "login": "Masuk",
     "loginError": "Masuk gagal. Silakan periksa kredensial Anda.",
+    "username": "Nama Pengguna",
     "email": "Email",
     "password": "Kata Sandi",
     "signIn": "Masuk",
-    "adminPanel": "Panel Admin"
+    "adminPanel": "Panel Admin",
+    "errors": {
+      "usernameRequired": "Nama pengguna wajib diisi",
+      "usernameTooShort": "Nama pengguna harus minimal 3 karakter",
+      "usernameInvalid": "Nama pengguna hanya boleh berisi huruf, angka, dan underscore",
+      "passwordRequired": "Kata sandi wajib diisi",
+      "passwordTooShort": "Kata sandi harus minimal 6 karakter",
+      "userNotFound": "Pengguna tidak ditemukan. Silakan periksa nama pengguna Anda.",
+      "wrongPassword": "Kata sandi salah. Silakan coba lagi.",
+      "invalidEmail": "Format email tidak valid.",
+      "invalidCredentials": "Nama pengguna atau kata sandi tidak valid.",
+      "tooManyRequests": "Terlalu banyak percobaan masuk. Silakan coba lagi nanti.",
+      "networkError": "Kesalahan jaringan. Silakan periksa koneksi Anda.",
+      "internalError": "Terjadi kesalahan. Silakan coba lagi.",
+      "loginFailed": "Masuk gagal. Silakan coba lagi."
+    }
   },
   "common": {
     "search": "Cari",
