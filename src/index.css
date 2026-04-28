@@ -8,6 +8,7 @@
   --color-glass-border: rgba(255, 255, 255, 0.15);
   --color-bg-dark: #0f1f14;
   --color-bg-light: #1a2e1f;
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .glass {
@@ -29,7 +30,7 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: #f9fafb;
   min-height: 100vh;
   color: #111827;

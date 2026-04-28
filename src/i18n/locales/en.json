@@ -135,7 +135,8 @@
     "totalEarnings": "Total Earnings",
     "entriesThisMonth": "Entries This Month",
     "recentActivity": "Recent Activity",
-    "topStudents": "Top Students by Waste"
+    "topStudents": "Top Students by Waste",
+    "overviewByStudent": "Overview of Waste Collected by Students"
   },
   "wasteTypes": {
     "title": "Waste Types",
@@ -180,6 +181,7 @@
     "filter": "Filter",
     "reset": "Reset",
     "save": "Save",
+    "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",

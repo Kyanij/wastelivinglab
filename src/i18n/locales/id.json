@@ -135,7 +135,8 @@
     "totalEarnings": "Total Pendapatan",
     "entriesThisMonth": "Entri Bulan Ini",
     "recentActivity": "Aktivitas Terbaru",
-    "topStudents": "Siswa Terbaik berdasarkan Sampah"
+    "topStudents": "Siswa Terbaik berdasarkan Sampah",
+    "overviewByStudent": "Ringkasan Sampah yang Dikumpulkan Siswa"
   },
   "wasteTypes": {
     "title": "Jenis Sampah",
@@ -180,6 +181,7 @@
     "filter": "Filter",
     "reset": "Reset",
     "save": "Simpan",
+    "cancel": "Batal",
     "delete": "Hapus",
     "edit": "Edit",
     "close": "Tutup",

@@ -6,6 +6,7 @@ import SeedPage from '../pages/SeedPage';
 import WasteTypesPage from '../pages/WasteTypesPage';
 import StudentsPage from '../pages/StudentsPage';
 import StudentDetailPage from '../pages/StudentDetailPage';
+import DashboardPage from '../pages/DashboardPage';
 
 export default function Router() {
   return (
@@ -14,7 +15,7 @@ export default function Router() {
       <Route path="/dev/seed" element={<SeedPage />} />
       
       <Route element={<ProtectedRoute><AppLayout><Outlet /></AppLayout></ProtectedRoute>}>
-        <Route path="/dashboard" element={<div>Dashboard</div>} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentDetailPage />} />
         <Route path="/waste-entries" element={<div>Waste Entries</div>} />

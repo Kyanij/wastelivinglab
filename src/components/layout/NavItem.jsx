@@ -13,9 +13,13 @@ export default function NavItem({ to, icon: Icon, label }) {
         }`
       }
     >
-      <Icon className="w-5 h-5 flex-shrink-0" />
-      <span className="font-medium">{label}</span>
-      {({ isActive }) => isActive && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
+      {({ isActive }) => (
+        <>
+          <Icon className="w-5 h-5 flex-shrink-0" />
+          <span className="font-medium">{label}</span>
+          {isActive && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
+        </>
+      )}
     </NavLink>
   );
 }

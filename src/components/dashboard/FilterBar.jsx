@@ -1,0 +1,107 @@
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { Calendar, Download, Filter } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+
+export default function FilterBar({ filters, onFiltersChange, classes, wasteTypes, onExport }) {
+  const { t } = useTranslation();
+  const [localFilters, setLocalFilters] = useState({
+    dateFrom: filters.dateFrom || startOfMonth(new Date()),
+    dateTo: filters.dateTo || endOfMonth(new Date()),
+    studentClass: filters.studentClass || 'all',
+    wasteType: filters.wasteType || 'all',
+  });
+
+  useEffect(() => {
+    setLocalFilters(prev => ({
+      ...prev,
+      dateFrom: filters.dateFrom || startOfMonth(new Date()),
+      dateTo: filters.dateTo || endOfMonth(new Date()),
+      studentClass: filters.studentClass || 'all',
+      wasteType: filters.wasteType || 'all',
+    }));
+  }, [filters]);
+
+  const handleChange = (key, value) => {
+    const updated = { ...localFilters, [key]: value };
+    setLocalFilters(updated);
+    onFiltersChange(updated);
+  };
+
+  const handleReset = () => {
+    const defaultFilters = {
+      dateFrom: startOfMonth(new Date()),
+      dateTo: endOfMonth(new Date()),
+      studentClass: 'all',
+      wasteType: 'all',
+    };
+    setLocalFilters(defaultFilters);
+    onFiltersChange(defaultFilters);
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-4 mb-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-xl bg-gray-100">
+            <Calendar className="w-4 h-4 text-gray-500" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="date"
+              value={localFilters.dateFrom ? format(localFilters.dateFrom, 'yyyy-MM-dd') : ''}
+              onChange={(e) => handleChange('dateFrom', new Date(e.target.value))}
+              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+            />
+            <span className="text-gray-400 text-sm">to</span>
+            <input
+              type="date"
+              value={localFilters.dateTo ? format(localFilters.dateTo, 'yyyy-MM-dd') : ''}
+              onChange={(e) => handleChange('dateTo', new Date(e.target.value))}
+              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+            />
+          </div>
+        </div>
+
+        <div className="w-px h-8 bg-gray-200" />
+
+        <Select value={localFilters.studentClass} onValueChange={(v) => handleChange('studentClass', v)}>
+          <SelectTrigger className="w-[140px] h-10">
+            <SelectValue placeholder={t('students.allClasses')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t('students.allClasses')}</SelectItem>
+            {classes.map(c => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={localFilters.wasteType} onValueChange={(v) => handleChange('wasteType', v)}>
+          <SelectTrigger className="w-[160px] h-10">
+            <SelectValue placeholder="All Waste Types" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Waste Types</SelectItem>
+            {wasteTypes.map(wt => (
+              <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-2 ml-auto">
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500 hover:text-gray-700">
+            <Filter className="w-4 h-4 mr-1" />
+            Reset
+          </Button>
+          <Button size="sm" onClick={onExport} className="bg-green-600 hover:bg-green-700 text-white border-0">
+            <Download className="w-4 h-4 mr-1" />
+            Export
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
