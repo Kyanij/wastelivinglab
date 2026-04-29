@@ -5,20 +5,22 @@ import { Calendar, Download, Filter } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-export default function FilterBar({ filters, onFiltersChange, classes, wasteTypes, onExport }) {
+export default function FilterBar({ filters, onFiltersChange, classes, wasteTypes, onExport, isExporting }) {
   const { t } = useTranslation();
   const [localFilters, setLocalFilters] = useState({
-    dateFrom: filters.dateFrom || startOfMonth(new Date()),
-    dateTo: filters.dateTo || endOfMonth(new Date()),
+    dateFrom: filters.dateFrom || null,
+    dateTo: filters.dateTo || null,
     studentClass: filters.studentClass || 'all',
     wasteType: filters.wasteType || 'all',
   });
 
+  const isAllTime = !localFilters.dateFrom && !localFilters.dateTo;
+
   useEffect(() => {
     setLocalFilters(prev => ({
       ...prev,
-      dateFrom: filters.dateFrom || startOfMonth(new Date()),
-      dateTo: filters.dateTo || endOfMonth(new Date()),
+      dateFrom: filters.dateFrom || null,
+      dateTo: filters.dateTo || null,
       studentClass: filters.studentClass || 'all',
       wasteType: filters.wasteType || 'all',
     }));
@@ -26,14 +28,30 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
 
   const handleChange = (key, value) => {
     const updated = { ...localFilters, [key]: value };
+    if (key === 'dateFrom' || key === 'dateTo') {
+      updated.dateFrom = updated.dateFrom || null;
+      updated.dateTo = updated.dateTo || null;
+    }
     setLocalFilters(updated);
     onFiltersChange(updated);
   };
 
+  const handleAllTimeToggle = (checked) => {
+    if (checked) {
+      const updated = { ...localFilters, dateFrom: null, dateTo: null };
+      setLocalFilters(updated);
+      onFiltersChange(updated);
+    } else {
+      const updated = { ...localFilters, dateFrom: startOfMonth(new Date()), dateTo: endOfMonth(new Date()) };
+      setLocalFilters(updated);
+      onFiltersChange(updated);
+    }
+  };
+
   const handleReset = () => {
     const defaultFilters = {
-      dateFrom: startOfMonth(new Date()),
-      dateTo: endOfMonth(new Date()),
+      dateFrom: null,
+      dateTo: null,
       studentClass: 'all',
       wasteType: 'all',
     };
@@ -48,19 +66,30 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
           <div className="p-2 rounded-xl bg-gray-100">
             <Calendar className="w-4 h-4 text-gray-500" />
           </div>
-          <div className="flex items-center gap-2">
+          <label className="flex items-center gap-2 h-10 px-3 border border-gray-200 rounded-xl bg-white cursor-pointer hover:bg-gray-50">
+            <input
+              type="checkbox"
+              checked={isAllTime}
+              onChange={(e) => handleAllTimeToggle(e.target.checked)}
+              className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
+            />
+            <span className="text-sm text-gray-700">All Time</span>
+          </label>
+          <div className={`flex items-center gap-2 ${isAllTime ? 'opacity-50 pointer-events-none' : ''}`}>
             <input
               type="date"
               value={localFilters.dateFrom ? format(localFilters.dateFrom, 'yyyy-MM-dd') : ''}
               onChange={(e) => handleChange('dateFrom', new Date(e.target.value))}
-              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              disabled={isAllTime}
+              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:bg-gray-100"
             />
             <span className="text-gray-400 text-sm">to</span>
             <input
               type="date"
               value={localFilters.dateTo ? format(localFilters.dateTo, 'yyyy-MM-dd') : ''}
               onChange={(e) => handleChange('dateTo', new Date(e.target.value))}
-              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              disabled={isAllTime}
+              className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:bg-gray-100"
             />
           </div>
         </div>
@@ -96,9 +125,18 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
             <Filter className="w-4 h-4 mr-1" />
             Reset
           </Button>
-          <Button size="sm" onClick={onExport} className="bg-green-600 hover:bg-green-700 text-white border-0">
-            <Download className="w-4 h-4 mr-1" />
-            Export
+          <Button size="sm" onClick={onExport} disabled={isExporting} className="bg-green-600 hover:bg-green-700 text-white border-0 disabled:opacity-50">
+            {isExporting ? (
+              <>
+                <span className="w-4 h-4 mr-1 inline-block animate-spin border-2 border-white border-t-transparent rounded-full" />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4 mr-1" />
+                Export
+              </>
+            )}
           </Button>
         </div>
       </div>

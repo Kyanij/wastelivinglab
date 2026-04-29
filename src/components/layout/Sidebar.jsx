@@ -1,18 +1,19 @@
-import { LayoutDashboard, Users, Package, Recycle, FileBarChart, Settings, Leaf } from 'lucide-react';
+import { LayoutDashboard, Users, Package, Recycle, Settings, Leaf } from 'lucide-react';
 import NavItem from './NavItem';
+import ReportsNavItem from './ReportsNavItem';
 import LogoutButton from '../auth/LogoutButton';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Sidebar() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/students', icon: Users, label: 'Students' },
-    { to: '/waste-entries', icon: Package, label: 'Waste Entries' },
-    { to: '/waste-types', icon: Recycle, label: 'Waste Types' },
-    { to: '/reports', icon: FileBarChart, label: 'Reports' },
-    { to: '/settings', icon: Settings, label: 'Settings' },
+    { to: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard') },
+    { to: '/students', icon: Users, label: t('nav.students') },
+    { to: '/waste-entries', icon: Package, label: t('nav.wasteEntries') },
+    { to: '/waste-types', icon: Recycle, label: t('nav.wasteTypes') },
   ];
 
   return (
@@ -33,6 +34,8 @@ export default function Sidebar() {
         {navItems.map((item) => (
           <NavItem key={item.to} {...item} />
         ))}
+        <ReportsNavItem />
+        <NavItem to="/settings" icon={Settings} label={t('nav.settings')} />
       </nav>
 
       <div className="p-4 border-t border-white/10">

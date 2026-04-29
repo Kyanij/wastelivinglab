@@ -7,6 +7,10 @@ import WasteTypesPage from '../pages/WasteTypesPage';
 import StudentsPage from '../pages/StudentsPage';
 import StudentDetailPage from '../pages/StudentDetailPage';
 import DashboardPage from '../pages/DashboardPage';
+import OverviewReport from '../pages/reports/OverviewReport';
+import StudentReport from '../pages/reports/StudentReport';
+import ClassReport from '../pages/reports/ClassReport';
+import WasteAnalysisReport from '../pages/reports/WasteAnalysisReport';
 
 export default function Router() {
   return (
@@ -20,7 +24,13 @@ export default function Router() {
         <Route path="/students/:id" element={<StudentDetailPage />} />
         <Route path="/waste-entries" element={<div>Waste Entries</div>} />
         <Route path="/waste-types" element={<WasteTypesPage />} />
-        <Route path="/reports" element={<div>Reports</div>} />
+        
+        <Route path="/reports" element={<Navigate to="/reports/overview" replace />} />
+        <Route path="/reports/overview" element={<OverviewReport />} />
+        <Route path="/reports/student" element={<StudentReport />} />
+        <Route path="/reports/class" element={<ClassReport />} />
+        <Route path="/reports/waste-analysis" element={<WasteAnalysisReport />} />
+        
         <Route path="/settings" element={<div>Settings</div>} />
       </Route>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import {
@@ -14,10 +14,14 @@ import RecentActivity from '../components/dashboard/RecentActivity';
 import Insights from '../components/dashboard/Insights';
 import { useDashboard } from '../hooks/dashboard/useDashboard';
 import { useWasteTypes } from '../hooks/useWasteTypes';
+import { exportToPDF, generatePDFHeaderHTML } from '../utils/pdfExport';
 import toast from 'react-hot-toast';
+import '../styles/pdf-export.css';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const dashboardRef = useRef(null);
+  const [isExporting, setIsExporting] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: null,
     dateTo: null,
@@ -39,8 +43,26 @@ export default function DashboardPage() {
     uniqueClasses,
   } = useDashboard(filters);
 
-  const handleExport = () => {
-    toast.success('Export feature coming soon!');
+  const handleExport = async () => {
+    if (isExporting) return;
+
+    setIsExporting(true);
+    toast.loading('Generating PDF...', { id: 'pdf-export' });
+
+    const headerHTML = generatePDFHeaderHTML(filters);
+
+    try {
+      await exportToPDF('dashboard-export', {
+        fileName: `Waste-Management-Report-${format(new Date(), 'yyyy-MM-dd')}.pdf`,
+        headerHTML,
+      });
+      toast.success('PDF exported successfully!', { id: 'pdf-export' });
+    } catch (error) {
+      console.error('PDF export error:', error);
+      toast.error('Failed to export PDF. Please try again.', { id: 'pdf-export' });
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Calculate insights data
@@ -58,7 +80,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Waste Management Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">{format(new Date(), 'dd MMM yyyy')}</p>
+          <p className="text-sm text-gray-500 mt-1">Overview of waste collected by students</p>
         </div>
       </div>
 
@@ -69,10 +91,13 @@ export default function DashboardPage() {
         classes={uniqueClasses}
         wasteTypes={wasteTypes}
         onExport={handleExport}
+        isExporting={isExporting}
       />
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-5 gap-4">
+      {/* PDF Export Container */}
+      <div id="dashboard-export" className="pdf-export-container" ref={dashboardRef}>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-5 gap-4">
         <StatCard
           icon={Leaf}
           label="Total Waste (kg)"
@@ -146,14 +171,15 @@ export default function DashboardPage() {
       />
 
       {/* Insights */}
-      <Insights
-        wasteTrend={kpis.trends.waste}
-        topClass={topClass}
-        topClassPercent={topClassPercent}
-        topWasteType={topWasteType}
-        topWasteTypePercent={topWasteTypePercent}
-        isLoading={loading}
-      />
+        <Insights
+          wasteTrend={kpis.trends.waste}
+          topClass={topClass}
+          topClassPercent={topClassPercent}
+          topWasteType={topWasteType}
+          topWasteTypePercent={topWasteTypePercent}
+          isLoading={loading}
+        />
+      </div>
     </div>
   );
 }

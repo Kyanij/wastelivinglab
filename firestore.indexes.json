@@ -19,16 +19,6 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "date",
-          "order": "DESCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "wasteEntries",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
           "fieldPath": "studentId",
           "order": "ASCENDING"
         },
