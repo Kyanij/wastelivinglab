@@ -1,17 +1,36 @@
 export function groupEntriesByDate(entries) {
   const grouped = {};
   entries.forEach((entry) => {
-    const dateKey = entry.date ? new Date(entry.date.seconds * 1000).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }) : 'Unknown Date';
-    if (!grouped[dateKey]) {
-      grouped[dateKey] = [];
+    let dateKey;
+    if (entry.date?.toDate) {
+      dateKey = entry.date.toDate().toISOString().split('T')[0];
+    } else if (entry.date) {
+      dateKey = new Date(entry.date).toISOString().split('T')[0];
+    } else {
+      dateKey = 'unknown';
     }
-    grouped[dateKey].push(entry);
+    
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = {
+        dateKey,
+        entries: [],
+        totalWeight: 0,
+        totalEarnings: 0,
+      };
+    }
+    grouped[dateKey].entries.push(entry);
+    grouped[dateKey].totalWeight += entry.weight || 0;
+    grouped[dateKey].totalEarnings += entry.amount || 0;
   });
-  return grouped;
+  
+  return Object.values(grouped).sort((a, b) => 
+    new Date(b.dateKey) - new Date(a.dateKey)
+  );
+}
+
+export function formatDateKey(dateKey) {
+  const date = new Date(dateKey);
+  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 export function calculateSummary(entries) {

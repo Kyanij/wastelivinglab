@@ -74,10 +74,16 @@ export async function getEntriesByClass(studentClass) {
 
 export async function getEntriesByStudentAndDateRange(studentId, fromDate, toDate) {
   let q;
+  
   if (fromDate && toDate) {
-    const fromTimestamp = Timestamp.fromDate(new Date(fromDate));
-    const toTimestamp = Timestamp.fromDate(new Date(toDate));
-    toTimestamp.toDate().setHours(23, 59, 59, 999);
+    const fromDateObj = new Date(fromDate);
+    fromDateObj.setHours(0, 0, 0, 0);
+    
+    const toDateObj = new Date(toDate);
+    toDateObj.setHours(23, 59, 59, 999);
+    
+    const fromTimestamp = Timestamp.fromDate(fromDateObj);
+    const toTimestamp = Timestamp.fromDate(toDateObj);
     
     q = query(
       collection(db, COLLECTIONS.WASTE_ENTRIES),
