@@ -122,3 +122,27 @@ export async function getUniqueClasses() {
   const classes = [...new Set(students.map((s) => s.class).filter(Boolean))];
   return classes.sort();
 }
+
+export async function searchStudentsByName(searchTerm) {
+  if (!searchTerm || searchTerm.trim().length < 2) {
+    return [];
+  }
+  const term = searchTerm.toLowerCase().trim();
+  const q = query(
+    collection(db, STUDENTS_COLLECTION),
+    orderBy('name', 'asc'),
+    limit(10)
+  );
+  const snapshot = await getDocs(q);
+  const students = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+  
+  // Filter by name, class, or rollNo (client-side filtering since we don't have nameLower)
+  return students.filter(s => 
+    s.name?.toLowerCase().includes(term) ||
+    s.class?.toLowerCase().includes(term) ||
+    s.rollNo?.toLowerCase().includes(term)
+  ).slice(0, 10);
+}

@@ -97,7 +97,8 @@ export default function OverviewReport() {
         onClassChange={updateClass}
         onWasteTypeChange={updateWasteType}
         onRefresh={loadData}
-        onExport={() => {}}
+        reportType="overview"
+        pdfData={data}
       />
 
       {/* KPI Cards */}

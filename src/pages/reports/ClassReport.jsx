@@ -68,7 +68,8 @@ export default function ClassReport() {
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
         onRefresh={loadData}
-        onExport={() => {}}
+        reportType="class"
+        pdfData={data}
       />
 
       {/* KPI Cards */}

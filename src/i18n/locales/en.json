@@ -22,6 +22,7 @@
     "wasteAnalysis": "Waste Analysis",
     "wasteAnalysisDesc": "Analyze waste types and understand composition",
     "exportPDF": "Export PDF",
+    "generating": "Generating...",
     "allClasses": "All Classes",
     "allWasteTypes": "All Waste Types",
     "searchStudent": "Search student name...",
@@ -72,7 +73,19 @@
     "kg": "kg",
     "top": "Top",
     "averagePerEntry": "Average per Entry",
-    "total": "Total"
+    "total": "Total",
+    "dateRange": "Date Range",
+    "quickSelect": "Quick Select",
+    "selectedRange": "Selected Range",
+    "selectEndDate": "Now select the end date",
+    "days": "days",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "thisYear": "This Year"
   },
   "students": {
     "title": "Students List",
@@ -259,6 +272,8 @@
     "success": "Success",
     "kg": "kg",
     "rollNoLabel": "Roll No:",
-    "total": "Total"
+    "total": "Total",
+    "apply": "Apply",
+    "refresh": "Refresh"
   }
 }

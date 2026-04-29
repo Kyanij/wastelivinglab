@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Award } from 'lucide-react';
+import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Award, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
-import PageHeader from '../../components/reports/PageHeader';
 import StudentSearchInput from '../../components/reports/StudentSearchInput';
+import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getStudentReportData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
 
@@ -96,25 +96,43 @@ export default function StudentReport() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('reports.student')}
-        description={t('reports.studentDesc')}
-        dateRange={dateRange}
-        onDateRangeChange={updateDateRange}
-        onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
-        onExport={() => {}}
-      />
+      {/* Page Title */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{t('reports.student')}</h1>
+          <p className="text-gray-500 mt-1">{t('reports.studentDesc')}</p>
+        </div>
+      </div>
 
-      {/* Student Search */}
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {t('wasteEntry.selectStudent')}
-        </label>
+      {/* Student Search - Always Visible */}
+      <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-800">
+              {t('wasteEntry.selectStudent')}
+            </label>
+            <p className="text-xs text-gray-500">{t('reports.searchStudent')}</p>
+          </div>
+        </div>
         <StudentSearchInput 
           value={selectedStudent}
           onChange={handleStudentSelect}
         />
       </div>
+
+      {/* Date Range Picker - Only visible after student selected */}
+      {selectedStudent && (
+        <EnhancedDateRangePicker
+          dateRange={dateRange}
+          onDateRangeChange={updateDateRange}
+          onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
+        />
+      )}
 
       {!selectedStudent ? (
         <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center">

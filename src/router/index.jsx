@@ -11,12 +11,16 @@ import OverviewReport from '../pages/reports/OverviewReport';
 import StudentReport from '../pages/reports/StudentReport';
 import ClassReport from '../pages/reports/ClassReport';
 import WasteAnalysisReport from '../pages/reports/WasteAnalysisReport';
+import PublicPortal from '../pages/PublicPortal';
 
 export default function Router() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dev/seed" element={<SeedPage />} />
+      
+      {/* Public Portal - No authentication required */}
+      <Route path="/" element={<PublicPortal />} />
       
       <Route element={<ProtectedRoute><AppLayout><Outlet /></AppLayout></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPage />} />

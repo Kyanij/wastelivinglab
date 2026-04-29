@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Download, RefreshCw, Calendar } from 'lucide-react';
+import { RefreshCw, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
+import ExportPDFButton from './ExportPDFButton';
 
 export default function PageHeader({ 
   title, 
@@ -16,9 +17,17 @@ export default function PageHeader({
   onClassChange,
   onWasteTypeChange,
   onRefresh,
-  onExport
+  reportType,
+  pdfData,
 }) {
   const { t } = useTranslation();
+
+  const filters = {
+    dateFrom: dateRange.from,
+    dateTo: dateRange.to,
+    selectedClass,
+    selectedWasteType,
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
@@ -36,13 +45,13 @@ export default function PageHeader({
           >
             <RefreshCw className="w-5 h-5 text-gray-600" />
           </button>
-          <button
-            onClick={onExport}
-            className="flex items-center gap-2 px-4 py-2.5 bg-[#1A6B3C] text-white rounded-xl font-medium hover:bg-[#15803d] transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            {t('reports.exportPDF')}
-          </button>
+          {reportType && pdfData && (
+            <ExportPDFButton
+              reportType={reportType}
+              data={pdfData}
+              filters={filters}
+            />
+          )}
         </div>
       </div>
 

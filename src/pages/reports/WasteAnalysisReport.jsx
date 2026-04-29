@@ -73,7 +73,8 @@ export default function WasteAnalysisReport() {
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
         onRefresh={loadData}
-        onExport={() => {}}
+        reportType="waste"
+        pdfData={data}
       />
 
       {/* KPI Cards */}

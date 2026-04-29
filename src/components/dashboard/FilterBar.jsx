@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
-import { Calendar, Download, Filter } from 'lucide-react';
+import { Calendar, Filter } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-export default function FilterBar({ filters, onFiltersChange, classes, wasteTypes, onExport, isExporting }) {
+export default function FilterBar({ filters, onFiltersChange, classes, wasteTypes }) {
   const { t } = useTranslation();
   const [localFilters, setLocalFilters] = useState({
     dateFrom: filters.dateFrom || null,
@@ -124,19 +124,6 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
           <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500 hover:text-gray-700">
             <Filter className="w-4 h-4 mr-1" />
             Reset
-          </Button>
-          <Button size="sm" onClick={onExport} disabled={isExporting} className="bg-green-600 hover:bg-green-700 text-white border-0 disabled:opacity-50">
-            {isExporting ? (
-              <>
-                <span className="w-4 h-4 mr-1 inline-block animate-spin border-2 border-white border-t-transparent rounded-full" />
-                Exporting...
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4 mr-1" />
-                Export
-              </>
-            )}
           </Button>
         </div>
       </div>

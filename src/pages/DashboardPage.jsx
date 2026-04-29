@@ -1,6 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
 import {
   Leaf, Wallet, Users, BarChart2, Trophy,
 } from 'lucide-react';
@@ -14,14 +13,9 @@ import RecentActivity from '../components/dashboard/RecentActivity';
 import Insights from '../components/dashboard/Insights';
 import { useDashboard } from '../hooks/dashboard/useDashboard';
 import { useWasteTypes } from '../hooks/useWasteTypes';
-import { exportToPDF, generatePDFHeaderHTML } from '../utils/pdfExport';
-import toast from 'react-hot-toast';
-import '../styles/pdf-export.css';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const dashboardRef = useRef(null);
-  const [isExporting, setIsExporting] = useState(false);
   const [filters, setFilters] = useState({
     dateFrom: null,
     dateTo: null,
@@ -42,28 +36,6 @@ export default function DashboardPage() {
     recentActivity,
     uniqueClasses,
   } = useDashboard(filters);
-
-  const handleExport = async () => {
-    if (isExporting) return;
-
-    setIsExporting(true);
-    toast.loading('Generating PDF...', { id: 'pdf-export' });
-
-    const headerHTML = generatePDFHeaderHTML(filters);
-
-    try {
-      await exportToPDF('dashboard-export', {
-        fileName: `Waste-Management-Report-${format(new Date(), 'yyyy-MM-dd')}.pdf`,
-        headerHTML,
-      });
-      toast.success('PDF exported successfully!', { id: 'pdf-export' });
-    } catch (error) {
-      console.error('PDF export error:', error);
-      toast.error('Failed to export PDF. Please try again.', { id: 'pdf-export' });
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   // Calculate insights data
   const totalWaste = wasteByType.reduce((sum, d) => sum + d.value, 0);
@@ -90,14 +62,10 @@ export default function DashboardPage() {
         onFiltersChange={setFilters}
         classes={uniqueClasses}
         wasteTypes={wasteTypes}
-        onExport={handleExport}
-        isExporting={isExporting}
       />
 
-      {/* PDF Export Container */}
-      <div id="dashboard-export" className="pdf-export-container" ref={dashboardRef}>
-        {/* KPI Cards */}
-        <div className="grid grid-cols-5 gap-4">
+      {/* KPI Cards */}
+      <div className="grid grid-cols-5 gap-4">
         <StatCard
           icon={Leaf}
           label="Total Waste (kg)"
@@ -179,7 +147,6 @@ export default function DashboardPage() {
           topWasteTypePercent={topWasteTypePercent}
           isLoading={loading}
         />
-      </div>
     </div>
   );
 }

@@ -58,17 +58,30 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   const students = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   const wasteTypes = wasteTypesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-  const totalWaste = currentEntries.reduce((sum, e) => sum + (e.weight || 0), 0);
-  const totalEarnings = currentEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
-  const prevWaste = prevEntries.reduce((sum, e) => sum + (e.weight || 0), 0);
-  const prevEarnings = prevEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
+  // Filter entries by selected class and waste type
+  const filteredCurrentEntries = currentEntries.filter(entry => {
+    const matchClass = selectedClass === 'all' || entry.studentClass === selectedClass;
+    const matchType = selectedWasteType === 'all' || entry.wasteTypeId === selectedWasteType;
+    return matchClass && matchType;
+  });
+
+  const filteredPrevEntries = prevEntries.filter(entry => {
+    const matchClass = selectedClass === 'all' || entry.studentClass === selectedClass;
+    const matchType = selectedWasteType === 'all' || entry.wasteTypeId === selectedWasteType;
+    return matchClass && matchType;
+  });
+
+  const totalWaste = filteredCurrentEntries.reduce((sum, e) => sum + (e.weight || 0), 0);
+  const totalEarnings = filteredCurrentEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const prevWaste = filteredPrevEntries.reduce((sum, e) => sum + (e.weight || 0), 0);
+  const prevEarnings = filteredPrevEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
 
   const wasteChange = prevWaste > 0 ? ((totalWaste - prevWaste) / prevWaste) * 100 : 0;
   const earningsChange = prevEarnings > 0 ? ((totalEarnings - prevEarnings) / prevEarnings) * 100 : 0;
 
-  const uniqueStudents = new Set(currentEntries.map(e => e.studentId));
+  const uniqueStudents = new Set(filteredCurrentEntries.map(e => e.studentId));
   const activeStudents = uniqueStudents.size;
-  const prevUniqueStudents = new Set(prevEntries.map(e => e.studentId));
+  const prevUniqueStudents = new Set(filteredPrevEntries.map(e => e.studentId));
   const prevActiveStudents = prevUniqueStudents.size;
   const studentsChange = activeStudents - prevActiveStudents;
 
@@ -79,7 +92,7 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   const wasteByType = {};
   const dailyData = {};
   
-  currentEntries.forEach(entry => {
+  filteredCurrentEntries.forEach(entry => {
     const typeName = entry.wasteTypeName || 'Unknown';
     wasteByType[typeName] = (wasteByType[typeName] || 0) + (entry.weight || 0);
 
@@ -98,7 +111,7 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   }));
 
   const studentStats = {};
-  currentEntries.forEach(entry => {
+  filteredCurrentEntries.forEach(entry => {
     const sid = entry.studentId;
     if (!studentStats[sid]) {
       studentStats[sid] = { 
@@ -126,7 +139,7 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
 
   const topClass = uniqueClasses.length > 0 ? uniqueClasses[0] : 'N/A';
   const classStats = {};
-  currentEntries.forEach(entry => {
+  filteredCurrentEntries.forEach(entry => {
     const cls = entry.studentClass || 'Unknown';
     if (!classStats[cls]) classStats[cls] = 0;
     classStats[cls] += entry.weight || 0;

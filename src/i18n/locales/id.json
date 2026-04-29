@@ -22,6 +22,7 @@
     "wasteAnalysis": "Analisis Sampah",
     "wasteAnalysisDesc": "Analisis jenis sampah dan pahami komposisi",
     "exportPDF": "Ekspor PDF",
+    "generating": "Membuat...",
     "allClasses": "Semua Kelas",
     "allWasteTypes": "Semua Jenis Sampah",
     "searchStudent": "Cari nama siswa...",
@@ -72,7 +73,19 @@
     "kg": "kg",
     "top": "Teratas",
     "averagePerEntry": "Rata-rata per Entri",
-    "total": "Total"
+    "total": "Total",
+    "dateRange": "Rentang Tanggal",
+    "quickSelect": "Pilih Cepat",
+    "selectedRange": "Rentang Terpilih",
+    "selectEndDate": "Sekarang pilih tanggal akhir",
+    "days": "hari",
+    "today": "Hari Ini",
+    "yesterday": "Kemarin",
+    "last7Days": "7 Hari Terakhir",
+    "last30Days": "30 Hari Terakhir",
+    "thisMonth": "Bulan Ini",
+    "lastMonth": "Bulan Lalu",
+    "thisYear": "Tahun Ini"
   },
   "students": {
     "title": "Daftar Siswa",
@@ -259,6 +272,8 @@
     "success": "Berhasil",
     "kg": "kg",
     "rollNoLabel": "No. Absen:",
-    "total": "Total"
+    "total": "Total",
+    "apply": "Terapkan",
+    "refresh": "Segarkan"
   }
 }

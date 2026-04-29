@@ -5,6 +5,7 @@ import {
   where,
   orderBy,
   limit,
+  Timestamp,
 } from 'firebase/firestore';
 import { db } from './config';
 import { COLLECTIONS } from './collections';
@@ -64,6 +65,35 @@ export async function getEntriesByClass(studentClass) {
     where('studentClass', '==', studentClass),
     orderBy('date', 'desc')
   );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}
+
+export async function getEntriesByStudentAndDateRange(studentId, fromDate, toDate) {
+  let q;
+  if (fromDate && toDate) {
+    const fromTimestamp = Timestamp.fromDate(new Date(fromDate));
+    const toTimestamp = Timestamp.fromDate(new Date(toDate));
+    toTimestamp.toDate().setHours(23, 59, 59, 999);
+    
+    q = query(
+      collection(db, COLLECTIONS.WASTE_ENTRIES),
+      where('studentId', '==', studentId),
+      where('date', '>=', fromTimestamp),
+      where('date', '<=', toTimestamp),
+      orderBy('date', 'desc')
+    );
+  } else {
+    q = query(
+      collection(db, COLLECTIONS.WASTE_ENTRIES),
+      where('studentId', '==', studentId),
+      orderBy('date', 'desc')
+    );
+  }
+  
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
