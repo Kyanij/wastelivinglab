@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Leaf, Wallet, Users, BarChart2, Trophy,
 } from 'lucide-react';
+import { startOfMonth, endOfMonth } from 'date-fns';
 import StatCard from '../components/dashboard/StatCard';
-import FilterBar from '../components/dashboard/FilterBar';
+import EnhancedDateRangePicker from '../components/reports/EnhancedDateRangePicker';
 import WasteTrendChart from '../components/dashboard/WasteTrendChart';
 import WasteDistributionChart from '../components/dashboard/WasteDistributionChart';
 import ClassPerformanceChart from '../components/dashboard/ClassPerformanceChart';
@@ -13,9 +14,16 @@ import RecentActivity from '../components/dashboard/RecentActivity';
 import Insights from '../components/dashboard/Insights';
 import { useDashboard } from '../hooks/dashboard/useDashboard';
 import { useWasteTypes } from '../hooks/useWasteTypes';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Button } from '../components/ui/button';
+import { RotateCcw } from 'lucide-react';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
+  const today = new Date();
+  const defaultDateRange = { from: startOfMonth(today), to: today };
+  
+  const [dateRange, setDateRange] = useState(defaultDateRange);
   const [filters, setFilters] = useState({
     dateFrom: null,
     dateTo: null,
@@ -37,6 +45,43 @@ export default function DashboardPage() {
     uniqueClasses,
   } = useDashboard(filters);
 
+  const handleDateRangeChange = (from, to) => {
+    setDateRange({ from, to });
+    setFilters(prev => ({ ...prev, dateFrom: from, dateTo: to }));
+  };
+
+  const handleClassChange = (value) => {
+    setFilters(prev => ({ ...prev, studentClass: value }));
+  };
+
+  const handleWasteTypeChange = (value) => {
+    setFilters(prev => ({ ...prev, wasteType: value }));
+  };
+
+  const handleResetFilters = () => {
+    const today = new Date();
+    const defaultRange = { from: startOfMonth(today), to: today };
+    setDateRange(defaultRange);
+    setFilters({
+      dateFrom: defaultRange.from,
+      dateTo: defaultRange.to,
+      studentClass: 'all',
+      wasteType: 'all',
+    });
+  };
+
+  const hasActiveFilters = useMemo(() => {
+    const today = new Date();
+    const currentMonthStart = startOfMonth(today);
+    const currentMonthEnd = today;
+    
+    const isDefaultDateRange = 
+      dateRange.from?.getTime() === currentMonthStart.getTime() && 
+      dateRange.to?.getTime() === currentMonthEnd.getTime();
+    
+    return filters.studentClass !== 'all' || filters.wasteType !== 'all' || !isDefaultDateRange;
+  }, [filters, dateRange]);
+
   // Calculate insights data
   const totalWaste = wasteByType.reduce((sum, d) => sum + d.value, 0);
   const topClass = wasteByClass[0]?.name || '';
@@ -57,12 +102,54 @@ export default function DashboardPage() {
       </div>
 
       {/* Filter Bar */}
-      <FilterBar
-        filters={filters}
-        onFiltersChange={setFilters}
-        classes={uniqueClasses}
-        wasteTypes={wasteTypes}
-      />
+      <div className="bg-white rounded-2xl border border-gray-200 p-4">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+          <EnhancedDateRangePicker
+            dateRange={dateRange}
+            onDateRangeChange={handleDateRangeChange}
+          />
+          
+          <div className="hidden lg:block w-px h-8 bg-gray-200" />
+          
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={filters.studentClass} onValueChange={handleClassChange}>
+              <SelectTrigger className="w-[130px] md:w-[140px] h-10">
+                <SelectValue placeholder={t('students.allClasses')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('students.allClasses')}</SelectItem>
+                {uniqueClasses.map(c => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.wasteType} onValueChange={handleWasteTypeChange}>
+              <SelectTrigger className="w-[130px] md:w-[160px] h-10">
+                <SelectValue placeholder="All Waste Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Waste Types</SelectItem>
+                {wasteTypes.map(wt => (
+                  <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {hasActiveFilters && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleResetFilters} 
+                className="text-green-600 hover:text-green-700 hover:bg-green-50"
+              >
+                <RotateCcw className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">{t('common.reset')}</span>
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">

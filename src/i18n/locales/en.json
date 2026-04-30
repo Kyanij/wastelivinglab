@@ -126,7 +126,7 @@
   "students": {
     "title": "Students List",
     "addStudent": "Add Student",
-    "searchPlaceholder": "Search student by name or roll no...",
+    "searchPlaceholder": "Search by name, student ID, or class...",
     "allClasses": "All Classes",
     "allStatus": "All Status",
     "tableHeaders": {

@@ -141,7 +141,8 @@ export default function StudentsPage() {
     const matchesSearch =
       !search ||
       student.name?.toLowerCase().includes(search.toLowerCase()) ||
-      student.studentId?.toLowerCase().includes(search.toLowerCase());
+      student.studentId?.toLowerCase().includes(search.toLowerCase()) ||
+      student.class?.toLowerCase().includes(search.toLowerCase());
     const matchesClass = !selectedClass || student.class === selectedClass;
     return matchesSearch && matchesClass;
   });

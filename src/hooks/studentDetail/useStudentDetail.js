@@ -97,13 +97,16 @@ export function useFilters() {
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
+  const defaultDateFrom = firstDayOfMonth.toISOString().split('T')[0];
+  const defaultDateTo = today.toISOString().split('T')[0];
+
   const [filters, setFilters] = useState({
-    dateFrom: firstDayOfMonth.toISOString().split('T')[0],
-    dateTo: today.toISOString().split('T')[0],
+    dateFrom: defaultDateFrom,
+    dateTo: defaultDateTo,
     wasteTypeId: 'all',
   });
 
-  const hasActiveFilters = filters.dateFrom !== '' || filters.dateTo !== '' || filters.wasteTypeId !== 'all';
+  const hasActiveFilters = filters.dateFrom !== defaultDateFrom || filters.dateTo !== defaultDateTo || filters.wasteTypeId !== 'all';
 
   const resetFilters = () => {
     const today = new Date();

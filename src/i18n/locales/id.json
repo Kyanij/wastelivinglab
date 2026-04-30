@@ -126,7 +126,7 @@
   "students": {
     "title": "Daftar Siswa",
     "addStudent": "Tambah Siswa",
-    "searchPlaceholder": "Cari siswa berdasarkan nama atau no. absen...",
+    "searchPlaceholder": "Cari berdasarkan nama, ID siswa, atau kelas...",
     "allClasses": "Semua Kelas",
     "allStatus": "Semua Status",
     "tableHeaders": {
