@@ -52,8 +52,8 @@ export default function PublicPortal() {
               </svg>
             </div>
             <div>
-              <h1 className="font-semibold text-lg">Green Champs</h1>
-              <p className="text-green-300 text-xs hidden sm:block">Student Waste Tracker — Public Portal</p>
+              <h1 className="font-semibold text-lg">{t('portal.title')}</h1>
+              <p className="text-green-300 text-xs hidden sm:block">{t('portal.subtitle')}</p>
             </div>
           </div>
           
@@ -106,7 +106,7 @@ export default function PublicPortal() {
 
       {/* Footer */}
       <footer className="max-w-5xl mx-auto px-4 py-4 text-center text-green-600 text-xs">
-        <p>Together we create a cleaner tomorrow.</p>
+        <p>{t('portal.footer')}</p>
       </footer>
     </div>
   );

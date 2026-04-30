@@ -48,7 +48,7 @@ export default function StudentCard({ student, isActive, onClick }) {
       <div className="flex-1 min-w-0 text-left">
         <h4 className="font-semibold text-gray-800 text-sm truncate">{student.name}</h4>
         <p className="text-xs text-gray-500 truncate">
-          {student.class} · {student.rollNo}
+          {student.class} · {student.studentId}
         </p>
       </div>
       <svg

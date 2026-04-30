@@ -320,7 +320,7 @@ export const StudentPDF = ({ data, filters }) => {
         <View style={[styles.row, styles.rowHeader, { marginBottom: 10 }]}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{student.name}</Text>
-            <Text style={styles.gray}>Class: {student.class} | Roll No: {student.rollNo}</Text>
+            <Text style={styles.gray}>Class: {student.class} | Student ID: {student.studentId}</Text>
             <Text style={styles.gray}>Joined: {student.createdAt ? formatDate(student.createdAt.toDate()) : 'N/A'}</Text>
           </View>
         </View>

@@ -81,7 +81,7 @@ export async function addStudent(data) {
   const docRef = await addDoc(collection(db, STUDENTS_COLLECTION), {
     name: data.name,
     class: data.class,
-    rollNo: data.rollNo,
+    studentId: data.studentId,
     gender: data.gender || 'Other',
     createdAt: serverTimestamp(),
     totalWaste: 0,
@@ -96,7 +96,7 @@ export async function updateStudent(id, data) {
   await updateDoc(docRef, {
     name: data.name,
     class: data.class,
-    rollNo: data.rollNo,
+    studentId: data.studentId,
     gender: data.gender,
   });
 }
@@ -106,11 +106,11 @@ export async function deleteStudent(id) {
   await deleteDoc(docRef);
 }
 
-export async function checkDuplicateRollNo(classValue, rollNo, excludeId = null) {
+export async function checkDuplicateStudentId(classValue, studentId, excludeId = null) {
   const q = query(
     collection(db, STUDENTS_COLLECTION),
     where('class', '==', classValue),
-    where('rollNo', '==', rollNo)
+    where('studentId', '==', studentId)
   );
   const snapshot = await getDocs(q);
   const duplicates = snapshot.docs.filter((d) => d.id !== excludeId);
@@ -139,10 +139,10 @@ export async function searchStudentsByName(searchTerm) {
     ...doc.data(),
   }));
   
-  // Filter by name, class, or rollNo (client-side filtering since we don't have nameLower)
+  // Filter by name, class, or studentId (client-side filtering since we don't have nameLower)
   return students.filter(s => 
     s.name?.toLowerCase().includes(term) ||
     s.class?.toLowerCase().includes(term) ||
-    s.rollNo?.toLowerCase().includes(term)
+    s.studentId?.toLowerCase().includes(term)
   ).slice(0, 10);
 }

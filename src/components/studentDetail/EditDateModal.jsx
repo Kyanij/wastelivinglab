@@ -168,19 +168,19 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
   const visibleRows = rows.filter((r) => !r.markedForDeletion);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       <div
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
 
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 sticky top-0 bg-white">
+      <div className="relative bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl sm:rounded-xl shadow-xl overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               {t('studentDetail.editDateTitle')}
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 hidden sm:block">
               {t('studentDetail.editingDateSubtitle', { date: formattedDate })}
             </p>
           </div>
@@ -192,9 +192,9 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="text-xs font-medium text-gray-500 bg-gray-50">
                   <th className="px-2 py-2 text-left">
@@ -222,7 +222,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
                           onChange={(e) =>
                             updateRow(index, 'wasteTypeId', e.target.value)
                           }
-                          className={`w-full px-2 py-1 border rounded text-sm ${
+                          className={`w-full px-2 py-2 md:py-1 border rounded text-sm ${
                             rowErrors.wasteTypeId
                               ? 'border-red-500'
                               : 'border-gray-200'
@@ -246,7 +246,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
                           onChange={(e) =>
                             updateRow(index, 'weight', e.target.value)
                           }
-                          className={`w-full px-2 py-1 border rounded text-sm text-right ${
+                          className={`w-full px-2 py-2 md:py-1 border rounded text-sm text-right ${
                             rowErrors.weight
                               ? 'border-red-500'
                               : 'border-gray-200'
@@ -262,14 +262,14 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
                           onChange={(e) =>
                             updateRow(index, 'rate', e.target.value)
                           }
-                          className={`w-full px-2 py-1 border rounded text-sm text-right ${
+                          className={`w-full px-2 py-2 md:py-1 border rounded text-sm text-right ${
                             rowErrors.rate
                               ? 'border-red-500'
                               : 'border-gray-200'
                           }`}
                         />
                       </td>
-                      <td className="px-2 py-2 text-right text-green-600 font-medium">
+                      <td className="px-2 py-2 text-right text-green-600 font-medium text-sm">
                         Rp{formatCurrency(row.amount)}
                       </td>
                       <td className="px-2 py-2">
@@ -299,18 +299,18 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
             {t('wasteEntry.addAnotherType')}
           </button>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               {t('modals.cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
               {loading ? t('common.loading') : t('modals.updateEntry')}
             </button>

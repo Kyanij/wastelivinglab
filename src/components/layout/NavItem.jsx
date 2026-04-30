@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
-export default function NavItem({ to, icon: Icon, label }) {
+export default function NavItem({ to, icon: Icon, label, onClick }) {
   return (
     <NavLink
       to={to}
+      onClick={onClick}
       className={({ isActive }) =>
         `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
           isActive

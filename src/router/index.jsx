@@ -26,16 +26,13 @@ export default function Router() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentDetailPage />} />
-        <Route path="/waste-entries" element={<div>Waste Entries</div>} />
-        <Route path="/waste-types" element={<WasteTypesPage />} />
+        <Route path="/waste-types" element={<WasteTypesPage key="waste-types" />} />
         
         <Route path="/reports" element={<Navigate to="/reports/overview" replace />} />
         <Route path="/reports/overview" element={<OverviewReport />} />
         <Route path="/reports/student" element={<StudentReport />} />
         <Route path="/reports/class" element={<ClassReport />} />
         <Route path="/reports/waste-analysis" element={<WasteAnalysisReport />} />
-        
-        <Route path="/settings" element={<div>Settings</div>} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />

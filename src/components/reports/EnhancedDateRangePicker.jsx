@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight, Clock, RefreshCw } from 'lucide-react';
 import { 
   format, 
   startOfDay, 
@@ -19,7 +19,7 @@ import {
   endOfYear
 } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { useEffect } from 'react';
+import ExportPDFButton from './ExportPDFButton';
 
 const presets = [
   { key: 'today', label: 'reports.today', days: 0 },
@@ -34,7 +34,7 @@ const presets = [
   { key: 'thisYear', label: 'reports.thisYear', getValue: () => ({ from: startOfYear(new Date()), to: endOfYear(new Date()) }) },
 ];
 
-export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh }) {
+export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(dateRange.from);
@@ -179,18 +179,27 @@ export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, 
             ))}
           </div>
 
-          {/* Refresh Button */}
-          {onRefresh && (
-            <button
-              onClick={onRefresh}
-              className="ml-auto p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-primary/30 transition-all duration-200 group"
-              title={t('common.refresh')}
-            >
-              <svg className="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-          )}
+          {/* Refresh Button - moved to right */}
+          <div className="ml-auto flex items-center gap-2">
+            {onRefresh && (
+              <button
+                onClick={onRefresh}
+                className="p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-primary/30 transition-all duration-200 group"
+                title={t('common.refresh')}
+              >
+                <svg className="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            )}
+            {pdfData && filters && (
+              <ExportPDFButton
+                reportType="student"
+                data={pdfData}
+                filters={filters}
+              />
+            )}
+          </div>
         </div>
 
         {/* Calendar Dropdown */}

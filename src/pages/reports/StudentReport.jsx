@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Award, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 
+import PageHeader from '../../components/reports/PageHeader';
+import ExportPDFButton from '../../components/reports/ExportPDFButton';
 import StudentSearchInput from '../../components/reports/StudentSearchInput';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
@@ -94,15 +96,51 @@ export default function StudentReport() {
     },
   ] : [];
 
+  // Flatten entries for PDF export
+  const flattenEntriesForPDF = () => {
+    if (!data?.entries) return [];
+    const flatEntries = [];
+    data.entries.forEach((entry) => {
+      entry.items.forEach((item) => {
+        flatEntries.push({
+          date: entry.date,
+          wasteTypeName: item.wasteTypeName || 'Unknown',
+          weight: item.weight || 0,
+          rate: item.rate || 0,
+          amount: item.amount || 0,
+        });
+      });
+    });
+    return flatEntries;
+  };
+
+  // Prepare PDF data structure
+  const pdfData = data ? {
+    student: data.student,
+    entries: flattenEntriesForPDF(),
+    totalWaste: data.kpis?.totalWaste?.value || 0,
+    totalEarnings: data.kpis?.totalEarnings?.value || 0,
+    totalEntries: data.kpis?.totalEntries?.value || 0,
+    avgPerEntry: data.kpis?.avgPerEntry?.value || 0,
+  } : null;
+
+  const filters = {
+    dateFrom: dateRange.from,
+    dateTo: dateRange.to,
+  };
+
   return (
     <div className="space-y-6">
-      {/* Page Title */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('reports.student')}</h1>
-          <p className="text-gray-500 mt-1">{t('reports.studentDesc')}</p>
-        </div>
-      </div>
+      <PageHeader
+        title={t('reports.student')}
+        description={t('reports.studentDesc')}
+        dateRange={dateRange}
+        onDateRangeChange={updateDateRange}
+        reportType={selectedStudent ? 'student' : undefined}
+        pdfData={pdfData}
+        selectedClass={selectedClass}
+        selectedWasteType={selectedWasteType}
+      />
 
       {/* Student Search - Always Visible */}
       <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -131,6 +169,8 @@ export default function StudentReport() {
           dateRange={dateRange}
           onDateRangeChange={updateDateRange}
           onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
+          pdfData={pdfData}
+          filters={filters}
         />
       )}
 
@@ -214,7 +254,7 @@ function StudentProfileCard({ student }) {
             </span>
           </div>
           <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
-            <span>{t('common.rollNoLabel')} {student.rollNo}</span>
+            <span>{t('common.studentIdLabel')} {student.studentId}</span>
             <span>•</span>
             <span>{t('common.joinedOn', { date: student.createdAt ? format(student.createdAt.toDate(), 'MMM d, yyyy') : 'N/A' })}</span>
           </div>

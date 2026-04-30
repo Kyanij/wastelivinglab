@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getEntriesByStudentAndDateRange } from '../../firebase/wasteEntries';
 import { calculateSummary, formatKg, formatCurrency, WASTE_TYPE_CONFIG, groupEntriesByDate } from '../../utils/portalHelpers';
 import { Loader2 } from 'lucide-react';
@@ -30,6 +31,7 @@ function getInitials(name) {
 }
 
 export default function StudentDetailReport({ student }) {
+  const { t } = useTranslation();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
@@ -129,14 +131,14 @@ export default function StudentDetailReport({ student }) {
               <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
               </svg>
-              {student.rollNo}
+              {student.studentId}
             </span>
             <span className="w-1 h-1 rounded-full bg-gray-300"></span>
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              {entries.length} collections
+              {entries.length} {t('portal.collections')}
             </span>
           </div>
         </div>
@@ -144,10 +146,10 @@ export default function StudentDetailReport({ student }) {
 
       {/* Date Range Filter */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-gray-100">
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Date Range</h3>
+        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{t('portal.dateRange')}</h3>
         <div className="flex flex-wrap items-end gap-4">
           <div className="flex-1 min-w-[150px]">
-            <label className="block text-sm font-medium text-gray-600 mb-2">From:</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('portal.from')}</label>
             <input
               type="date"
               value={dateFrom}
@@ -156,7 +158,7 @@ export default function StudentDetailReport({ student }) {
             />
           </div>
           <div className="flex-1 min-w-[150px]">
-            <label className="block text-sm font-medium text-gray-600 mb-2">To:</label>
+            <label className="block text-sm font-medium text-gray-600 mb-2">{t('portal.to')}</label>
             <input
               type="date"
               value={dateTo}
@@ -171,7 +173,7 @@ export default function StudentDetailReport({ student }) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            Apply
+            {t('common.apply')}
           </button>
         </div>
         {error && (
@@ -187,7 +189,7 @@ export default function StudentDetailReport({ student }) {
       {/* Collection Summary */}
       {hasApplied && (
         <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Collection Summary</h3>
+          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{t('portal.collectionSummary')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {WASTE_TYPE_CONFIG.map((type) => {
               const data = summary[type.name] || { quantity: 0, earned: 0 };
@@ -204,7 +206,7 @@ export default function StudentDetailReport({ student }) {
                     {formatKg(data.quantity)}
                   </p>
                   <p className="text-sm text-green-600 font-medium">
-                    Earned: {formatCurrency(data.earned)}
+                    {t('portal.earned')} {formatCurrency(data.earned)}
                   </p>
                 </div>
               );
@@ -221,7 +223,7 @@ export default function StudentDetailReport({ student }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-800">Detailed Report</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('portal.detailedReport')}</h3>
         </div>
 
         {!hasApplied ? (
@@ -231,8 +233,8 @@ export default function StudentDetailReport({ student }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <h4 className="text-lg font-semibold text-gray-600 mb-2">Select Date Range</h4>
-            <p className="text-gray-400 text-sm">Choose a date range above and click Apply to view collections</p>
+            <h4 className="text-lg font-semibold text-gray-600 mb-2">{t('portal.selectDateRange')}</h4>
+            <p className="text-gray-400 text-sm">{t('portal.chooseDateRange')}</p>
           </div>
         ) : loading ? (
           <div className="flex items-center justify-center py-12">
@@ -245,8 +247,8 @@ export default function StudentDetailReport({ student }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
             </div>
-            <h4 className="text-lg font-semibold text-gray-600 mb-2">No Data</h4>
-            <p className="text-gray-400 text-sm">No collections found for this date range</p>
+            <h4 className="text-lg font-semibold text-gray-600 mb-2">{t('portal.noData')}</h4>
+            <p className="text-gray-400 text-sm">{t('portal.noCollectionsFound')}</p>
           </div>
         ) : (
           <>
@@ -254,10 +256,10 @@ export default function StudentDetailReport({ student }) {
             <div className="border-b border-gray-100 bg-gray-50/50">
               <div className="flex items-center px-5 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">
                 <div className="w-[8%]"></div>
-                <div className="w-[22%]">Date</div>
-                <div className="w-[20%] text-right">Total Weight</div>
-                <div className="w-[20%] text-right">Total Earnings</div>
-                <div className="w-[20%]">Entries</div>
+                <div className="w-[22%]">{t('portal.date')}</div>
+                <div className="w-[20%] text-right">{t('portal.totalWeight')}</div>
+                <div className="w-[20%] text-right">{t('portal.totalEarnings')}</div>
+                <div className="w-[20%]">{t('portal.entries')}</div>
                 <div className="w-[10%]"></div>
               </div>
             </div>
@@ -279,7 +281,7 @@ export default function StudentDetailReport({ student }) {
               <div className="flex items-center">
                 <div className="w-[8%]"></div>
                 <div className="w-[22%]">
-                  <span className="text-base font-bold text-gray-800">Total</span>
+                  <span className="text-base font-bold text-gray-800">{t('portal.total')}</span>
                 </div>
                 <div className="w-[20%] text-right">
                   <span className="text-base font-bold text-gray-800">

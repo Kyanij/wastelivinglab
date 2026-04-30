@@ -13,11 +13,11 @@ export default function StatCard({ icon: Icon, label, value, trend, suffix = '',
 
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5">
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-4 md:p-5">
         <div className="animate-pulse">
-          <div className="h-10 w-10 rounded-xl bg-gray-100 mb-4" />
-          <div className="h-8 w-24 bg-gray-100 rounded mb-2" />
-          <div className="h-4 w-32 bg-gray-100 rounded" />
+          <div className="h-8 w-8 md:h-10 md:w-10 rounded-lg md:rounded-xl bg-gray-100 mb-3 md:mb-4" />
+          <div className="h-6 md:h-8 w-16 md:w-24 bg-gray-100 rounded mb-1 md:mb-2" />
+          <div className="h-3 md:h-4 w-24 md:w-32 bg-gray-100 rounded" />
         </div>
       </div>
     );
@@ -27,13 +27,13 @@ export default function StatCard({ icon: Icon, label, value, trend, suffix = '',
   const isNegative = trend < 0;
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 hover:shadow-md transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-2.5 rounded-xl ${colors.bg}`}>
-          <Icon className={`w-5 h-5 ${colors.icon}`} />
+    <div className="rounded-xl md:rounded-2xl border border-gray-200 bg-white shadow-sm p-4 md:p-5 hover:shadow-md transition-all duration-300">
+      <div className="flex items-center justify-between mb-3 md:mb-4">
+        <div className={`p-2 rounded-lg md:rounded-xl ${colors.bg}`}>
+          <Icon className={`w-4 h-4 md:w-5 md:h-5 ${colors.icon}`} />
         </div>
         {trend !== undefined && !isText && (
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
+          <div className={`flex items-center gap-1 px-1.5 md:px-2 py-0.5 md:py-1 rounded-full text-xs font-semibold ${
             isPositive ? 'bg-emerald-50 text-emerald-600' :
             isNegative ? 'bg-red-50 text-red-600' :
             'bg-gray-50 text-gray-600'
@@ -43,8 +43,8 @@ export default function StatCard({ icon: Icon, label, value, trend, suffix = '',
           </div>
         )}
       </div>
-      <div className="text-2xl font-bold text-gray-900 mb-1">{prefix}{typeof value === 'number' ? value.toFixed(2) : value}{suffix}</div>
-      <div className="text-sm text-gray-500">{label}</div>
+      <div className="text-lg md:text-2xl font-bold text-gray-900 mb-1">{prefix}{typeof value === 'number' ? value.toFixed(2) : value}{suffix}</div>
+      <div className="text-xs md:text-sm text-gray-500">{label}</div>
     </div>
   );
 }

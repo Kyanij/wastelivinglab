@@ -8,13 +8,13 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [name, setName] = useState(student.name || '');
   const [classValue, setClassValue] = useState(student.class || '');
-  const [rollNo, setRollNo] = useState(student.rollNo || '');
+  const [studentId, setStudentId] = useState(student.studentId || '');
   const [gender, setGender] = useState(student.gender || 'Male');
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState({ name: '', class: '', rollNo: '' });
+  const [errors, setErrors] = useState({ name: '', class: '', studentId: '' });
 
   const validateForm = () => {
-    const newErrors = { name: '', class: '', rollNo: '' };
+    const newErrors = { name: '', class: '', studentId: '' };
     let isValid = true;
 
     if (!name.trim()) {
@@ -25,8 +25,8 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
       newErrors.class = t('modals.errors.classRequired');
       isValid = false;
     }
-    if (!rollNo.trim()) {
-      newErrors.rollNo = t('modals.errors.rollNoRequired');
+    if (!studentId.trim()) {
+      newErrors.studentId = t('modals.errors.studentIdRequired');
       isValid = false;
     }
 
@@ -43,7 +43,7 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
       await updateStudent(student.id, {
         name: name.trim(),
         class: classValue.trim(),
-        rollNo: rollNo.trim(),
+        studentId: studentId.trim(),
         gender,
       });
       toast.success(t('students.successUpdated'));
@@ -56,11 +56,11 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">{t('modals.editStudent')}</h2>
+      <div className="relative bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md sm:rounded-2xl shadow-xl overflow-y-auto">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900">{t('modals.editStudent')}</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
@@ -69,7 +69,7 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('modals.fullName')}</label>
             <input
@@ -93,7 +93,7 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('modals.class')}</label>
               <input
@@ -117,24 +117,24 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('modals.rollNo')}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('modals.studentId')}</label>
               <input
                 type="text"
-                value={rollNo}
+                value={studentId}
                 onChange={(e) => {
-                  setRollNo(e.target.value);
-                  if (errors.rollNo) setErrors({ ...errors, rollNo: '' });
+                  setStudentId(e.target.value);
+                  if (errors.studentId) setErrors({ ...errors, studentId: '' });
                 }}
                 className={`w-full px-4 py-2.5 rounded-lg border text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                  errors.rollNo
+                  errors.studentId
                     ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-green-500'
                 }`}
               />
-              {errors.rollNo && (
+              {errors.studentId && (
                 <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1">
                   <AlertCircle className="w-4 h-4" />
-                  {errors.rollNo}
+                  {errors.studentId}
                 </p>
               )}
             </div>
@@ -153,18 +153,18 @@ export default function EditStudentModal({ student, onClose, onSuccess }) {
             </select>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
             >
               {t('modals.cancel')}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
               {t('modals.updateStudent')}

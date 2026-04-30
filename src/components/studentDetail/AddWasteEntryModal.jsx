@@ -183,11 +183,11 @@ export default function AddWasteEntryModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+      <div className="relative bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-2xl sm:rounded-xl shadow-xl overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               {t('wasteEntry.addTitle')}
@@ -202,32 +202,32 @@ export default function AddWasteEntryModal({
           </button>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
               {t('wasteEntry.selectDate')}
             </label>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <p className="text-gray-500 text-xs mt-1">{t('wasteEntry.pastDateNote')}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2 md:mb-3">
               {t('wasteEntry.wasteType')}
             </label>
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               {items.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+                <div key={item.id} className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 p-3 md:p-4 bg-gray-50 rounded-lg">
                   <div className="flex-1 min-w-[120px]">
                     <select
                       value={item.wasteTypeId}
                       onChange={(e) => updateItem(index, 'wasteTypeId', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="">{t('wasteEntry.wasteType')}</option>
                       {wasteTypes.map((wt) => (
@@ -237,7 +237,7 @@ export default function AddWasteEntryModal({
                       ))}
                     </select>
                   </div>
-                  <div className="w-24">
+                  <div className="w-20 md:w-24">
                     <input
                       type="number"
                       step="0.1"
@@ -245,10 +245,10 @@ export default function AddWasteEntryModal({
                       placeholder={t('wasteEntry.weight')}
                       value={item.weight}
                       onChange={(e) => updateItem(index, 'weight', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-right"
+                      className="w-full px-2 md:px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg text-right text-sm md:text-base"
                     />
                   </div>
-                  <div className="w-24">
+                  <div className="w-20 md:w-24">
                     <input
                       type="number"
                       step="0.01"
@@ -256,11 +256,11 @@ export default function AddWasteEntryModal({
                       placeholder={t('wasteEntry.rate')}
                       value={item.rate}
                       onChange={(e) => updateItem(index, 'rate', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-right"
+                      className="w-full px-2 md:px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg text-right text-sm md:text-base"
                     />
                   </div>
-                  <div className="w-28 text-right">
-                    <span className="text-green-600 font-medium">
+                  <div className="w-24 md:w-28 text-right">
+                    <span className="text-green-600 font-medium text-sm md:text-base">
                       Rp{formatCurrency(item.amount)}
                     </span>
                   </div>
@@ -299,17 +299,17 @@ export default function AddWasteEntryModal({
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full sm:flex-1 px-4 py-3 md:py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               {t('common.cancel')}
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading || totalWeight <= 0}
-              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              className="w-full sm:flex-1 px-4 py-3 md:py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
               {loading ? t('common.loading') : t('wasteEntry.saveEntry')}
             </button>

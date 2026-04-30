@@ -25,7 +25,7 @@ export default function StudentSearchInput({ value, onChange, placeholder }) {
       const filtered = students
         .filter(s => 
           s.name?.toLowerCase().includes(lower) || 
-          s.rollNo?.toLowerCase().includes(lower)
+          s.studentId?.toLowerCase().includes(lower)
         )
         .slice(0, 10);
       setFiltered(filtered);
@@ -116,7 +116,7 @@ export default function StudentSearchInput({ value, onChange, placeholder }) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{student.name}</p>
                 <p className="text-xs text-gray-500">
-                  {student.class} • Roll No. {student.rollNo}
+                  {student.class} • ID: {student.studentId}
                 </p>
               </div>
               {selectedStudent?.id === student.id && (

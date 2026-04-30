@@ -41,7 +41,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "rollNo",
+          "fieldPath": "studentId",
           "order": "ASCENDING"
         }
       ]

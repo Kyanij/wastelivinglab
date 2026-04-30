@@ -10,10 +10,14 @@ const reportsSubItems = [
   { to: '/reports/waste-analysis', label: 'nav.wasteAnalysis', icon: BarChart3 },
 ];
 
-export default function ReportsNavItem() {
+export default function ReportsNavItem({ onClick }) {
   const location = useLocation();
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(true);
+  
+  const handleClick = () => {
+    if (onClick) onClick();
+  };
   
   const isReportsRoute = location.pathname.startsWith('/reports');
   const isActive = location.pathname === '/reports' || isReportsRoute;
@@ -47,6 +51,7 @@ export default function ReportsNavItem() {
               <NavLink
                 key={item.to}
                 to={item.to}
+                onClick={handleClick}
                 className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-sm ${
                   isSubActive
                     ? 'bg-primary/20 text-primary-light font-medium'

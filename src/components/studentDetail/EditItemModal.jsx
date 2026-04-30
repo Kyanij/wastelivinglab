@@ -89,14 +89,14 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
   const formattedDate = format(entryDate, 'MMMM dd, yyyy');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       <div
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
 
-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+      <div className="relative bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md sm:rounded-xl shadow-xl overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100">
           <div>
             <h2 className="text-lg font-semibold text-gray-900">
               {t('studentDetail.editItemTitle')}
@@ -116,15 +116,15 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               {t('wasteEntry.wasteType')}
             </label>
             <select
               value={formData.wasteTypeId}
               onChange={handleWasteTypeChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              className={`w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.wasteTypeId ? 'border-red-500' : 'border-gray-200'
               }`}
             >
@@ -142,7 +142,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 {t('wasteEntry.weight')} *
               </label>
               <input
@@ -152,7 +152,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
                 max="999"
                 value={formData.weight}
                 onChange={handleWeightChange}
-                className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                className={`w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-green-500 ${
                   errors.weight ? 'border-red-500' : 'border-gray-200'
                 }`}
               />
@@ -161,20 +161,20 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 {t('wasteEntry.amount')}
               </label>
               <input
                 type="text"
                 value={`Rp${amount}`}
                 disabled
-                className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-gray-500"
+                className="w-full px-3 py-2.5 border rounded-lg bg-gray-50 text-gray-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
               {t('wasteEntry.rate')} *
             </label>
             <input
@@ -183,7 +183,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
               min="0"
               value={formData.rate}
               onChange={handleRateChange}
-              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              className={`w-full px-3 py-2.5 rounded-lg border focus:outline-none focus:ring-2 focus:ring-green-500 ${
                 errors.rate ? 'border-red-500' : 'border-gray-200'
               }`}
             />
@@ -192,18 +192,18 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
             )}
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full sm:flex-1 px-4 py-2.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               {t('modals.cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
               {loading ? t('common.loading') : t('modals.updateItem')}
             </button>

@@ -13,7 +13,7 @@ export default function StudentInfoCard({ student }) {
       <div className="flex-1">
         <h2 className="text-xl font-bold text-gray-800">{student.name}</h2>
         <p className="text-sm text-gray-500">
-          Class: {student.class} | Roll No: {student.rollNo}
+          Class: {student.class} | ID: {student.studentId}
         </p>
       </div>
       <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">

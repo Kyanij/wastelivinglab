@@ -52,7 +52,7 @@ function StudentRow({ student, index, onEdit }) {
           </div>
           <div>
             <p className="font-semibold text-gray-900">{student.name}</p>
-            <p className="text-sm text-gray-500">No. {student.rollNo}</p>
+            <p className="text-sm text-gray-500">ID: {student.studentId}</p>
           </div>
         </div>
       </td>
@@ -66,21 +66,21 @@ function StudentRow({ student, index, onEdit }) {
         <span className="text-green-600 font-semibold">Rp{student.totalEarnings?.toFixed(2) || '0.00'}</span>
       </td>
       <td className="px-6 py-4 text-gray-500">{formatLastEntry(student.lastEntryDate)}</td>
-      <td className="px-6 py-4 text-right">
-        <div className="flex items-center justify-end gap-2">
+      <td className="px-4 sm:px-6 py-3 sm:py-4 text-right">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-1 sm:gap-2">
           <button
             onClick={onEdit}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 sm:py-1.5 text-sm text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
           >
             <Pencil className="w-4 h-4" />
-            {t('students.edit')}
+            <span className="sm:hidden">{t('students.edit')}</span>
           </button>
           <button
             onClick={() => navigate(`/students/${student.id}`)}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1 px-3 py-2 sm:py-1.5 text-sm text-green-600 border border-green-600 rounded-lg hover:bg-green-50 transition-colors"
           >
             <ChevronRightIcon className="w-4 h-4" />
-            {t('students.viewDetails')}
+            <span className="sm:hidden">{t('students.viewDetails')}</span>
           </button>
         </div>
       </td>
@@ -141,7 +141,7 @@ export default function StudentsPage() {
     const matchesSearch =
       !search ||
       student.name?.toLowerCase().includes(search.toLowerCase()) ||
-      student.rollNo?.toLowerCase().includes(search.toLowerCase());
+      student.studentId?.toLowerCase().includes(search.toLowerCase());
     const matchesClass = !selectedClass || student.class === selectedClass;
     return matchesSearch && matchesClass;
   });
@@ -189,23 +189,23 @@ export default function StudentsPage() {
   const recordsCount = filteredCount;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-gray-50 -mx-4 md:mx-0 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('students.title')}</h1>
-          <p className="text-gray-500 mt-1">Manage student records and track their waste collection</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('students.title')}</h1>
+          <p className="text-gray-500 text-sm mt-1 hidden sm:block">Manage student records and track their waste collection</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm"
         >
           <Plus className="w-5 h-5" />
           {t('students.addStudent')}
         </button>
       </div>
 
-      <div className="flex items-center gap-4 mb-6">
-        <form onSubmit={handleSearch} className="flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4 md:mb-6">
+        <form onSubmit={handleSearch} className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -224,7 +224,7 @@ export default function StudentsPage() {
             setSelectedClass(e.target.value);
             setCurrentPage(1);
           }}
-          className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer bg-white w-40"
+          className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer bg-white min-w-[120px]"
         >
           <option value="">{t('students.allClasses')}</option>
           {classes.map((cls) => (
@@ -234,7 +234,8 @@ export default function StudentsPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full min-w-[600px]">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left text-sm font-medium text-gray-500 px-6 py-3 w-16">#</th>
@@ -276,15 +277,16 @@ export default function StudentsPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between mt-6">
-        <div className="flex items-center gap-4">
-          <p className="text-gray-500 text-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 md:mt-6">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
+          <p>
             {t('students.showing', { from: fromNum, to: toNum, total: totalStudents })} • {recordsCount} {t('students.recordsOnPage')}
           </p>
           <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-sm">Show</span>
+            <span className="hidden sm:inline">Show</span>
             <select
               value={pageSize}
               onChange={handlePageSizeChange}
@@ -295,7 +297,7 @@ export default function StudentsPage() {
               <option value="15">15</option>
               <option value="20">20</option>
             </select>
-            <span className="text-gray-500 text-sm">per page</span>
+            <span className="hidden sm:inline">per page</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -306,7 +308,7 @@ export default function StudentsPage() {
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <span className="px-4 py-2 text-gray-900 font-medium">{currentPage}</span>
+          <span className="px-3 py-2 text-gray-900 font-medium">{currentPage}</span>
           <button
             onClick={handleNextPage}
             disabled={!hasMore}

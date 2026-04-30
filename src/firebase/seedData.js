@@ -14,11 +14,11 @@ export const WASTE_TYPES = [
 ];
 
 export const STUDENTS = [
-  { name: 'Aarav Sharma', class: '6A', rollNo: '101', gender: 'Male' },
-  { name: 'Priya Patel', class: '6A', rollNo: '102', gender: 'Female' },
-  { name: 'Raj Kumar', class: '6B', rollNo: '201', gender: 'Male' },
-  { name: 'Ananya Singh', class: '6B', rollNo: '202', gender: 'Female' },
-  { name: 'Vikram Reddy', class: '7A', rollNo: '301', gender: 'Male' },
+  { name: 'Aarav Sharma', class: '6A', studentId: '101', gender: 'Male' },
+  { name: 'Priya Patel', class: '6A', studentId: '102', gender: 'Female' },
+  { name: 'Raj Kumar', class: '6B', studentId: '201', gender: 'Male' },
+  { name: 'Ananya Singh', class: '6B', studentId: '202', gender: 'Female' },
+  { name: 'Vikram Reddy', class: '7A', studentId: '301', gender: 'Male' },
 ];
 
 const generateWasteEntries = (studentDocs, wasteTypeDocs) => {

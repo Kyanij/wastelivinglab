@@ -60,9 +60,9 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-4 mb-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
+    <div className="rounded-xl md:rounded-2xl border border-gray-200 bg-white shadow-sm p-3 md:p-4 mb-4 md:mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 md:gap-4">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
           <div className="p-2 rounded-xl bg-gray-100">
             <Calendar className="w-4 h-4 text-gray-500" />
           </div>
@@ -73,7 +73,7 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
               onChange={(e) => handleAllTimeToggle(e.target.checked)}
               className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
             />
-            <span className="text-sm text-gray-700">All Time</span>
+            <span className="text-sm text-gray-700 hidden sm:inline">All Time</span>
           </label>
           <div className={`flex items-center gap-2 ${isAllTime ? 'opacity-50 pointer-events-none' : ''}`}>
             <input
@@ -83,7 +83,7 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
               disabled={isAllTime}
               className="h-10 rounded-xl border border-gray-200 bg-white px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50 disabled:bg-gray-100"
             />
-            <span className="text-gray-400 text-sm">to</span>
+            <span className="text-gray-400 text-sm hidden sm:inline">to</span>
             <input
               type="date"
               value={localFilters.dateTo ? format(localFilters.dateTo, 'yyyy-MM-dd') : ''}
@@ -94,36 +94,36 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
           </div>
         </div>
 
-        <div className="w-px h-8 bg-gray-200" />
+        <div className="hidden lg:block w-px h-8 bg-gray-200" />
 
-        <Select value={localFilters.studentClass} onValueChange={(v) => handleChange('studentClass', v)}>
-          <SelectTrigger className="w-[140px] h-10">
-            <SelectValue placeholder={t('students.allClasses')} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t('students.allClasses')}</SelectItem>
-            {classes.map(c => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap items-center gap-2 md:gap-3">
+          <Select value={localFilters.studentClass} onValueChange={(v) => handleChange('studentClass', v)}>
+            <SelectTrigger className="w-[130px] md:w-[140px] h-10">
+              <SelectValue placeholder={t('students.allClasses')} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t('students.allClasses')}</SelectItem>
+              {classes.map(c => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Select value={localFilters.wasteType} onValueChange={(v) => handleChange('wasteType', v)}>
-          <SelectTrigger className="w-[160px] h-10">
-            <SelectValue placeholder="All Waste Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Waste Types</SelectItem>
-            {wasteTypes.map(wt => (
-              <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select value={localFilters.wasteType} onValueChange={(v) => handleChange('wasteType', v)}>
+            <SelectTrigger className="w-[130px] md:w-[160px] h-10">
+              <SelectValue placeholder="All Waste Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Waste Types</SelectItem>
+              {wasteTypes.map(wt => (
+                <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <div className="flex items-center gap-2 ml-auto">
           <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500 hover:text-gray-700">
             <Filter className="w-4 h-4 mr-1" />
-            Reset
+            <span className="hidden sm:inline">Reset</span>
           </Button>
         </div>
       </div>

@@ -106,3 +106,15 @@ export async function getEntriesByStudentAndDateRange(studentId, fromDate, toDat
     ...doc.data(),
   }));
 }
+
+export async function getEntriesByWasteType(wasteTypeId) {
+  const q = query(
+    collection(db, COLLECTIONS.WASTE_ENTRIES),
+    where('wasteTypeId', '==', wasteTypeId)
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}

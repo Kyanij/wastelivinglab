@@ -1,25 +1,40 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { startOfMonth, endOfMonth, subMonths, format, isValid, parseISO } from 'date-fns';
 
 export function useReportFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
-  
+  const hasInteracted = useRef(false);
+
   const getInitialDates = () => {
     const from = searchParams.get('from');
     const to = searchParams.get('to');
-    
+
+    if (from && to) {
+      hasInteracted.current = true;
+    }
+
     const fromDate = from && isValid(parseISO(from)) ? parseISO(from) : startOfMonth(new Date());
     const toDate = to && isValid(parseISO(to)) ? parseISO(to) : endOfMonth(new Date());
-    
+
     return { from: fromDate, to: toDate };
   };
 
   const [dateRange, setDateRange] = useState(getInitialDates);
-  const [selectedClass, setSelectedClass] = useState(searchParams.get('class') || 'all');
-  const [selectedWasteType, setSelectedWasteType] = useState(searchParams.get('type') || 'all');
+  const [selectedClass, setSelectedClass] = useState(() => {
+    const cls = searchParams.get('class');
+    if (cls) hasInteracted.current = true;
+    return cls || 'all';
+  });
+  const [selectedWasteType, setSelectedWasteType] = useState(() => {
+    const type = searchParams.get('type');
+    if (type) hasInteracted.current = true;
+    return type || 'all';
+  });
 
   useEffect(() => {
+    if (!hasInteracted.current) return;
+
     const params = new URLSearchParams();
     params.set('from', format(dateRange.from, 'yyyy-MM-dd'));
     params.set('to', format(dateRange.to, 'yyyy-MM-dd'));
@@ -36,18 +51,22 @@ export function useReportFilters() {
   }, [dateRange]);
 
   const updateDateRange = (from, to) => {
+    hasInteracted.current = true;
     setDateRange({ from, to });
   };
 
   const updateClass = (cls) => {
+    hasInteracted.current = true;
     setSelectedClass(cls);
   };
 
   const updateWasteType = (type) => {
+    hasInteracted.current = true;
     setSelectedWasteType(type);
   };
 
   const resetFilters = () => {
+    hasInteracted.current = true;
     setDateRange({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) });
     setSelectedClass('all');
     setSelectedWasteType('all');

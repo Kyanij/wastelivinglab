@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getStudents } from '../../firebase/students';
 import StudentCard from './StudentCard';
 import { Loader2 } from 'lucide-react';
 
 export default function StudentList({ selectedStudentId, onSelectStudent }) {
+  const { t } = useTranslation();
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -74,7 +76,7 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
     ? students.filter(s => 
         s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.class?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.rollNo?.toLowerCase().includes(searchQuery.toLowerCase())
+        s.studentId?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : students;
 
@@ -82,7 +84,7 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
     <div className="flex flex-col h-full">
       <div className="p-4 border-b border-gray-100">
         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-          Students
+          {t('portal.students')}
         </h2>
         <div className="relative group">
           <svg
@@ -97,7 +99,7 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search student..."
+            placeholder={t('portal.searchPlaceholder')}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border-2 border-gray-100 bg-gray-50 focus:border-green-400 focus:bg-white outline-none transition-all text-sm"
           />
         </div>
@@ -115,7 +117,7 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p className="text-sm text-gray-500">No students found</p>
+            <p className="text-sm text-gray-500">{t('portal.noStudentsFound')}</p>
           </div>
         ) : (
           <>
@@ -140,7 +142,7 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
       </div>
 
       <div className="p-3 border-t border-gray-100 bg-gray-50 text-xs text-gray-500 text-center">
-        {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} found
+        {filteredStudents.length} {filteredStudents.length === 1 ? t('portal.student') : t('portal.students')} {t('common.found')}
       </div>
     </div>
   );

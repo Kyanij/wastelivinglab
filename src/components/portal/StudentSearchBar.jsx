@@ -73,7 +73,7 @@ export default function StudentSearchBar({ onSelectStudent }) {
               className="w-full px-4 py-2 text-left text-sm hover:bg-green-50 flex items-center justify-between border-b border-gray-100 last:border-b-0"
             >
               <span className="font-medium text-gray-800">{student.name}</span>
-              <span className="text-xs text-gray-500">{student.class} - {student.rollNo}</span>
+              <span className="text-xs text-gray-500">{student.class} - {student.studentId}</span>
             </button>
           ))}
         </div>

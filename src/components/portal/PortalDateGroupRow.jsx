@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronRight, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { formatDateKey } from '../../utils/portalHelpers';
 import { formatCurrency } from '../../utils/portalHelpers';
 
@@ -7,8 +8,9 @@ function formatWeight(weight) {
 }
 
 export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) {
+  const { t } = useTranslation();
   const entryCount = dateGroup.entries.length;
-  const entryCountText = entryCount === 1 ? '1 item' : `${entryCount} items`;
+  const entryCountText = entryCount === 1 ? `1 ${t('portal.item')}` : `${entryCount} ${t('portal.items')}`;
 
   return (
     <div className="border-b border-gray-100 last:border-b-0">
@@ -73,10 +75,10 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
               <table className="w-full">
                 <thead>
                   <tr className="bg-white/50 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <th className="px-4 py-2.5 text-left w-[30%]">Waste Type</th>
-                    <th className="px-4 py-2.5 text-right w-[20%]">Weight</th>
-                    <th className="px-4 py-2.5 text-right w-[20%]">Rate/kg</th>
-                    <th className="px-4 py-2.5 text-right w-[20%]">Amount</th>
+                    <th className="px-4 py-2.5 text-left w-[30%]">{t('portal.wasteType')}</th>
+                    <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.weight')}</th>
+                    <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.rateKg')}</th>
+                    <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.amount')}</th>
                     <th className="px-4 py-2.5 w-[10%]"></th>
                   </tr>
                 </thead>
