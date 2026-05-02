@@ -328,5 +328,16 @@
     "total": "Total",
     "apply": "Apply",
     "refresh": "Refresh"
+  },
+  "pagination": {
+    "showing": "Showing {{from}} to {{to}} of {{total}}",
+    "rowsPerPage": "Rows per page:",
+    "goTo": "Go to page",
+    "firstPage": "First page",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "lastPage": "Last page",
+    "page": "Page",
+    "of": "of"
   }
 }

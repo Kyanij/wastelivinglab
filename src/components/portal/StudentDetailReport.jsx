@@ -1,89 +1,144 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getEntriesByStudentAndDateRange } from '../../firebase/wasteEntries';
-import { calculateSummary, formatKg, formatCurrency, WASTE_TYPE_CONFIG, groupEntriesByDate } from '../../utils/portalHelpers';
 import { Loader2 } from 'lucide-react';
+import { getEntriesByStudentAndDateRange } from '../../firebase/wasteEntries';
+import { groupEntriesByDate } from '../../hooks/studentDetail/useStudentDetail';
+import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import PortalDateGroupRow from './PortalDateGroupRow';
 
-const avatarColors = [
-  'bg-blue-100 text-blue-700',
-  'bg-green-100 text-green-700',
-  'bg-yellow-100 text-yellow-700',
-  'bg-pink-100 text-pink-700',
-  'bg-purple-100 text-purple-700',
-  'bg-teal-100 text-teal-700',
-  'bg-orange-100 text-orange-700',
-  'bg-indigo-100 text-indigo-700',
-];
-
-function getAvatarColor(name) {
-  const index = name?.charCodeAt(0) || 0;
-  return avatarColors[index % avatarColors.length];
-}
-
 function getInitials(name) {
-  if (!name) return '?';
+  if (!name) return '??';
   const parts = name.trim().split(' ');
-  if (parts.length >= 2) {
+  if (parts.length > 1) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
   return name.substring(0, 2).toUpperCase();
+}
+
+function getAvatarColor(name) {
+  if (!name) return 'bg-gray-500';
+  const colors = [
+    'bg-green-500',
+    'bg-blue-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-teal-500',
+    'bg-orange-500',
+    'bg-cyan-500'
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function formatKg(kg) {
+  if (kg === 0) return '0 kg';
+  if (kg < 1) return `${(kg * 1000).toFixed(0)} g`;
+  return `${kg.toFixed(1)} kg`;
+}
+
+function formatCurrency(amount) {
+  if (amount === 0) return 'Rp 0';
+  return `Rp ${amount.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function PortalEmptyState() {
+  const { t } = useTranslation();
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+      <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+        <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l9-5-9-5-9 5 9 5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-semibold text-gray-700 mb-2">{t('portal.noStudentsFound')}</h3>
+      <p className="text-gray-500 text-sm">{t('reports.selectStudent')}</p>
+    </div>
+  );
 }
 
 export default function StudentDetailReport({ student }) {
   const { t } = useTranslation();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [hasApplied, setHasApplied] = useState(false);
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [error, setError] = useState('');
+  const [dateRange, setDateRange] = useState(() => {
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    return { from: firstDayOfMonth, to: today };
+  });
   const [expandedDates, setExpandedDates] = useState({});
 
   useEffect(() => {
-    const today = new Date();
-    const lastYear = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-    setDateFrom(lastYear.toISOString().split('T')[0]);
-    setDateTo(today.toISOString().split('T')[0]);
-    setHasApplied(false);
-    setEntries([]);
-  }, [student]);
+    if (!student) return;
+    
+    const fetchData = async () => {
+      setLoading(true);
+      setExpandedDates({});
+      try {
+        const fromDate = dateRange.from.toLocaleDateString('en-CA');
+        const toDate = dateRange.to.toLocaleDateString('en-CA');
+        console.log('Fetching entries:', { studentId: student.id, fromDate, toDate });
+        const data = await getEntriesByStudentAndDateRange(student.id, fromDate, toDate);
+        console.log('Entries fetched:', data.length, 'entries');
+        setEntries(data);
+      } catch (error) {
+        console.error('Error fetching entries:', error);
+      }
+      setLoading(false);
+    };
+    
+    fetchData();
+  }, [dateRange.from, dateRange.to, student]);
 
-  const handleApplyDateFilter = async () => {
-    if (!dateFrom || !dateTo) {
-      setError('Please select both dates');
-      return;
-    }
-    if (new Date(dateFrom) > new Date(dateTo)) {
-      setError('Start date must be before end date');
-      return;
-    }
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    if (new Date(dateTo) > today) {
-      setError('End date cannot be in the future');
-      return;
-    }
-
-    setError('');
-    setLoading(true);
-    setExpandedDates({});
-    setHasApplied(true);
-    try {
-      const data = await getEntriesByStudentAndDateRange(student.id, dateFrom, dateTo);
-      setEntries(data);
-    } catch (error) {
-      console.error('Error fetching entries:', error);
-    }
-    setLoading(false);
+  const handleDateRangeChange = (from, to) => {
+    const fromStr = from.toLocaleDateString('en-CA');
+    const toStr = to.toLocaleDateString('en-CA');
+    console.log('Date range changed:', { from: fromStr, to: toStr });
+    setDateRange({ from, to });
   };
 
   const dateGroups = useMemo(() => groupEntriesByDate(entries), [entries]);
-  const summary = calculateSummary(entries);
+  const summary = useMemo(() => {
+    const typeMap = {
+      'Plastic Bottles': 'Plastic',
+      'Plastic': 'Plastic',
+      'Paper Waste': 'Paper',
+      'Paper': 'Paper',
+      'Glass': 'Glass',
+      'Cans': 'Metal',
+      'Metal': 'Metal',
+      'E-Waste': 'E-Waste'
+    };
+    
+    const uniqueTypes = {};
+    const summaries = {};
+    
+    entries.forEach((entry) => {
+      const rawType = entry.wasteTypeName || entry.wasteType || 'Other';
+      const type = typeMap[rawType] || rawType;
+      
+      uniqueTypes[type] = true;
+      if (!summaries[type]) {
+        summaries[type] = { quantity: 0, earned: 0 };
+      }
+      summaries[type].quantity += entry.weight || 0;
+      summaries[type].earned += entry.amount || 0;
+    });
+    
+    return { types: Object.keys(uniqueTypes), summaries };
+  }, [entries]);
   const totalWeight = entries.reduce((sum, e) => sum + (e.weight || 0), 0);
   const totalEarnings = entries.reduce((sum, e) => sum + (e.amount || 0), 0);
 
-  const colorClass = getAvatarColor(student.name);
+  if (!student) {
+    return <PortalEmptyState />;
+  }
+
+  const colorClass = getAvatarColor(student.name || '');
 
   const toggleDateExpansion = (dateKey) => {
     setExpandedDates(prev => ({
@@ -139,6 +194,9 @@ export default function StudentDetailReport({ student }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               {entries.length} {t('portal.collections')}
+              <span className="text-gray-400 text-xs ml-1">
+                ({dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()})
+              </span>
             </span>
           </div>
         </div>
@@ -147,62 +205,48 @@ export default function StudentDetailReport({ student }) {
       {/* Date Range Filter */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-gray-100">
         <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{t('portal.dateRange')}</h3>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-sm font-medium text-gray-600 mb-2">{t('portal.from')}</label>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 bg-white text-gray-700 outline-none text-sm focus:border-green-400 transition-all"
-            />
-          </div>
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-sm font-medium text-gray-600 mb-2">{t('portal.to')}</label>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-100 bg-white text-gray-700 outline-none text-sm focus:border-green-400 transition-all"
-            />
-          </div>
-          <button
-            onClick={handleApplyDateFilter}
-            className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white font-semibold rounded-xl shadow-lg shadow-green-500/20 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            {t('common.apply')}
-          </button>
-        </div>
-        {error && (
-          <p className="text-red-500 text-sm mt-3 flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            {error}
-          </p>
-        )}
+        <EnhancedDateRangePicker
+          dateRange={dateRange}
+          onDateRangeChange={handleDateRangeChange}
+          reportType="portal"
+          pdfData={{ student, entries }}
+          filters={{ dateFrom: dateRange.from, dateTo: dateRange.to }}
+        />
       </div>
 
       {/* Collection Summary */}
-      {hasApplied && (
+      {!loading && entries.length > 0 && summary.types.length > 0 && (
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{t('portal.collectionSummary')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {WASTE_TYPE_CONFIG.map((type) => {
-              const data = summary[type.name] || { quantity: 0, earned: 0 };
+            {summary.types.map((type) => {
+              const data = summary.summaries[type] || { quantity: 0, earned: 0 };
+              const typeColors = {
+                'Plastic': '#2563eb',
+                'Paper': '#ea580c',
+                'Metal': '#dc2626',
+                'E-Waste': '#16a34a',
+                'Glass': '#0891b2',
+                'Other': '#6b7280'
+              };
+              const typeIcons = {
+                'Plastic': '🧴',
+                'Paper': '📄',
+                'Metal': '🥫',
+                'E-Waste': '🖥️',
+                'Glass': '🫙',
+                'Other': '📦'
+              };
               return (
                 <div
-                  key={type.name}
+                  key={type}
                   className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xl">{type.icon}</span>
-                    <span className="text-xs font-medium text-gray-600 uppercase">{type.name}</span>
+                    <span className="text-xl">{typeIcons[type] || '📦'}</span>
+                    <span className="text-xs font-medium text-gray-600 uppercase">{type}</span>
                   </div>
-                  <p className="text-2xl font-bold" style={{ color: type.color }}>
+                  <p className="text-2xl font-bold" style={{ color: typeColors[type] || '#6b7280' }}>
                     {formatKg(data.quantity)}
                   </p>
                   <p className="text-sm text-green-600 font-medium">
@@ -226,17 +270,7 @@ export default function StudentDetailReport({ student }) {
           <h3 className="text-lg font-semibold text-gray-800">{t('portal.detailedReport')}</h3>
         </div>
 
-        {!hasApplied ? (
-          <div className="py-12 text-center">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-600 mb-2">{t('portal.selectDateRange')}</h4>
-            <p className="text-gray-400 text-sm">{t('portal.chooseDateRange')}</p>
-          </div>
-        ) : loading ? (
+        {loading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 text-green-600 animate-spin" />
           </div>

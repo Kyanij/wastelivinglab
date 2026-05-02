@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Plus, Loader2, ChevronLeft, ChevronRight, Users, Pencil, ChevronRight as ChevronRightIcon } from 'lucide-react';
+import { Search, Plus, Loader2, Users, Pencil, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getStudents, getUniqueClasses } from '../firebase/students';
+import { getAllStudents, getUniqueClasses } from '../firebase/students';
 import { format } from 'date-fns';
 import AddStudentModal from '../components/students/AddStudentModal';
 import EditStudentModal from '../components/students/EditStudentModal';
+import Pagination from '../components/layout/Pagination';
 
 const getClassBadgeColor = (cls) => {
   const badgeColors = {
@@ -90,104 +91,84 @@ function StudentRow({ student, index, onEdit }) {
 
 export default function StudentsPage() {
   const { t } = useTranslation();
-  const [students, setStudents] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [classes, setClasses] = useState([]);
-  const [lastVisible, setLastVisible] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editStudent, setEditStudent] = useState(null);
   const [pageSize, setPageSize] = useState(10);
-  const [firstVisible, setFirstVisible] = useState(null);
 
-  const loadStudents = useCallback(async (reset = false, newPageSize = null) => {
+  const loadAllData = async () => {
     setLoading(true);
     try {
-      const size = newPageSize || pageSize;
-      const cursor = reset ? null : lastVisible;
-      const result = await getStudents(size, cursor);
-      setStudents(result.students);
-      setLastVisible(result.lastVisible);
-      setFirstVisible(reset ? null : firstVisible);
-      setHasMore(result.hasMore);
-      setCurrentPage(reset ? 1 : currentPage);
+      const [studentsData, classesData] = await Promise.all([
+        getAllStudents(),
+        getUniqueClasses()
+      ]);
+      setAllStudents(studentsData);
+      setClasses(classesData);
     } catch (err) {
-      console.error('Error loading students:', err);
+      console.error('Error loading data:', err);
     } finally {
       setLoading(false);
     }
-  }, [lastVisible, firstVisible, pageSize, currentPage]);
-
-  const loadClasses = useCallback(async () => {
-    const uniqueClasses = await getUniqueClasses();
-    setClasses(uniqueClasses);
-  }, []);
+  };
 
   useEffect(() => {
-    loadStudents(true);
-    loadClasses();
+    loadAllData();
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    loadStudents(true);
-  };
-
-  const filteredStudents = students.filter((student) => {
-    const matchesSearch =
-      !search ||
-      student.name?.toLowerCase().includes(search.toLowerCase()) ||
-      student.studentId?.toLowerCase().includes(search.toLowerCase()) ||
-      student.class?.toLowerCase().includes(search.toLowerCase());
-    const matchesClass = !selectedClass || student.class === selectedClass;
-    return matchesSearch && matchesClass;
-  });
-
-  const handleNextPage = () => {
-    if (hasMore) {
-      setCurrentPage(currentPage + 1);
-      loadStudents();
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      loadStudents(true);
-    }
-  };
-
-  const handlePageSizeChange = (e) => {
-    const newSize = parseInt(e.target.value, 10);
-    setPageSize(newSize);
-    setCurrentPage(1);
-    setLoading(true);
-    getStudents(newSize, null).then((result) => {
-      setStudents(result.students);
-      setLastVisible(result.lastVisible);
-      setFirstVisible(null);
-      setHasMore(result.hasMore);
-      setLoading(false);
+  const filteredStudents = useMemo(() => {
+    return allStudents.filter((student) => {
+      const matchesSearch =
+        !search ||
+        student.name?.toLowerCase().includes(search.toLowerCase()) ||
+        student.studentId?.toLowerCase().includes(search.toLowerCase()) ||
+        student.class?.toLowerCase().includes(search.toLowerCase());
+      const matchesClass = !selectedClass || student.class === selectedClass;
+      return matchesSearch && matchesClass;
     });
-  };
+  }, [allStudents, search, selectedClass]);
+
+  const paginatedStudents = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredStudents.slice(start, start + pageSize);
+  }, [filteredStudents, currentPage, pageSize]);
+
+  const totalFilteredCount = filteredStudents.length;
+  const totalPages = Math.ceil(totalFilteredCount / pageSize) || 1;
 
   const handleEditSuccess = () => {
     setEditStudent(null);
-    setCurrentPage(1);
-    loadStudents(true);
+    loadAllData();
   };
 
-  const filteredCount = filteredStudents.length;
-  const fromNum = (currentPage - 1) * pageSize + 1;
-  const toNum = hasMore 
-    ? currentPage * pageSize 
-    : fromNum + filteredCount - 1 || fromNum;
-  const totalStudents = hasMore ? currentPage * pageSize : toNum;
-  const recordsCount = filteredCount;
+  const handleAddSuccess = () => {
+    setShowAddModal(false);
+    loadAllData();
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (newSize) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleClassChange = (e) => {
+    setSelectedClass(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 -mx-4 md:mx-0 px-4 md:px-0">
@@ -206,25 +187,20 @@ export default function StudentsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4 md:mb-6">
-        <form onSubmit={handleSearch} className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t('students.searchPlaceholder')}
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-        </form>
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearchChange}
+            placeholder={t('students.searchPlaceholder')}
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          />
+        </div>
 
         <select
           value={selectedClass}
-          onChange={(e) => {
-            setSelectedClass(e.target.value);
-            setCurrentPage(1);
-          }}
+          onChange={handleClassChange}
           className="px-4 py-2.5 rounded-lg border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 appearance-none cursor-pointer bg-white min-w-[120px]"
         >
           <option value="">{t('students.allClasses')}</option>
@@ -255,7 +231,7 @@ export default function StudentsPage() {
                   <Loader2 className="w-8 h-8 text-green-600 animate-spin mx-auto" />
                 </td>
               </tr>
-            ) : filteredStudents.length === 0 ? (
+            ) : paginatedStudents.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-20 text-center">
                   <div className="flex flex-col items-center">
@@ -267,7 +243,7 @@ export default function StudentsPage() {
                 </td>
               </tr>
             ) : (
-              filteredStudents.map((student, index) => (
+              paginatedStudents.map((student, index) => (
                 <StudentRow
                   key={student.id}
                   student={student}
@@ -281,54 +257,21 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 md:mt-6">
-        <div className="flex flex-wrap items-center gap-2 md:gap-4 text-sm text-gray-500">
-          <p>
-            {t('students.showing', { from: fromNum, to: toNum, total: totalStudents })} • {recordsCount} {t('students.recordsOnPage')}
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="hidden sm:inline">Show</span>
-            <select
-              value={pageSize}
-              onChange={handlePageSizeChange}
-              className="px-2 py-1 rounded border border-gray-300 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-            </select>
-            <span className="hidden sm:inline">per page</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-            className="p-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <span className="px-3 py-2 text-gray-900 font-medium">{currentPage}</span>
-          <button
-            onClick={handleNextPage}
-            disabled={!hasMore}
-            className="p-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+      {!loading && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          totalItems={totalFilteredCount}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
 
       {showAddModal && (
         <AddStudentModal
           onClose={() => setShowAddModal(false)}
-          onSuccess={() => {
-            setShowAddModal(false);
-            setCurrentPage(1);
-            loadStudents(true);
-            loadClasses();
-          }}
+          onSuccess={handleAddSuccess}
         />
       )}
 

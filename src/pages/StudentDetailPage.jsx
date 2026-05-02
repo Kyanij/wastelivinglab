@@ -21,12 +21,13 @@ export default function StudentDetailPage() {
   const { id: studentId } = useParams();
 
   const { student, entries, loading, error, getInitials, refetch } = useStudentDetail(studentId);
-  const { filters, setFilters, hasActiveFilters, resetFilters } = useFilters();
+  const { filters, setFilters, hasActiveFilters, resetFilters, defaultDateFrom, defaultDateTo } = useFilters();
   const { expandedDates, toggleDate, isExpanded, expandAll } = useExpandedDates();
   const { loading: mutationLoading, updateItem, updateDateEntries, deleteItem, deleteDateEntries } = useEntryMutations(studentId, refetch);
 
   const today = new Date();
-  const [dateRange, setDateRange] = useState({ from: startOfMonth(today), to: today });
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const [dateRange, setDateRange] = useState({ from: firstDayOfMonth, to: today });
 
   const [editItemModal, setEditItemModal] = useState(null);
   const [editDateModal, setEditDateModal] = useState(null);
@@ -117,6 +118,8 @@ export default function StudentDetailPage() {
         dateRange={dateRange}
         onDateRangeChange={handleDateRangeChange}
         pdfData={pdfData}
+        defaultDateFrom={defaultDateFrom}
+        defaultDateTo={defaultDateTo}
       />
 
       <HistoryTable

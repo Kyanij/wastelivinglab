@@ -4,6 +4,7 @@ import { Trash2, DollarSign, Users, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
 
 import PageHeader from '../../components/reports/PageHeader';
+import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getOverviewData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
 
@@ -86,8 +87,12 @@ export default function OverviewReport() {
       <PageHeader
         title={t('reports.overview')}
         description={t('reports.overviewDesc')}
+      />
+
+      <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
+        onRefresh={loadData}
         showClassFilter
         showWasteTypeFilter
         classes={classes}
@@ -96,7 +101,6 @@ export default function OverviewReport() {
         selectedWasteType={selectedWasteType}
         onClassChange={updateClass}
         onWasteTypeChange={updateWasteType}
-        onRefresh={loadData}
         reportType="overview"
         pdfData={data}
       />

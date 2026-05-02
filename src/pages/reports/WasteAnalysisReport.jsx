@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Trash2, DollarSign, FileText, Recycle } from 'lucide-react';
 
 import PageHeader from '../../components/reports/PageHeader';
+import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters } from '../../hooks/reports/useReportFilters';
 import { getWasteAnalysisData } from '../../firebase/reports';
 
@@ -70,6 +71,9 @@ export default function WasteAnalysisReport() {
       <PageHeader
         title={t('reports.wasteAnalysis')}
         description={t('reports.wasteAnalysisDesc')}
+      />
+
+      <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
         onRefresh={loadData}

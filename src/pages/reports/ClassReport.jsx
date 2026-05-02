@@ -4,6 +4,7 @@ import { Trash2, Building2, Users, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
 
 import PageHeader from '../../components/reports/PageHeader';
+import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getClassReportData } from '../../firebase/reports';
 
@@ -65,6 +66,9 @@ export default function ClassReport() {
       <PageHeader
         title={t('reports.class')}
         description={t('reports.classDesc')}
+      />
+
+      <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
         onRefresh={loadData}

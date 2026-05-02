@@ -6,6 +6,7 @@ import {
   deleteDoc,
   getDoc,
   getDocs,
+  getCountFromServer,
   query,
   where,
   orderBy,
@@ -18,6 +19,11 @@ import { COLLECTIONS } from './collections';
 
 const STUDENTS_COLLECTION = COLLECTIONS.STUDENTS;
 const WASTE_ENTRIES_COLLECTION = COLLECTIONS.WASTE_ENTRIES;
+
+export async function getStudentsCount() {
+  const snapshot = await getCountFromServer(collection(db, STUDENTS_COLLECTION));
+  return snapshot.data().count;
+}
 
 export async function getStudents(pageSize = 10, cursor = null) {
   let q = query(

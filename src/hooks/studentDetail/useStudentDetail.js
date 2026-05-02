@@ -93,12 +93,20 @@ export function useStudentDetail(studentId) {
   return { student, entries, loading, error, getInitials, refetch };
 }
 
+const toLocalDateString = (date) => {
+  const d = date instanceof Date ? date : new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export function useFilters() {
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const defaultDateFrom = firstDayOfMonth.toISOString().split('T')[0];
-  const defaultDateTo = today.toISOString().split('T')[0];
+  const defaultDateFrom = toLocalDateString(firstDayOfMonth);
+  const defaultDateTo = toLocalDateString(today);
 
   const [filters, setFilters] = useState({
     dateFrom: defaultDateFrom,
@@ -112,27 +120,25 @@ export function useFilters() {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     setFilters({
-      dateFrom: firstDayOfMonth.toISOString().split('T')[0],
-      dateTo: today.toISOString().split('T')[0],
+      dateFrom: toLocalDateString(firstDayOfMonth),
+      dateTo: toLocalDateString(today),
       wasteTypeId: 'all',
     });
   };
 
-  return { filters, setFilters, hasActiveFilters, resetFilters };
+  return { filters, setFilters, hasActiveFilters, resetFilters, defaultDateFrom, defaultDateTo };
 }
 
 export function filterEntries(entries, filters) {
   return entries.filter((entry) => {
     const entryDate = entry.date?.toDate ? entry.date.toDate() : new Date(entry.date);
+    const entryDateStr = toLocalDateString(entryDate);
+    
     if (filters.dateFrom) {
-      const fromDate = new Date(filters.dateFrom);
-      fromDate.setHours(0, 0, 0, 0);
-      if (entryDate < fromDate) return false;
+      if (entryDateStr < filters.dateFrom) return false;
     }
     if (filters.dateTo) {
-      const toDate = new Date(filters.dateTo);
-      toDate.setHours(23, 59, 59, 999);
-      if (entryDate > toDate) return false;
+      if (entryDateStr > filters.dateTo) return false;
     }
     if (filters.wasteTypeId !== 'all' && entry.wasteTypeId !== filters.wasteTypeId) return false;
     return true;

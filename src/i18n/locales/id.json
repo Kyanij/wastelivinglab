@@ -328,5 +328,16 @@
     "total": "Total",
     "apply": "Terapkan",
     "refresh": "Segarkan"
+  },
+  "pagination": {
+    "showing": "Menampilkan {{from}} hingga {{to}} dari {{total}}",
+    "rowsPerPage": "Baris per halaman:",
+    "goTo": "Ke halaman",
+    "firstPage": "Halaman pertama",
+    "prevPage": "Halaman sebelumnya",
+    "nextPage": "Halaman berikutnya",
+    "lastPage": "Halaman terakhir",
+    "page": "Halaman",
+    "of": "dari"
   }
 }

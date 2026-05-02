@@ -4,6 +4,8 @@ import { getStudents } from '../../firebase/students';
 import StudentCard from './StudentCard';
 import { Loader2 } from 'lucide-react';
 
+const PAGE_SIZE = 20;
+
 export default function StudentList({ selectedStudentId, onSelectStudent }) {
   const { t } = useTranslation();
   const [students, setStudents] = useState([]);
@@ -13,8 +15,6 @@ export default function StudentList({ selectedStudentId, onSelectStudent }) {
   const [hasMore, setHasMore] = useState(true);
   const [lastVisible, setLastVisible] = useState(null);
   const observerRef = useRef(null);
-
-  const PAGE_SIZE = 20;
 
   const fetchStudents = useCallback(async (reset = false) => {
     if (reset) {

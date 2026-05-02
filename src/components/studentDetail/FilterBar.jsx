@@ -3,7 +3,15 @@ import { RotateCcw } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 
-export default function FilterBar({ filters, setFilters, hasActiveFilters, resetFilters, dateRange, onDateRangeChange }) {
+const toLocalDateString = (date) => {
+  const d = date instanceof Date ? date : new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+export default function FilterBar({ filters, setFilters, hasActiveFilters, resetFilters, dateRange, onDateRangeChange, defaultDateFrom, defaultDateTo }) {
   const { t } = useTranslation();
   const { wasteTypes } = useWasteTypes();
 
@@ -13,8 +21,8 @@ export default function FilterBar({ filters, setFilters, hasActiveFilters, reset
     }
     setFilters((prev) => ({
       ...prev,
-      dateFrom: from instanceof Date ? from.toISOString().split('T')[0] : from,
-      dateTo: to instanceof Date ? to.toISOString().split('T')[0] : to,
+      dateFrom: from instanceof Date ? toLocalDateString(from) : from,
+      dateTo: to instanceof Date ? toLocalDateString(to) : to,
     }));
   };
 

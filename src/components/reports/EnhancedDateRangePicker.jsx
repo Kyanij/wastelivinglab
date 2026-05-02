@@ -34,7 +34,7 @@ const presets = [
   { key: 'thisYear', label: 'reports.thisYear', getValue: () => ({ from: startOfYear(new Date()), to: endOfYear(new Date()) }) },
 ];
 
-export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters }) {
+export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters, reportType }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(dateRange.from);
@@ -192,9 +192,9 @@ export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, 
                 </svg>
               </button>
             )}
-            {pdfData && filters && (
+            {pdfData && (
               <ExportPDFButton
-                reportType="student"
+                reportType={reportType || 'overview'}
                 data={pdfData}
                 filters={filters}
               />
