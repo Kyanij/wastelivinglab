@@ -134,7 +134,8 @@ export default function LoginPage() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl shadow-lg shadow-green-500/30 mb-4">
               <Leaf className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-white tracking-tight">Green Champs</h1>
+            <h1 className="text-4xl font-bold text-white tracking-tight">Tabungan Sampah Digital</h1>
+            <p className="mt-2 text-white tracking-tight text-lg">Model School-Based Living Lab</p>
             <p className="text-green-300/70 mt-2 text-lg">{t('auth.adminPanel')}</p>
           </div>
 
@@ -229,8 +230,8 @@ export default function LoginPage() {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-green-400/40 text-sm mt-6">
-            Waste Collection Management System
+          <p className="text-center text-white tracking-tight  text-sm mt-6">
+            Research by Apri Yulda, S.K.M., M.K.M.
           </p>
         </div>
       </div>

@@ -169,6 +169,7 @@ export default function StudentReport() {
           dateRange={dateRange}
           onDateRangeChange={updateDateRange}
           onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
+          reportType="student"
           pdfData={pdfData}
           filters={filters}
         />

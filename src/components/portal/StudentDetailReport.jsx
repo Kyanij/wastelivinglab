@@ -81,12 +81,10 @@ export default function StudentDetailReport({ student }) {
       try {
         const fromDate = dateRange.from.toLocaleDateString('en-CA');
         const toDate = dateRange.to.toLocaleDateString('en-CA');
-        console.log('Fetching entries:', { studentId: student.id, fromDate, toDate });
         const data = await getEntriesByStudentAndDateRange(student.id, fromDate, toDate);
-        console.log('Entries fetched:', data.length, 'entries');
         setEntries(data);
       } catch (error) {
-        console.error('Error fetching entries:', error);
+        // Silent fail
       }
       setLoading(false);
     };
@@ -95,9 +93,6 @@ export default function StudentDetailReport({ student }) {
   }, [dateRange.from, dateRange.to, student]);
 
   const handleDateRangeChange = (from, to) => {
-    const fromStr = from.toLocaleDateString('en-CA');
-    const toStr = to.toLocaleDateString('en-CA');
-    console.log('Date range changed:', { from: fromStr, to: toStr });
     setDateRange({ from, to });
   };
 
@@ -209,8 +204,17 @@ export default function StudentDetailReport({ student }) {
           dateRange={dateRange}
           onDateRangeChange={handleDateRangeChange}
           reportType="portal"
-          pdfData={{ student, entries }}
-          filters={{ dateFrom: dateRange.from, dateTo: dateRange.to }}
+          pdfData={{
+            student: {
+              ...student,
+              totalWaste: student?.totalWaste || 0,
+              totalEarnings: student?.totalEarnings || 0,
+              totalEntries: entries.length,
+              avgPerEntry: entries.length > 0 ? (student?.totalWaste || 0) / entries.length : 0
+            },
+            entries
+          }}
+          filters={{ dateFrom: dateRange.from.toISOString(), dateTo: dateRange.to.toISOString() }}
         />
       </div>
 

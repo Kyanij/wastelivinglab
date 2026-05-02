@@ -165,8 +165,17 @@ const styles = StyleSheet.create({
 });
 
 const formatDate = (date) => {
-  if (!date) return 'N/A';
-  return format(new Date(date), 'dd MMM yyyy');
+  if (!date || date === 'N/A') return 'N/A';
+  try {
+    if (typeof date?.toDate === 'function') {
+      date = date.toDate();
+    }
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return 'N/A';
+    return format(d, 'dd MMM yyyy');
+  } catch (e) {
+    return 'N/A';
+  }
 };
 
 const formatCurrency = (value) => {
@@ -234,7 +243,8 @@ export const OverviewPDF = ({ data, filters }) => {
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Overview Report</Text>
-          <Text style={styles.subtitle}>Green Champs - School Waste Collection System</Text>
+          <Text style={styles.subtitle}>Tabungan Sampah Digital</Text>
+                    <Text style={styles.subtitle}>Model School-Based Living Lab</Text>
           <Text style={styles.dateRange}>
             Date Range: {dateRangeStr} | Class: {selectedClass === 'all' ? 'All' : selectedClass} | Waste Type: {selectedWasteType === 'all' ? 'All' : selectedWasteType}
           </Text>
@@ -512,6 +522,90 @@ export const WasteAnalysisPDF = ({ data, filters }) => {
 
         <Text
           style={styles.footer}
+          render={({ pageNumber, totalPages }) =>
+            `Page ${pageNumber} of ${totalPages} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')}`
+          }
+          fixed
+        />
+      </Page>
+    </Document>
+  );
+};
+
+export const PortalPDF = ({ data, filters }) => {
+  const { dateFrom, dateTo } = filters || {};
+  const student = data?.student || {};
+  const entries = data?.entries || [];
+  const totalWeight = entries.reduce((sum, e) => sum + (e.weight || 0), 0);
+  const totalEarnings = entries.reduce((sum, e) => sum + (e.amount || 0), 0);
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page} wrap>
+        <View style={styles.header}>
+          <Text style={styles.title}>Student Collection Report</Text>
+          <Text style={styles.subtitle}>Green Champs - School Waste Collection</Text>
+          <Text style={styles.dateRange}>
+            Period: {formatDate(dateFrom)} - {formatDate(dateTo)}
+          </Text>
+        </View>
+
+        <View style={[styles.row, styles.rowHeader, { marginBottom: 10 }]}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{student.name || 'N/A'}</Text>
+            <Text style={styles.gray}>Class: {student.class || 'N/A'} | Student ID: {student.studentId || 'N/A'}</Text>
+          </View>
+        </View>
+
+        <View style={styles.kpiGrid}>
+          <KPICard label="Total Waste" value={student.totalWaste || totalWeight} suffix=" kg" />
+          <KPICard label="Total Earnings" value={student.totalEarnings || totalEarnings} isCurrency />
+          <KPICard label="Total Entries" value={entries.length} />
+          <KPICard label="Avg per Entry" value={entries.length > 0 ? (student.totalWaste || totalWeight) / entries.length : 0} suffix=" kg" />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Collection Details</Text>
+          <View style={styles.table}>
+            <TableHeader
+              cols={[
+                { label: 'Date', width: 1.5 },
+                { label: 'Waste Type', width: 1.5 },
+                { label: 'Weight (kg)', width: 1, align: 'right' },
+                { label: 'Amount', width: 1.2, align: 'right' },
+              ]}
+            />
+            {entries.slice(0, 30).map((entry, index) => (
+              <TableRow
+                key={index}
+                cols={[
+                  { key: 'date', width: 1.5, render: (val) => formatDate(val) },
+                  { key: 'wasteTypeName', width: 1.5 },
+                  { key: 'weight', width: 1, align: 'right', render: (val) => formatNumber(val) },
+                  { key: 'amount', width: 1.2, align: 'right', render: (val) => formatCurrency(val) },
+                ]}
+                data={{
+                  date: entry.date,
+                  wasteTypeName: entry.wasteTypeName || entry.wasteType || 'Other',
+                  weight: entry.weight,
+                  amount: entry.amount,
+                }}
+              />
+            ))}
+          </View>
+          {entries.length > 30 && (
+            <Text style={[styles.gray, { marginTop: 10 }]}>... and {entries.length - 30} more entries</Text>
+          )}
+        </View>
+
+        <View style={[styles.footer, { marginTop: 20 }]}>
+          <Text style={styles.footerText}>
+            Generated on {format(new Date(), 'dd MMM yyyy HH:mm')} | Green Champs - Waste Collection System
+          </Text>
+        </View>
+
+        <Text
+          style={styles.pageNumber}
           render={({ pageNumber, totalPages }) =>
             `Page ${pageNumber} of ${totalPages} | Generated: ${format(new Date(), 'dd MMM yyyy HH:mm')}`
           }

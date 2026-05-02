@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF } from './ReportPDF';
+import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF, PortalPDF } from './ReportPDF';
 
 export default function ExportPDFButton({ reportType, data, filters }) {
   const { t } = useTranslation();
@@ -12,8 +12,9 @@ export default function ExportPDFButton({ reportType, data, filters }) {
       case 'overview':
         return OverviewPDF;
       case 'student':
-      case 'portal':
         return StudentPDF;
+      case 'portal':
+        return PortalPDF;
       case 'class':
         return ClassPDF;
       case 'waste':

@@ -63,9 +63,9 @@ Built with **React + Firebase (Firestore)**. Default route: `/`
 ```jsx
 // Top bar — always visible
 <header>
-  <img src="/logo.png" alt="Green Champs" />
-  <span>Green Champs</span>
-  <p>Student Waste Tracker — Public Portal</p>
+  <img src="/logo.png" alt="Tabungan Sampah Digital" />
+  <span>Tabungan Sampah Digital</span>
+  <p>Model School-Based Living Lab</p>
 </header>
 ```
 
