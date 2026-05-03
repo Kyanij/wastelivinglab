@@ -1,0 +1,2 @@
+export const IDLE_TIMEOUT_MINUTES = 15
+export const WARNING_MINUTES_BEFORE = 2

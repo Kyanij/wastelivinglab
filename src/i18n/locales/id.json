@@ -344,5 +344,11 @@
     "title": "Tabungan Sampah Digital",
     "subtitle": "Model School-Based Living Lab",
     "system": "Sistem Pengumpulan Sampah"
+  },
+  "idleWarning": {
+    "title": "Sesi Akan Berakhir",
+    "message": "Anda akan keluar karena tidak ada aktivitas.",
+    "stayLoggedIn": "Tetap Masuk",
+    "logout": "Keluar"
   }
 }

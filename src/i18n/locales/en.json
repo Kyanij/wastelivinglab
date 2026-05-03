@@ -344,5 +344,11 @@
     "title": "Tabungan Sampah Digital",
     "subtitle": "Model School-Based Living Lab",
     "system": "Waste Collection System"
+  },
+  "idleWarning": {
+    "title": "Session Expiring",
+    "message": "You will be logged out due to inactivity.",
+    "stayLoggedIn": "Stay Logged In",
+    "logout": "Logout"
   }
 }
