@@ -339,5 +339,10 @@
     "lastPage": "Last page",
     "page": "Page",
     "of": "of"
+  },
+  "pdf": {
+    "title": "Tabungan Sampah Digital",
+    "subtitle": "Model School-Based Living Lab",
+    "system": "Waste Collection System"
   }
 }

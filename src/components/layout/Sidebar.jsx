@@ -27,7 +27,7 @@ export default function Sidebar() {
               <Leaf className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white leading-tight">Green Champs</h1>
+              <h1 className="text-lg font-bold text-white leading-tight">{t('pdf.title', 'Tabungan Sampah Digital')}</h1>
               <p className="text-xs text-gray-400">Admin Panel</p>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function Sidebar() {
                 <Leaf className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-white leading-tight">Green Champs</h1>
+                <h1 className="text-lg font-bold text-white leading-tight">{t('pdf.title', 'Tabungan Sampah Digital')}</h1>
                 <p className="text-xs text-gray-400">Admin Panel</p>
               </div>
             </div>

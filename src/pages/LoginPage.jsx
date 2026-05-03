@@ -129,14 +129,40 @@ export default function LoginPage() {
 
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          {/* Logo and branding */}
+{/* Logo and branding */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl shadow-lg shadow-green-500/30 mb-4">
-              <Leaf className="w-10 h-10 text-white" />
+            {/* 3 Logos in horizontal row with impressive design */}
+            <div className="flex items-center justify-center gap-3 mb-5">
+              <div className="relative">
+                <img 
+                  src="/assests/logo/1.jpeg" 
+                  alt="Logo 1" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
+                  style={{ animationDelay: '0ms' }}
+                />
+                <div className="absolute inset-0 rounded-full ring-2 ring-white/10"></div>
+              </div>
+              <div className="relative">
+                <img 
+                  src="/assests/logo/2.jpeg" 
+                  alt="Logo 2" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white/30 shadow-lg shadow-green-500/30 animate-fadeInUp"
+                  style={{ animationDelay: '150ms' }}
+                />
+                <div className="absolute inset-0 rounded-full ring-2 ring-white/20 bg-gradient-to-tr from-green-400/20 to-transparent"></div>
+              </div>
+              <div className="relative">
+                <img 
+                  src="/assests/logo/3.jpeg" 
+                  alt="Logo 3" 
+                  className="w-16 h-14 rounded-lg object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
+                  style={{ animationDelay: '300ms' }}
+                />
+              </div>
             </div>
-            <h1 className="text-4xl font-bold text-white tracking-tight">Tabungan Sampah Digital</h1>
-            <p className="mt-2 text-white tracking-tight text-lg">Model School-Based Living Lab</p>
-            <p className="text-green-300/70 mt-2 text-lg">{t('auth.adminPanel')}</p>
+            <h1 className="text-3xl font-bold text-white tracking-tight">Tabungan Sampah Digital</h1>
+            <p className="mt-1 text-white/80 text-base">Model School-Based Living Lab</p>
+            <p className="text-green-300/70 mt-1 text-sm">{t('auth.adminPanel')}</p>
           </div>
 
           {/* Login card */}

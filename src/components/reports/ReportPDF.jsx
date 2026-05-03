@@ -232,19 +232,20 @@ const KPICard = ({ label, value, change, prefix = '', suffix = '', isCurrency = 
   </View>
 );
 
-export const OverviewPDF = ({ data, filters }) => {
+export const OverviewPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo, selectedClass, selectedWasteType } = filters || {};
   const kpis = data?.kpis || {};
   const topStudents = data?.topStudents || [];
   const dateRangeStr = `${formatDate(dateFrom)} - ${formatDate(dateTo)}`;
+  const trans = translations || { title: 'Tabungan Sampah Digital', subtitle: 'Model School-Based Living Lab', system: 'Waste Collection System' };
 
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Overview Report</Text>
-          <Text style={styles.subtitle}>Tabungan Sampah Digital</Text>
-                    <Text style={styles.subtitle}>Model School-Based Living Lab</Text>
+          <Text style={styles.subtitle}>{trans.title}</Text>
+          <Text style={styles.subtitle}>{trans.subtitle}</Text>
           <Text style={styles.dateRange}>
             Date Range: {dateRangeStr} | Class: {selectedClass === 'all' ? 'All' : selectedClass} | Waste Type: {selectedWasteType === 'all' ? 'All' : selectedWasteType}
           </Text>
@@ -313,17 +314,20 @@ export const OverviewPDF = ({ data, filters }) => {
   );
 };
 
-export const StudentPDF = ({ data, filters }) => {
+export const StudentPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
   const student = data?.student || {};
   const entries = data?.entries || [];
+  const trans = translations || { title: 'Tabungan Sampah Digital', subtitle: 'Model School-Based Living Lab', system: 'Waste Collection System' };
   
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Student Performance Report</Text>
-          <Text style={styles.subtitle}>Green Champs - School Waste Collection System</Text>
+          <Text style={styles.subtitle}>{trans.title}</Text>
+          <Text style={styles.subtitle}>{trans.subtitle}</Text>
+
           <Text style={styles.dateRange}>Date Range: {formatDate(dateFrom)} - {formatDate(dateTo)}</Text>
         </View>
 
@@ -388,17 +392,19 @@ export const StudentPDF = ({ data, filters }) => {
   );
 };
 
-export const ClassPDF = ({ data, filters }) => {
+export const ClassPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
   const classData = data?.ranking || [];
   const kpis = data?.kpis || {};
+  const trans = translations || { title: 'Tabungan Sampah Digital', subtitle: 'Model School-Based Living Lab', system: 'Waste Collection System' };
   
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Class Performance Report</Text>
-          <Text style={styles.subtitle}>Green Champs - School Waste Collection System</Text>
+          <Text style={styles.subtitle}>{trans.title}</Text>
+          <Text style={styles.subtitle}>{trans.subtitle}</Text>
           <Text style={styles.dateRange}>Date Range: {formatDate(dateFrom)} - {formatDate(dateTo)}</Text>
         </View>
 
@@ -451,17 +457,20 @@ export const ClassPDF = ({ data, filters }) => {
   );
 };
 
-export const WasteAnalysisPDF = ({ data, filters }) => {
+export const WasteAnalysisPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
   const typeData = data?.summary || [];
   const kpis = data?.kpis || {};
+  const trans = translations || { title: 'Tabungan Sampah Digital', subtitle: 'Model School-Based Living Lab', system: 'Waste Collection System' };
   
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Waste Analysis Report</Text>
-          <Text style={styles.subtitle}>Green Champs - School Waste Collection System</Text>
+          <Text style={styles.subtitle}>{trans.title}</Text>
+          <Text style={styles.subtitle}>{trans.subtitle}</Text>
+
           <Text style={styles.dateRange}>Date Range: {formatDate(dateFrom)} - {formatDate(dateTo)}</Text>
         </View>
 
@@ -532,19 +541,21 @@ export const WasteAnalysisPDF = ({ data, filters }) => {
   );
 };
 
-export const PortalPDF = ({ data, filters }) => {
+export const PortalPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
   const student = data?.student || {};
   const entries = data?.entries || [];
   const totalWeight = entries.reduce((sum, e) => sum + (e.weight || 0), 0);
   const totalEarnings = entries.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const trans = translations || { title: 'Tabungan Sampah Digital', subtitle: 'Model School-Based Living Lab', system: 'Waste Collection System' };
 
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
           <Text style={styles.title}>Student Collection Report</Text>
-          <Text style={styles.subtitle}>Green Champs - School Waste Collection</Text>
+          <Text style={styles.subtitle}>{trans.title}</Text>
+          <Text style={styles.subtitle}>{trans.subtitle}</Text>
           <Text style={styles.dateRange}>
             Period: {formatDate(dateFrom)} - {formatDate(dateTo)}
           </Text>
@@ -600,7 +611,7 @@ export const PortalPDF = ({ data, filters }) => {
 
         <View style={[styles.footer, { marginTop: 20 }]}>
           <Text style={styles.footerText}>
-            Generated on {format(new Date(), 'dd MMM yyyy HH:mm')} | Green Champs - Waste Collection System
+            Generated on {format(new Date(), 'dd MMM yyyy HH:mm')} | {trans.title} - {trans.system}
           </Text>
         </View>
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,11 @@ import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF, PortalPDF } from '
 
 export default function ExportPDFButton({ reportType, data, filters }) {
   const { t } = useTranslation();
+  
+  const pdfTitle = t('pdf.title', 'Tabungan Sampah Digital');
+  const pdfSubtitle = t('pdf.subtitle', 'Model School-Based Living Lab');
+  const pdfSystem = t('pdf.system', 'Waste Collection System');
+  const pdfTranslations = { title: pdfTitle, subtitle: pdfSubtitle, system: pdfSystem };
   
   const getPDFComponent = () => {
     switch (reportType) {
@@ -25,11 +29,11 @@ export default function ExportPDFButton({ reportType, data, filters }) {
   };
 
   const PDFComponent = getPDFComponent();
-  const fileName = `GreenChamps_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
+  const fileName = `TabunganSampahDigital_${reportType}_${new Date().toISOString().split('T')[0]}.pdf`;
 
   return (
     <PDFDownloadLink
-      document={<PDFComponent data={data} filters={filters} />}
+      document={<PDFComponent data={data} filters={filters} translations={pdfTranslations} />}
       fileName={fileName}
       className="flex items-center gap-2 px-4 py-2.5 bg-[#1A6B3C] text-white rounded-xl font-medium hover:bg-[#15803d] transition-colors disabled:opacity-50"
     >

@@ -250,114 +250,114 @@ export default function WasteTypesPage() {
         </div>
       )}
 
-      {/* Add Panel - Full screen on mobile, slide in from right on larger screens */}
-      <div className={`fixed inset-0 sm:inset-y-0 right-0 w-full sm:w-[420px] bg-white sm:border-l border-gray-200 shadow-2xl transform transition-transform duration-300 z-50 overflow-hidden flex flex-col ${showAddPanel ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="h-full flex flex-col">
-          {/* Panel Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">{t('wasteTypes.addNewType')}</h2>
-            <button
-              onClick={() => setShowAddPanel(false)}
-              className="p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Panel Content */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('wasteTypes.name')} *
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (errors.name) setErrors({ ...errors, name: '' });
-                  }}
-                  placeholder={t('wasteTypes.namePlaceholder')}
-                  className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                    errors.name
-                      ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                      : 'border-gray-200 focus:ring-green-500 focus:border-green-500'
-                  }`}
-                />
-                {errors.name && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    {errors.name}
-                  </p>
-                )}
+      {showAddPanel && (
+        <>
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowAddPanel(false)} />
+          
+          {/* Modal - Centered popup */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-scaleIn">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                <h2 className="text-xl font-bold text-gray-900">{t('wasteTypes.addNewType')}</h2>
+                <button
+                  onClick={() => setShowAddPanel(false)}
+                  className="p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Rate Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('wasteTypes.defaultRate')} *
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">Rp</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={defaultRate}
-                    onChange={(e) => {
-                      setDefaultRate(e.target.value);
-                      if (errors.defaultRate) setErrors({ ...errors, defaultRate: '' });
-                    }}
-                    placeholder="0.00"
-                    className={`w-full pl-10 pr-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                      errors.defaultRate
-                        ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                        : 'border-gray-200 focus:ring-green-500 focus:border-green-500'
-                    }`}
-                  />
-                </div>
-                {errors.defaultRate && (
-                  <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    {errors.defaultRate}
-                  </p>
-                )}
-              </div>
-            </form>
-          </div>
+              {/* Modal Content */}
+              <div className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Name Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('wasteTypes.name')} *
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        if (errors.name) setErrors({ ...errors, name: '' });
+                      }}
+                      placeholder={t('wasteTypes.namePlaceholder')}
+                      className={`w-full px-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                        errors.name
+                          ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                          : 'border-gray-200 focus:ring-green-500 focus:border-green-500'
+                      }`}
+                    />
+                    {errors.name && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
 
-          {/* Panel Footer */}
-          <div className="p-6 border-t border-gray-200">
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setShowAddPanel(false)}
-                className="flex-1 px-5 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all"
-              >
-                {t('modals.cancel')}
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={saving}
-                className="flex-1 px-5 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {saving ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Plus className="w-5 h-5" />
-                )}
-                {t('common.save')}
-              </button>
+                  {/* Rate Input */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('wasteTypes.defaultRate')} *
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">Rp</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={defaultRate}
+                        onChange={(e) => {
+                          setDefaultRate(e.target.value);
+                          if (errors.defaultRate) setErrors({ ...errors, defaultRate: '' });
+                        }}
+                        placeholder="0.00"
+                        className={`w-full pl-10 pr-4 py-3.5 rounded-xl border text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+                          errors.defaultRate
+                            ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                            : 'border-gray-200 focus:ring-green-500 focus:border-green-500'
+                        }`}
+                      />
+                    </div>
+                    {errors.defaultRate && (
+                      <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.defaultRate}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Modal Footer */}
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddPanel(false)}
+                      className="flex-1 px-5 py-3 text-gray-700 font-medium hover:text-gray-900 hover:bg-gray-100 rounded-xl transition-all"
+                    >
+                      {t('modals.cancel')}
+                    </button>
+                    <button
+                      onClick={handleSubmit}
+                      disabled={saving}
+                      className="flex-1 px-5 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {saving ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Plus className="w-5 h-5" />
+                      )}
+                      {t('common.save')}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Backdrop */}
-      {showAddPanel && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowAddPanel(false)} />
+        </>
       )}
 
       {/* Edit Modal */}
