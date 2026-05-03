@@ -155,7 +155,7 @@ export default function LoginPage() {
                 <img 
                   src="/assests/logo/3.jpeg" 
                   alt="Logo 3" 
-                  className="w-16 h-14 rounded-lg object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
+                  className="w-24 h-auto rounded-lg object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
                   style={{ animationDelay: '300ms' }}
                 />
               </div>

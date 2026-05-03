@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getStudentById, getEntriesByStudentId } from '../../firebase/students';
 
+const toLocalDateString = (date) => {
+  const d = date instanceof Date ? date : new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export function useStudentDetail(studentId) {
   const navigate = useNavigate();
   const [student, setStudent] = useState(null);
@@ -90,16 +98,8 @@ export function useStudentDetail(studentId) {
     }
   };
 
-  return { student, entries, loading, error, getInitials, refetch };
+  return { student, entries, loading, error, getInitials, refetch, toLocalDateString };
 }
-
-const toLocalDateString = (date) => {
-  const d = date instanceof Date ? date : new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 export function useFilters() {
   const today = new Date();
@@ -148,7 +148,7 @@ export function filterEntries(entries, filters) {
 export function groupEntriesByDate(entries) {
   const grouped = entries.reduce((acc, entry) => {
     const entryDate = entry.date?.toDate ? entry.date.toDate() : new Date(entry.date);
-    const key = entryDate.toISOString().split('T')[0];
+    const key = toLocalDateString(entryDate);
     if (!acc[key]) acc[key] = [];
     acc[key].push(entry);
     return acc;

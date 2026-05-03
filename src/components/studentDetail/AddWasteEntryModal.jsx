@@ -4,6 +4,7 @@ import { X, Plus, Trash2 } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
 import { db } from '../../firebase/config';
 import { COLLECTIONS } from '../../firebase/collections';
+import { toLocalDateString } from '../../utils/portalHelpers';
 import {
   collection,
   addDoc,
@@ -27,7 +28,7 @@ export default function AddWasteEntryModal({
   const [loading, setLoading] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split('T')[0]
+    toLocalDateString(new Date())
   );
 
   const [items, setItems] = useState([
@@ -43,7 +44,7 @@ export default function AddWasteEntryModal({
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedDate(new Date().toISOString().split('T')[0]);
+      setSelectedDate(toLocalDateString(new Date()));
       setItems([
         {
           id: `item-${Date.now()}`,

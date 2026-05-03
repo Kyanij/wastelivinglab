@@ -6,6 +6,7 @@ import { startOfMonth } from 'date-fns';
 
 import { useStudentDetail, useFilters, filterEntries, groupEntriesByDate, useExpandedDates } from '../hooks/studentDetail/useStudentDetail';
 import { useEntryMutations } from '../hooks/studentDetail/useEntryMutations';
+import { toLocalDateString as toLocalDate } from '../utils/portalHelpers';
 
 import StudentHeader from '../components/studentDetail/StudentHeader';
 import FilterBar from '../components/studentDetail/FilterBar';
@@ -43,7 +44,7 @@ export default function StudentDetailPage() {
     if (lastAddedDate && !loading && entries.length > 0) {
       const dateExists = entries.some((entry) => {
         const d = entry.date?.toDate ? entry.date.toDate() : new Date(entry.date);
-        return d.toISOString().split('T')[0] === lastAddedDate;
+        return toLocalDate(d) === lastAddedDate;
       });
       if (dateExists) { expandAll([lastAddedDate]); setLastAddedDate(null); }
     }

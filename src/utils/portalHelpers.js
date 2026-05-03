@@ -1,11 +1,19 @@
+export function toLocalDateString(date) {
+  const d = date instanceof Date ? date : new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function groupEntriesByDate(entries) {
   const grouped = {};
   entries.forEach((entry) => {
     let dateKey;
     if (entry.date?.toDate) {
-      dateKey = entry.date.toDate().toISOString().split('T')[0];
+      dateKey = toLocalDateString(entry.date.toDate());
     } else if (entry.date) {
-      dateKey = new Date(entry.date).toISOString().split('T')[0];
+      dateKey = toLocalDateString(new Date(entry.date));
     } else {
       dateKey = 'unknown';
     }

@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { toLocalDateString } from '../../utils/portalHelpers';
 
 export default function DateRangeFilter({ onApply }) {
   const today = new Date();
-  const startOfYear = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
-  const endOfYear = new Date(today.getFullYear(), 11, 31).toISOString().split('T')[0];
+  const startOfYear = toLocalDateString(new Date(today.getFullYear(), 0, 1));
+  const endOfYear = toLocalDateString(new Date(today.getFullYear(), 11, 31));
 
   const [fromDate, setFromDate] = useState(startOfYear);
   const [toDate, setToDate] = useState(endOfYear);
