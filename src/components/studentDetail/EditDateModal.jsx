@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
 import { formatDateLong } from '../../utils/dateHelpers';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, loading }) {
   const { t } = useTranslation();
@@ -162,13 +163,6 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
   const formattedDate = dateGroup
     ? formatDateLong(dateGroup.dateKey)
     : '';
-
-  const formatCurrency = (amount) => {
-    return (amount || 0).toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
 
   const visibleRows = rows.filter((r) => !r.markedForDeletion);
 

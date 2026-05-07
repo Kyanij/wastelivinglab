@@ -77,11 +77,21 @@ export function calculateSummary(entries) {
 }
 
 export function formatCurrency(amount) {
+  const num = amount || 0;
+  if (Number.isInteger(num)) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
+  }
   return new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-    minimumFractionDigits: 2
-  }).format(amount || 0);
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(num);
 }
 
 export function formatKg(kg) {

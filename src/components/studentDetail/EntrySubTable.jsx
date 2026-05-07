@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 const wasteTypeKeyMap = {
   'Plastic': 'Plastic',
@@ -28,13 +29,6 @@ export default function EntrySubTable({
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);
-  };
-
-  const formatCurrency = (amount) => {
-    return (amount || 0).toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
   };
 
   return (

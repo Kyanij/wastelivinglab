@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '../../utils/dateHelpers';
 import { Plus } from 'lucide-react';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function StudentHeader({ student, getInitials, onAddEntry }) {
   const { t } = useTranslation();
@@ -26,11 +27,6 @@ export default function StudentHeader({ student, getInitials, onAddEntry }) {
   const formatWeight = (weight) => {
     const w = weight || 0;
     return w.toFixed(2);
-  };
-
-  const formatCurrency = (amount) => {
-    const a = amount || 0;
-    return a.toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const formatDate = (timestamp) => {

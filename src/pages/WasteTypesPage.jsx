@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useWasteTypes } from '../hooks/useWasteTypes';
 import { addWasteType, deleteWasteType, updateWasteType } from '../firebase/wasteTypes';
+import { formatCurrency } from '../utils/formatCurrency';
 import toast from 'react-hot-toast';
 
 const wasteTypeIcons = {
@@ -229,7 +230,7 @@ export default function WasteTypesPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">{getTranslatedWasteType(type.name)}</h3>
-                      <p className="text-sm text-gray-500">Rp{type.defaultRate?.toFixed(2)}/kg</p>
+                      <p className="text-sm text-gray-500">Rp{formatCurrency(type.defaultRate)}/kg</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

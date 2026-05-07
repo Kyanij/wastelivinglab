@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '../../utils/dateHelpers';
 import { ChevronDown, ChevronRight, Calendar, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import EntrySubTable from './EntrySubTable';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function DateGroupRow({
   dateGroup,
@@ -35,13 +36,6 @@ export default function DateGroupRow({
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);
-  };
-
-  const formatCurrency = (amount) => {
-    return (amount || 0).toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
   };
 
   const entryCountText =

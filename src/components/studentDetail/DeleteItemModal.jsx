@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import { formatDateLong } from '../../utils/dateHelpers';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function DeleteItemModal({ entry, isOpen, onClose, onConfirm, loading }) {
   const { t } = useTranslation();
@@ -16,13 +17,6 @@ export default function DeleteItemModal({ entry, isOpen, onClose, onConfirm, loa
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);
-  };
-
-  const formatCurrency = (amount) => {
-    return (amount || 0).toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
   };
 
   return (

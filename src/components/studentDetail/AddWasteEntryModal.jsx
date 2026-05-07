@@ -5,6 +5,7 @@ import { useWasteTypes } from '../../hooks/useWasteTypes';
 import { db } from '../../firebase/config';
 import { COLLECTIONS } from '../../firebase/collections';
 import { toLocalDateString } from '../../utils/portalHelpers';
+import { formatCurrency } from '../../utils/formatCurrency';
 import {
   collection,
   addDoc,
@@ -181,13 +182,6 @@ export default function AddWasteEntryModal({
   const totalWeight = activeItems.reduce((sum, item) => sum + parseFloat(item.weight || 0), 0);
   const totalAmount = activeItems.reduce((sum, item) => sum + item.amount, 0);
 
-  const formatCurrency = (amount) => {
-    return (amount || 0).toLocaleString('id-ID', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
@@ -226,59 +220,74 @@ export default function AddWasteEntryModal({
             <label className="block text-sm font-medium text-gray-700 mb-2 md:mb-3">
               {t('wasteEntry.wasteType')}
             </label>
-            <div className="space-y-2 md:space-y-3">
-              {items.map((item, index) => (
-                <div key={item.id} className="flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 p-3 md:p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-1 min-w-[120px]">
-                    <select
-                      value={item.wasteTypeId}
-                      onChange={(e) => updateItem(index, 'wasteTypeId', e.target.value)}
-                      className="w-full px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    >
-                      <option value="">{t('wasteEntry.wasteType')}</option>
-                      {wasteTypes.map((wt) => (
-                        <option key={wt.id} value={wt.id}>
-                          {getTranslatedWasteType(wt.name)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="w-20 md:w-24">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0.1"
-                      placeholder={t('wasteEntry.weight')}
-                      value={item.weight}
-                      onChange={(e) => updateItem(index, 'weight', e.target.value)}
-                      className="w-full px-2 md:px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg text-right text-sm md:text-base"
-                    />
-                  </div>
-                  <div className="w-20 md:w-24">
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder={t('wasteEntry.price')}
-                      value={item.rate}
-                      onChange={(e) => updateItem(index, 'rate', e.target.value)}
-                      className="w-full px-2 md:px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg text-right text-sm md:text-base"
-                    />
-                  </div>
-                  <div className="w-24 md:w-28 text-right">
-                    <span className="text-green-600 font-medium text-sm md:text-base">
-                      Rp{formatCurrency(item.amount)}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => removeItem(index)}
-                    disabled={items.length === 1}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[500px]">
+                <thead>
+                  <tr className="text-xs font-medium text-gray-500 bg-gray-50">
+                    <th className="px-2 py-2 text-left">
+                      {t('wasteEntry.wasteType')}
+                    </th>
+                    <th className="px-2 py-2 text-right">{t('wasteEntry.weight')}</th>
+                    <th className="px-2 py-2 text-right">{t('wasteEntry.price')}</th>
+                    <th className="px-2 py-2 text-right">
+                      {t('wasteEntry.amount')}
+                    </th>
+                    <th className="px-2 py-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item, index) => (
+                    <tr key={item.id} className="border-t border-gray-100">
+                      <td className="px-2 py-2">
+                        <select
+                          value={item.wasteTypeId}
+                          onChange={(e) => updateItem(index, 'wasteTypeId', e.target.value)}
+                          className="w-full px-2 py-2 md:py-1.5 border border-gray-200 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                          <option value="">{t('wasteEntry.wasteType')}</option>
+                          {wasteTypes.map((wt) => (
+                            <option key={wt.id} value={wt.id}>
+                              {getTranslatedWasteType(wt.name)}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-2 py-2">
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0.1"
+                          value={item.weight}
+                          onChange={(e) => updateItem(index, 'weight', e.target.value)}
+                          className="w-full px-2 py-2 md:py-1.5 border border-gray-200 rounded text-sm text-right focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-2 py-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={item.rate}
+                          onChange={(e) => updateItem(index, 'rate', e.target.value)}
+                          className="w-full px-2 py-2 md:py-1.5 border border-gray-200 rounded text-sm text-right focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-2 py-2 text-right text-green-600 font-medium text-sm">
+                        Rp{formatCurrency(item.amount)}
+                      </td>
+                      <td className="px-2 py-2">
+                        <button
+                          onClick={() => removeItem(index)}
+                          disabled={items.length === 1}
+                          className="p-1 text-red-500 hover:bg-red-50 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             <button
