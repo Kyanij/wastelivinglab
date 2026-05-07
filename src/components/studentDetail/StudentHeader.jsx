@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { formatDateShort } from '../../utils/dateHelpers';
 import { Plus } from 'lucide-react';
 
 export default function StudentHeader({ student, getInitials, onAddEntry }) {
@@ -35,8 +35,7 @@ export default function StudentHeader({ student, getInitials, onAddEntry }) {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return '-';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return format(date, 'MMM dd, yyyy');
+    return formatDateShort(timestamp);
   };
 
   return (

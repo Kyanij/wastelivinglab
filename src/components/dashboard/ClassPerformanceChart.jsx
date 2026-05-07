@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
   BarChart,
@@ -32,6 +33,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function ClassPerformanceChart({ data, isLoading }) {
+  const { t } = useTranslation();
   const chartData = data && data.length > 0 ? data : defaultData;
 
   if (isLoading) {
@@ -54,16 +56,16 @@ export default function ClassPerformanceChart({ data, isLoading }) {
             <div className="p-2 rounded-xl bg-emerald-50">
               <BarChart3 className="w-4 h-4 text-emerald-600" />
             </div>
-            <CardTitle className="text-base font-semibold text-gray-900">Class Performance</CardTitle>
+            <CardTitle className="text-base font-semibold text-gray-900">{t('dashboard.classPerformance')}</CardTitle>
             <span className="ml-2 px-2 py-0.5 text-xs font-medium text-white bg-emerald-500 rounded-md">
-              Total Waste (kg)
+              {t('dashboard.totalWasteKg')}
             </span>
           </div>
       </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (
           <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
-            No data available
+            {t('dashboard.noDataAvailable')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={280}>

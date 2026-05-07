@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Award, Calendar } from 'lucide-react';
-import { format } from 'date-fns';
 
 import PageHeader from '../../components/reports/PageHeader';
 import ExportPDFButton from '../../components/reports/ExportPDFButton';
 import StudentSearchInput from '../../components/reports/StudentSearchInput';
+import { formatDateShort } from '../../utils/dateHelpers';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getStudentReportData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
@@ -257,7 +257,7 @@ function StudentProfileCard({ student }) {
           <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
             <span>{t('common.studentIdLabel')} {student.studentId}</span>
             <span>•</span>
-            <span>{t('common.joinedOn', { date: student.createdAt ? format(student.createdAt.toDate(), 'MMM d, yyyy') : 'N/A' })}</span>
+            <span>{t('common.joinedOn', { date: student.createdAt ? formatDateShort(student.createdAt) : 'N/A' })}</span>
           </div>
         </div>
       </div>
@@ -340,7 +340,7 @@ function EntriesTable({ entries, expandedDates, toggleDate }) {
                   <ChevronRight className="w-5 h-5 text-gray-400" />
                 )}
                 <span className="font-medium text-gray-900">
-                  {format(new Date(entry.date), 'MMM d, yyyy')}
+                  {formatDateShort(entry.date)}
                 </span>
               </div>
               <div className="flex items-center gap-4 text-sm">

@@ -5,6 +5,7 @@ import { getEntriesByStudentAndDateRange } from '../../firebase/wasteEntries';
 import { groupEntriesByDate } from '../../hooks/studentDetail/useStudentDetail';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import PortalDateGroupRow from './PortalDateGroupRow';
+import { formatDateForInput } from '../../utils/dateHelpers';
 
 function getInitials(name) {
   if (!name) return '??';
@@ -79,8 +80,8 @@ export default function StudentDetailReport({ student }) {
       setLoading(true);
       setExpandedDates({});
       try {
-        const fromDate = dateRange.from.toLocaleDateString('en-CA');
-        const toDate = dateRange.to.toLocaleDateString('en-CA');
+        const fromDate = formatDateForInput(dateRange.from);
+        const toDate = formatDateForInput(dateRange.to);
         const data = await getEntriesByStudentAndDateRange(student.id, fromDate, toDate);
         setEntries(data);
       } catch (error) {
@@ -190,7 +191,7 @@ export default function StudentDetailReport({ student }) {
               </svg>
               {entries.length} {t('portal.collections')}
               <span className="text-gray-400 text-xs ml-1">
-                ({dateRange.from.toLocaleDateString()} - {dateRange.to.toLocaleDateString()})
+                ({formatDateForInput(dateRange.from)} - {formatDateForInput(dateRange.to)})
               </span>
             </span>
           </div>

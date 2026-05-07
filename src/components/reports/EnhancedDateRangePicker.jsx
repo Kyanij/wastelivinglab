@@ -102,7 +102,9 @@ export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, 
       day.setDate(day.getDate() + 1);
     }
 
-    const weekDays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    const weekDays = i18n.language === 'id' 
+      ? ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
+      : ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
     return (
       <div className="w-64">

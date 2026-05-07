@@ -1,6 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
 
+const wasteTypeKeyMap = {
+  'Plastic': 'Plastic',
+  'Paper': 'Paper',
+  'Glass': 'Glass',
+  'Plastic Bottles': 'Plastic Bottles',
+  'Paper Waste': 'Paper Waste',
+  'Metal': 'Metal',
+  'Mixed': 'Mixed',
+  'Other': 'Other'
+};
+
 export default function EntrySubTable({
   entries,
   onEditItem,
@@ -8,6 +19,12 @@ export default function EntrySubTable({
   dateGroup,
 }) {
   const { t } = useTranslation();
+
+  const getTranslatedWasteType = (name) => {
+    const key = `wasteTypes.names.${name}`;
+    const translated = t(key);
+    return translated === key ? name : translated;
+  };
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);
@@ -33,7 +50,7 @@ export default function EntrySubTable({
                 {t('wasteEntry.weight')}
               </th>
               <th className="px-3 md:px-4 py-2 text-right w-[20%]">
-                {t('wasteEntry.rate')}
+                {t('wasteEntry.price')}
               </th>
               <th className="px-3 md:px-4 py-2 text-right w-[20%]">
                 {t('wasteEntry.amount')}
@@ -50,7 +67,7 @@ export default function EntrySubTable({
                 } hover:bg-gray-100 transition-colors`}
               >
                 <td className="px-3 md:px-4 py-2 md:py-3 text-gray-900 font-medium text-sm">
-                  {entry.wasteTypeName}
+                  {getTranslatedWasteType(entry.wasteTypeName)}
                 </td>
                 <td className="px-3 md:px-4 py-2 md:py-3 text-right text-gray-700 text-sm">
                   {formatWeight(entry.weight)} kg

@@ -31,6 +31,11 @@ export default function DashboardPage() {
     wasteType: 'all',
   });
 
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
   const { wasteTypes } = useWasteTypes();
   const {
     loading,
@@ -96,8 +101,8 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Waste Management Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Overview of waste collected by students</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('dashboard.overviewByStudent')}</p>
         </div>
       </div>
 
@@ -126,12 +131,12 @@ export default function DashboardPage() {
 
             <Select value={filters.wasteType} onValueChange={handleWasteTypeChange}>
               <SelectTrigger className="w-[130px] md:w-[160px] h-10">
-                <SelectValue placeholder="All Waste Types" />
+                <SelectValue placeholder={t('reports.allWasteTypes')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Waste Types</SelectItem>
+                <SelectItem value="all">{t('reports.allWasteTypes')}</SelectItem>
                 {wasteTypes.map(wt => (
-                  <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
+                  <SelectItem key={wt.id} value={wt.name}>{getTranslatedWasteType(wt.name)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -155,7 +160,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
         <StatCard
           icon={Leaf}
-          label="Total Waste (kg)"
+          label={t('dashboard.totalWasteKg')}
           value={kpis.totalWaste}
           trend={kpis.trends.waste}
           suffix=" kg"
@@ -163,7 +168,7 @@ export default function DashboardPage() {
         />
         <StatCard
           icon={Wallet}
-          label="Total Earnings"
+          label={t('dashboard.totalEarnings')}
           value={kpis.totalEarnings}
           trend={kpis.trends.earnings}
           prefix="Rp "
@@ -171,14 +176,14 @@ export default function DashboardPage() {
         />
         <StatCard
           icon={Users}
-          label="Active Students"
+          label={t('dashboard.activeStudents')}
           value={kpis.activeStudents}
           trend={kpis.trends.active}
           isLoading={loading}
         />
         <StatCard
           icon={BarChart2}
-          label="Avg per Student"
+          label={t('dashboard.avgPerStudent')}
           value={kpis.avgWastePerStudent}
           trend={kpis.trends.avg}
           suffix=" kg"
@@ -186,7 +191,7 @@ export default function DashboardPage() {
         />
         <StatCard
           icon={Trophy}
-          label="Top Performer"
+          label={t('dashboard.topPerformer')}
           value={kpis.topPerformer?.name || '-'}
           isText={true}
           isLoading={loading}

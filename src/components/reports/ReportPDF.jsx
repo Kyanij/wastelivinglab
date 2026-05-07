@@ -354,7 +354,7 @@ export const StudentPDF = ({ data, filters, translations }) => {
                 { label: 'Date', width: 1.5 },
                 { label: 'Waste Type', width: 1.5 },
                 { label: 'Weight (kg)', width: 1, align: 'right' },
-                { label: 'Rate', width: 0.8, align: 'right' },
+                { label: 'Price', width: 0.8, align: 'right' },
                 { label: 'Amount', width: 1.2, align: 'right' },
               ]}
             />
@@ -490,7 +490,7 @@ export const WasteAnalysisPDF = ({ data, filters, translations }) => {
                 { label: 'Weight (kg)', width: 1.5, align: 'right' },
                 { label: 'Percentage', width: 1, align: 'right' },
                 { label: 'Earnings', width: 1.5, align: 'right' },
-                { label: 'Avg Rate', width: 1, align: 'right' },
+                { label: 'Avg Price', width: 1, align: 'right' },
               ]}
             />
             {typeData.map((type, index) => (

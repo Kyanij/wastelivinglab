@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { formatDateTime } from '../../utils/dateHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Recycle } from 'lucide-react';
 
@@ -8,8 +8,7 @@ export default function RecentActivity({ activities, isLoading }) {
 
   const getTimeAgo = (timestamp) => {
     if (!timestamp) return '';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return format(date, 'MMM d, h:mm a');
+    return formatDateTime(timestamp);
   };
 
   if (isLoading) {
@@ -40,13 +39,13 @@ export default function RecentActivity({ activities, isLoading }) {
           <div className="p-2 rounded-xl bg-blue-50">
             <Recycle className="w-4 h-4 text-blue-600" />
           </div>
-          <CardTitle className="text-base">Recent Activity</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.recentActivity')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {activities.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
-            No recent activity
+            {t('common.noData')}
           </div>
         ) : (
           <div className="space-y-3">
@@ -61,7 +60,7 @@ export default function RecentActivity({ activities, isLoading }) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-900">
                     <span className="font-medium">{activity.studentName}</span>
-                    <span className="text-gray-500"> collected </span>
+                    <span className="text-gray-500"> {t('portal.collected')} </span>
                     <span className="text-green-600 font-medium">{activity.weight}kg</span>
                     <span className="text-gray-500"> {activity.wasteType}</span>
                   </p>

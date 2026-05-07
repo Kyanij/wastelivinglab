@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { formatDateKey } from '../../utils/portalHelpers';
+import { formatDateShort } from '../../utils/dateHelpers';
 import { formatCurrency } from '../../utils/portalHelpers';
 
 function formatWeight(weight) {
@@ -11,6 +11,11 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
   const { t } = useTranslation();
   const entryCount = dateGroup.entries.length;
   const entryCountText = entryCount === 1 ? `1 ${t('portal.item')}` : `${entryCount} ${t('portal.items')}`;
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
 
   return (
     <div className="border-b border-gray-100 last:border-b-0">
@@ -37,7 +42,7 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
         <div className="w-[22%] flex items-center gap-2">
           <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
           <span className="text-gray-900 font-medium whitespace-nowrap">
-            {formatDateKey(dateGroup.dateKey)}
+            {formatDateShort(dateGroup.dateKey)}
           </span>
         </div>
 
@@ -77,7 +82,7 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
                   <tr className="bg-white/50 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <th className="px-4 py-2.5 text-left w-[30%]">{t('portal.wasteType')}</th>
                     <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.weight')}</th>
-                    <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.rateKg')}</th>
+                    <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.priceKg')}</th>
                     <th className="px-4 py-2.5 text-right w-[20%]">{t('portal.amount')}</th>
                     <th className="px-4 py-2.5 w-[10%]"></th>
                   </tr>
@@ -98,7 +103,7 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
                           ${getWasteTypeBadgeClass(entry.wasteTypeName || entry.wasteType)}
                         `}>
                           <span className="text-base">{getWasteTypeIcon(entry.wasteTypeName || entry.wasteType)}</span>
-                          {entry.wasteTypeName || entry.wasteType || 'Unknown'}
+                          {getTranslatedWasteType(entry.wasteTypeName || entry.wasteType || 'Unknown')}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">

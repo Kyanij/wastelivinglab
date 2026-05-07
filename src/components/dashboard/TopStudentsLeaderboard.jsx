@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Trophy } from 'lucide-react';
 
 export default function TopStudentsLeaderboard({ students, isLoading }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   if (isLoading) {
@@ -33,13 +35,13 @@ export default function TopStudentsLeaderboard({ students, isLoading }) {
           <div className="p-2 rounded-xl bg-green-50">
             <Trophy className="w-4 h-4 text-green-600" />
           </div>
-          <CardTitle className="text-base">Top Students</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.topStudents')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {students.length === 0 ? (
           <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-            No student data available
+            {t('dashboard.noDataAvailable')}
           </div>
         ) : (
           <div className="space-y-2 overflow-y-auto max-h-[220px] pr-1">

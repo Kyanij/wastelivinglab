@@ -1,14 +1,18 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
+import { formatDateLong } from '../../utils/dateHelpers';
 
 export default function DeleteItemModal({ entry, isOpen, onClose, onConfirm, loading }) {
   const { t } = useTranslation();
 
   if (!isOpen || !entry) return null;
 
-  const entryDate = entry.date?.toDate ? entry.date.toDate() : new Date();
-  const formattedDate = format(entryDate, 'MMMM dd, yyyy');
+  const formattedDate = formatDateLong(entry.date);
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);
@@ -45,7 +49,7 @@ export default function DeleteItemModal({ entry, isOpen, onClose, onConfirm, loa
           <div className="bg-gray-50 rounded-lg p-4 mb-4">
             <p className="text-gray-900 font-medium">
               {t('studentDetail.deleteItemDetails', {
-                type: entry.wasteTypeName,
+                type: getTranslatedWasteType(entry.wasteTypeName),
                 weight: formatWeight(entry.weight),
                 amount: formatCurrency(entry.amount),
               })}

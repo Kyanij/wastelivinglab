@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { PieChartIcon } from 'lucide-react';
@@ -17,6 +18,18 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function WasteDistributionChart({ data, isLoading }) {
+  const { t } = useTranslation();
+  
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
+  const translatedData = data.map(item => ({
+    ...item,
+    name: getTranslatedWasteType(item.name)
+  }));
+
   if (isLoading) {
     return (
       <Card className="h-[340px]">
@@ -39,13 +52,13 @@ export default function WasteDistributionChart({ data, isLoading }) {
           <div className="p-2 rounded-xl bg-green-50">
             <PieChartIcon className="w-4 h-4 text-green-600" />
           </div>
-          <CardTitle className="text-base">Waste by Type</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.wasteByType')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {data.length === 0 ? (
           <div className="flex items-center justify-center h-[240px] text-gray-400 text-sm">
-            No data available
+            {t('dashboard.noDataAvailable')}
           </div>
         ) : (
           <div className="flex flex-col h-[240px]">
@@ -53,7 +66,7 @@ export default function WasteDistributionChart({ data, isLoading }) {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={data}
+                    data={translatedData}
                     cx="50%"
                     cy="50%"
                     innerRadius={55}
@@ -61,7 +74,7 @@ export default function WasteDistributionChart({ data, isLoading }) {
                     paddingAngle={3}
                     dataKey="value"
                   >
-                    {data.map((entry, index) => (
+                    {translatedData.map((entry, index) => (
                       <Cell key={entry.name} fill={COLORS[index % COLORS.length]} stroke="transparent" />
                     ))}
                   </Pie>
@@ -71,12 +84,12 @@ export default function WasteDistributionChart({ data, isLoading }) {
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="text-center">
                   <div className="text-xl font-bold text-gray-900">{total.toFixed(1)}</div>
-                  <div className="text-xs text-gray-500">kg total</div>
+                  <div className="text-xs text-gray-500">{t('dashboard.kgTotal')}</div>
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2 mt-2">
-              {data.map((entry, index) => {
+              {translatedData.map((entry, index) => {
                 const percent = total > 0 ? ((entry.value / total) * 100).toFixed(0) : 0;
                 return (
                   <div key={entry.name} className="flex items-center gap-2">

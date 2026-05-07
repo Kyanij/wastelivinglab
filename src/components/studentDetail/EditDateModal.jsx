@@ -2,11 +2,16 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
-import { format } from 'date-fns';
+import { formatDateLong } from '../../utils/dateHelpers';
 
 export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, loading }) {
   const { t } = useTranslation();
   const { wasteTypes } = useWasteTypes();
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
 
   const [rows, setRows] = useState([]);
   const [errors, setErrors] = useState([]);
@@ -103,7 +108,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
       }
 
       if (row.rate === '' || parseFloat(row.rate) < 0) {
-        rowErrors.rate = t('studentDetail.rateNonNegative');
+        rowErrors.rate = t('studentDetail.priceNonNegative');
       }
 
       newErrors[index] = rowErrors;
@@ -155,7 +160,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
   };
 
   const formattedDate = dateGroup
-    ? format(new Date(dateGroup.dateKey), 'MMMM dd, yyyy')
+    ? formatDateLong(dateGroup.dateKey)
     : '';
 
   const formatCurrency = (amount) => {
@@ -201,7 +206,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
                     {t('wasteEntry.wasteType')}
                   </th>
                   <th className="px-2 py-2 text-right">{t('wasteEntry.weight')}</th>
-                  <th className="px-2 py-2 text-right">{t('wasteEntry.rate')}</th>
+                  <th className="px-2 py-2 text-right">{t('wasteEntry.price')}</th>
                   <th className="px-2 py-2 text-right">
                     {t('wasteEntry.amount')}
                   </th>
@@ -231,7 +236,7 @@ export default function EditDateModal({ dateGroup, isOpen, onClose, onSave, load
                           <option value="">{t('wasteEntry.wasteType')}</option>
                           {wasteTypes.map((wt) => (
                             <option key={wt.id} value={wt.id}>
-                              {wt.name}
+                              {getTranslatedWasteType(wt.name)}
                             </option>
                           ))}
                         </select>

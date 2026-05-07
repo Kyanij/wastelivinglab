@@ -14,6 +14,16 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
     wasteType: filters.wasteType || 'all',
   });
 
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+    dateFrom: filters.dateFrom || null,
+    dateTo: filters.dateTo || null,
+    studentClass: filters.studentClass || 'all',
+    wasteType: filters.wasteType || 'all',
+  });
+
   const isAllTime = !localFilters.dateFrom && !localFilters.dateTo;
 
   useEffect(() => {
@@ -111,19 +121,19 @@ export default function FilterBar({ filters, onFiltersChange, classes, wasteType
 
           <Select value={localFilters.wasteType} onValueChange={(v) => handleChange('wasteType', v)}>
             <SelectTrigger className="w-[130px] md:w-[160px] h-10">
-              <SelectValue placeholder="All Waste Types" />
+              <SelectValue placeholder={t('reports.allWasteTypes')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Waste Types</SelectItem>
+              <SelectItem value="all">{t('reports.allWasteTypes')}</SelectItem>
               {wasteTypes.map(wt => (
-                <SelectItem key={wt.id} value={wt.name}>{wt.name}</SelectItem>
+                <SelectItem key={wt.id} value={wt.name}>{getTranslatedWasteType(wt.name)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
           <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500 hover:text-gray-700">
             <Filter className="w-4 h-4 mr-1" />
-            <span className="hidden sm:inline">Reset</span>
+            <span className="hidden sm:inline">{t('common.reset')}</span>
           </Button>
         </div>
       </div>

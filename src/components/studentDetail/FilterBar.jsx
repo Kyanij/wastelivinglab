@@ -13,6 +13,12 @@ const toLocalDateString = (date) => {
 
 export default function FilterBar({ filters, setFilters, hasActiveFilters, resetFilters, dateRange, onDateRangeChange, defaultDateFrom, defaultDateTo }) {
   const { t } = useTranslation();
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
   const { wasteTypes } = useWasteTypes();
 
   const handleDateRangeChangeInternal = (from, to) => {
@@ -53,7 +59,7 @@ export default function FilterBar({ filters, setFilters, hasActiveFilters, reset
             <option value="all">{t('studentDetail.allWasteTypes')}</option>
             {wasteTypes.map((wt) => (
               <option key={wt.id} value={wt.id}>
-                {wt.name}
+                {getTranslatedWasteType(wt.name)}
               </option>
             ))}
           </select>

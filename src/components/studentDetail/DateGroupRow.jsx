@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { formatDateShort } from '../../utils/dateHelpers';
 import { ChevronDown, ChevronRight, Calendar, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import EntrySubTable from './EntrySubTable';
 
@@ -29,8 +29,8 @@ export default function DateGroupRow({
   }, []);
 
   const formatDate = (date) => {
-    const d = date.date ? date.date : new Date(date.dateKey);
-    return format(d, 'MMM dd, yyyy');
+    const d = date.date ? date.date : date.dateKey;
+    return formatDateShort(d);
   };
 
   const formatWeight = (weight) => {

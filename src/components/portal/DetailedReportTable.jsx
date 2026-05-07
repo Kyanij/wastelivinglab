@@ -1,10 +1,17 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { groupEntriesByDate, formatKg, formatCurrency } from '../../utils/portalHelpers';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
 export default function DetailedReportTable({ entries }) {
+  const { t } = useTranslation();
   const [expandedDate, setExpandedDate] = useState(null);
   const grouped = groupEntriesByDate(entries);
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
 
   const toggleDate = (date) => {
     setExpandedDate(expandedDate === date ? null : date);
@@ -35,10 +42,10 @@ export default function DetailedReportTable({ entries }) {
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Waste (kg)</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Earnings</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('portal.date')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('portal.totalWeight')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('portal.totalEarnings')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('portal.details')}</th>
             </tr>
           </thead>
           <tbody>
@@ -72,17 +79,17 @@ export default function DetailedReportTable({ entries }) {
                         <table className="w-full ml-4">
                           <thead>
                             <tr className="border-b border-gray-200">
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Waste Type</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Quantity (kg)</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Rate (Rp/kg)</th>
-                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Earnings (Rp)</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('portal.wasteType')}</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('portal.weight')}</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('portal.priceKg')}</th>
+                              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">{t('portal.amount')}</th>
                             </tr>
                           </thead>
                           <tbody>
                             {dayEntries.map((entry) => (
                               <tr key={entry.id} className="border-b border-gray-100 last:border-b-0">
                                 <td className="px-3 py-2 text-sm text-gray-700">
-                                  {entry.wasteTypeName || entry.wasteType || 'N/A'}
+                                  {getTranslatedWasteType(entry.wasteTypeName || entry.wasteType || 'N/A')}
                                 </td>
                                 <td className="px-3 py-2 text-sm text-gray-600">{formatKg(entry.weight)}</td>
                                 <td className="px-3 py-2 text-sm text-gray-600">

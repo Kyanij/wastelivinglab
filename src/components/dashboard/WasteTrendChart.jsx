@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
 import {
@@ -24,11 +25,26 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default function WasteTrendChart({ dailyData, weeklyData, monthlyData, isLoading }) {
+export default function WasteTrendChart({ dailyData = [], weeklyData = [], monthlyData = [], isLoading }) {
+  const { t } = useTranslation();
   const [period, setPeriod] = useState('daily');
 
-  const data =
-    period === 'daily' ? dailyData : period === 'weekly' ? weeklyData : monthlyData;
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
+  const hasWeeklyData = weeklyData && weeklyData.length > 0;
+  const hasMonthlyData = monthlyData && monthlyData.length > 0;
+
+  const getDataForPeriod = (p) => {
+    if (p === 'daily') return Array.isArray(dailyData) ? dailyData : [];
+    if (p === 'weekly') return Array.isArray(weeklyData) ? weeklyData : [];
+    if (p === 'monthly') return Array.isArray(monthlyData) ? monthlyData : [];
+    return [];
+  };
+
+  const data = getDataForPeriod(period);
 
   if (isLoading) {
     return (
@@ -51,7 +67,7 @@ export default function WasteTrendChart({ dailyData, weeklyData, monthlyData, is
             <div className="p-2 rounded-xl bg-green-50">
               <TrendingUp className="w-4 h-4 text-green-600" />
             </div>
-            <CardTitle className="text-base">Waste Collection Trend</CardTitle>
+            <CardTitle className="text-base">{t('dashboard.wasteCollectionTrend')}</CardTitle>
           </div>
           <Tabs value={period} onValueChange={setPeriod}>
             <TabsList className="h-8 bg-gray-100">
@@ -59,20 +75,24 @@ export default function WasteTrendChart({ dailyData, weeklyData, monthlyData, is
                 value="daily"
                 className="text-xs px-3 py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
-                Daily
+                {t('dashboard.daily')}
               </TabsTrigger>
-              <TabsTrigger
-                value="weekly"
-                className="text-xs px-3 py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-              >
-                Weekly
-              </TabsTrigger>
-              <TabsTrigger
-                value="monthly"
-                className="text-xs px-3 py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-              >
-                Monthly
-              </TabsTrigger>
+              { (
+                <TabsTrigger
+                  value="weekly"
+                  className="text-xs px-3 py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  {t('dashboard.weekly')}
+                </TabsTrigger>
+              )}
+              { (
+                <TabsTrigger
+                  value="monthly"
+                  className="text-xs px-3 py-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                >
+                  {t('dashboard.monthly')}
+                </TabsTrigger>
+              )}
             </TabsList>
           </Tabs>
         </div>
@@ -80,7 +100,7 @@ export default function WasteTrendChart({ dailyData, weeklyData, monthlyData, is
       <CardContent>
         {data.length === 0 ? (
           <div className="flex items-center justify-center h-[240px] text-gray-400 text-sm">
-            No data available for this period
+            {t('dashboard.noDataAvailable')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={240}>

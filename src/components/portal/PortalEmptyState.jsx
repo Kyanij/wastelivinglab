@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next';
+
 export default function PortalEmptyState() {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
       <div className="relative mb-6">
@@ -25,15 +28,15 @@ export default function PortalEmptyState() {
       </div>
       
       <h2 className="text-xl font-semibold text-gray-700 mb-2">
-        Select a Student
+        {t('portal.selectStudent')}
       </h2>
       <p className="text-gray-500 text-sm max-w-sm text-center">
-        Choose a student from the list to view their waste collection report and statistics
+        {t('portal.chooseStudentMessage')}
       </p>
 
       <div className="mt-8 flex items-center gap-2 text-xs text-gray-400">
         <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-        <span>Click on any student card to view details</span>
+        <span>{t('portal.clickStudentHint')}</span>
       </div>
     </div>
   );

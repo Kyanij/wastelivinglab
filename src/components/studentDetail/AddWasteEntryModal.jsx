@@ -25,6 +25,11 @@ export default function AddWasteEntryModal({
   const { t } = useTranslation();
   const { wasteTypes } = useWasteTypes();
 
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
   const [loading, setLoading] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(
@@ -233,7 +238,7 @@ export default function AddWasteEntryModal({
                       <option value="">{t('wasteEntry.wasteType')}</option>
                       {wasteTypes.map((wt) => (
                         <option key={wt.id} value={wt.id}>
-                          {wt.name}
+                          {getTranslatedWasteType(wt.name)}
                         </option>
                       ))}
                     </select>
@@ -254,7 +259,7 @@ export default function AddWasteEntryModal({
                       type="number"
                       step="0.01"
                       min="0"
-                      placeholder={t('wasteEntry.rate')}
+                      placeholder={t('wasteEntry.price')}
                       value={item.rate}
                       onChange={(e) => updateItem(index, 'rate', e.target.value)}
                       className="w-full px-2 md:px-3 py-2.5 md:py-2 border border-gray-200 rounded-lg text-right text-sm md:text-base"

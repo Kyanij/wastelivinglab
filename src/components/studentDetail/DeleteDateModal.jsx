@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
-import { format } from 'date-fns';
+import { formatDateLong } from '../../utils/dateHelpers';
 
 export default function DeleteDateModal({ dateGroup, isOpen, onClose, onConfirm, loading }) {
   const { t } = useTranslation();
 
   if (!isOpen || !dateGroup) return null;
 
-  const formattedDate = format(new Date(dateGroup.dateKey), 'MMMM dd, yyyy');
+  const formattedDate = formatDateLong(dateGroup.dateKey);
 
   const formatWeight = (weight) => {
     return (weight || 0).toFixed(2);

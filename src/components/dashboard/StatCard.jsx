@@ -1,15 +1,20 @@
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-const cardColors = {
-  'Total Waste (kg)': { bg: 'bg-emerald-100', icon: 'text-emerald-600', text: 'text-emerald-600' },
-  'Total Earnings': { bg: 'bg-amber-100', icon: 'text-amber-600', text: 'text-amber-600' },
-  'Active Students': { bg: 'bg-blue-100', icon: 'text-blue-600', text: 'text-blue-600' },
-  'Avg per Student': { bg: 'bg-purple-100', icon: 'text-purple-600', text: 'text-purple-600' },
-  'Top Performer': { bg: 'bg-rose-100', icon: 'text-rose-600', text: 'text-rose-600' },
-};
-
 export default function StatCard({ icon: Icon, label, value, trend, suffix = '', prefix = '', isText = false, isLoading = false }) {
-  const colors = cardColors[label] || { bg: 'bg-green-100', icon: 'text-green-600', text: 'text-green-600' };
+  const { t } = useTranslation();
+  
+  const getColors = () => {
+    const labelKey = label;
+    if (labelKey.includes('Sampah') || labelKey.includes('Waste')) return { bg: 'bg-emerald-100', icon: 'text-emerald-600', text: 'text-emerald-600' };
+    if (labelKey.includes('Pendapatan') || labelKey.includes('Earnings')) return { bg: 'bg-amber-100', icon: 'text-amber-600', text: 'text-amber-600' };
+    if (labelKey.includes('Siswa') || labelKey.includes('Students')) return { bg: 'bg-blue-100', icon: 'text-blue-600', text: 'text-blue-600' };
+    if (labelKey.includes('Rata') || labelKey.includes('Avg')) return { bg: 'bg-purple-100', icon: 'text-purple-600', text: 'text-purple-600' };
+    if (labelKey.includes('Terbaik') || labelKey.includes('Top') || labelKey.includes('Performer')) return { bg: 'bg-rose-100', icon: 'text-rose-600', text: 'text-rose-600' };
+    return { bg: 'bg-green-100', icon: 'text-green-600', text: 'text-green-600' };
+  };
+  
+  const colors = getColors();
 
   if (isLoading) {
     return (

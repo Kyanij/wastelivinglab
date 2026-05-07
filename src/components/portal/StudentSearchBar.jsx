@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { searchStudentsByName } from '../../firebase/students';
 import { Loader2 } from 'lucide-react';
 
 export default function StudentSearchBar({ onSelectStudent }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,7 +45,7 @@ export default function StudentSearchBar({ onSelectStudent }) {
             setSelectedStudent(null);
           }}
           onFocus={() => setShowDropdown(true)}
-          placeholder="Search by student name, class or ID..."
+          placeholder={t('portal.searchStudent')}
           className="w-full px-4 py-3 pl-10 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm"
         />
         <svg

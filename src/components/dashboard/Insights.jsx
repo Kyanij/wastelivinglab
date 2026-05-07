@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Lightbulb, TrendingUp, Users, Recycle } from 'lucide-react';
 
@@ -23,6 +24,13 @@ export default function Insights({
   topWasteTypePercent = 0,
   isLoading 
 }) {
+  const { t } = useTranslation();
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+
   if (isLoading) {
     return (
       <Card className="h-[140px]">
@@ -40,10 +48,17 @@ export default function Insights({
     );
   }
 
-  const trendValue = wasteTrend > 0 ? `+${wasteTrend.toFixed(1)}%` : `${wasteTrend.toFixed(1)}%`;
-  const trendColor = wasteTrend >= 0 
-    ? 'bg-green-500' 
-    : 'bg-red-500';
+  const trendStatus = wasteTrend >= 0 ? t('dashboard.increased') : t('dashboard.decreased');
+  const trendValue = t('dashboard.wasteIncreased', { status: trendStatus, percent: Math.abs(wasteTrend).toFixed(1) });
+  const trendColor = wasteTrend >= 0 ? 'bg-green-500' : 'bg-red-500';
+
+  const classValue = topClass 
+    ? t('dashboard.classLeads', { class: topClass, percent: topClassPercent.toFixed(1) })
+    : t('dashboard.noDataAvailable');
+
+  const wasteTypeValue = topWasteType 
+    ? `${getTranslatedWasteType(topWasteType)} (${topWasteTypePercent.toFixed(0)}%)`
+    : t('dashboard.noDataAvailable');
 
   return (
     <Card className="bg-white shadow-md">
@@ -52,27 +67,27 @@ export default function Insights({
           <div className="p-2 rounded-xl bg-yellow-50">
             <Lightbulb className="w-4 h-4 text-yellow-600" />
           </div>
-          <CardTitle className="text-base">Insights</CardTitle>
+          <CardTitle className="text-base">{t('dashboard.insights')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-3">
           <InsightCard 
             icon={TrendingUp}
-            title="Waste Trend"
-            value={`Waste ${wasteTrend >= 0 ? 'increased' : 'decreased'} by ${Math.abs(wasteTrend).toFixed(1)}%`}
+            title={t('dashboard.wasteTrend')}
+            value={trendValue}
             color={trendColor}
           />
           <InsightCard 
             icon={Users}
-            title="Top Class"
-            value={topClass ? `Class ${topClass} leads with ${topClassPercent.toFixed(1)}%` : 'No data'}
+            title={t('dashboard.topClass')}
+            value={classValue}
             color="bg-blue-500"
           />
           <InsightCard 
             icon={Recycle}
-            title="Top Waste Type"
-            value={topWasteType ? `${topWasteType} (${topWasteTypePercent.toFixed(0)}%)` : 'No data'}
+            title={t('dashboard.topWasteType')}
+            value={wasteTypeValue}
             color="bg-green-500"
           />
         </div>

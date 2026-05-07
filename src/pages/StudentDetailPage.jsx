@@ -105,8 +105,8 @@ export default function StudentDetailPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Student Waste History</h1>
-        <p className="text-gray-500 mt-1">Detailed view of student waste collection and earnings</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('studentDetail.pageTitle')}</h1>
+        <p className="text-gray-500 mt-1">{t('studentDetail.pageSubtitle')}</p>
       </div>
 
       <StudentHeader student={student} getInitials={getInitials} onAddEntry={() => setShowAddModal(true)} />

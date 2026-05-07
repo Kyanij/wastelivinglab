@@ -2,11 +2,16 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
-import { format } from 'date-fns';
+import { formatDateLong } from '../../utils/dateHelpers';
 
 export default function EditItemModal({ entry, isOpen, onClose, onSave, loading }) {
   const { t } = useTranslation();
   const { wasteTypes } = useWasteTypes();
+
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
 
   const [formData, setFormData] = useState({
     wasteTypeId: '',
@@ -71,7 +76,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
     }
 
     if (formData.rate === '' || parseFloat(formData.rate) < 0) {
-      newErrors.rate = t('studentDetail.rateNonNegative');
+      newErrors.rate = t('studentDetail.priceNonNegative');
     }
 
     setErrors(newErrors);
@@ -85,8 +90,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
     }
   };
 
-  const entryDate = entry?.date?.toDate ? entry.date.toDate() : new Date();
-  const formattedDate = format(entryDate, 'MMMM dd, yyyy');
+  const formattedDate = formatDateLong(entry?.date);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4">
@@ -103,7 +107,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
             </h2>
             <p className="text-sm text-gray-500 mt-1">
               {t('studentDetail.editingItemSubtitle', {
-                type: entry?.wasteTypeName,
+                type: getTranslatedWasteType(entry?.wasteTypeName),
                 date: formattedDate,
               })}
             </p>
@@ -131,7 +135,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
               <option value="">{t('wasteEntry.wasteType')}</option>
               {wasteTypes.map((wt) => (
                 <option key={wt.id} value={wt.id}>
-                  {wt.name}
+                  {getTranslatedWasteType(wt.name)}
                 </option>
               ))}
             </select>
@@ -175,7 +179,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              {t('wasteEntry.rate')} *
+              {t('wasteEntry.price')} *
             </label>
             <input
               type="number"

@@ -44,6 +44,12 @@ const getColorForType = (name) => {
 export default function WasteTypesPage() {
   const { t } = useTranslation();
   const { wasteTypes, loading } = useWasteTypes();
+  
+  const getTranslatedWasteType = (name) => {
+    const translated = t(`wasteTypesList.${name}`);
+    return translated === `wasteTypesList.${name}` ? name : translated;
+  };
+  
   const [showAddPanel, setShowAddPanel] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [name, setName] = useState('');
@@ -83,7 +89,7 @@ export default function WasteTypesPage() {
 
     const rate = parseFloat(rateVal);
     if (!rateVal || isNaN(rate) || rate <= 0) {
-      newErrors.defaultRate = t('wasteTypes.errors.rateRequired');
+      newErrors.defaultRate = t('wasteTypes.errors.priceRequired');
       isValid = false;
     }
 
@@ -222,7 +228,7 @@ export default function WasteTypesPage() {
                       <Icon className={`w-6 h-6 ${colorClass.split(' ')[1]}`} />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{type.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{getTranslatedWasteType(type.name)}</h3>
                       <p className="text-sm text-gray-500">Rp{type.defaultRate?.toFixed(2)}/kg</p>
                     </div>
                   </div>

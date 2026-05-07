@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Search, Plus, Loader2, Users, Pencil, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllStudents, getUniqueClasses } from '../firebase/students';
-import { format } from 'date-fns';
+import { formatDateShort } from '../utils/dateHelpers';
 import AddStudentModal from '../components/students/AddStudentModal';
 import EditStudentModal from '../components/students/EditStudentModal';
 import Pagination from '../components/layout/Pagination';
@@ -37,7 +37,7 @@ function StudentRow({ student, index, onEdit }) {
   const formatLastEntry = (date) => {
     if (!date) return '-';
     try {
-      return format(date.toDate(), 'MMM dd, yyyy');
+      return formatDateShort(date);
     } catch {
       return '-';
     }
@@ -53,7 +53,7 @@ function StudentRow({ student, index, onEdit }) {
           </div>
           <div>
             <p className="font-semibold text-gray-900">{student.name}</p>
-            <p className="text-sm text-gray-500">ID: {student.studentId}</p>
+            <p className="text-sm text-gray-500">{t('common.studentIdLabel')} {student.studentId}</p>
           </div>
         </div>
       </td>
@@ -175,7 +175,7 @@ export default function StudentsPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('students.title')}</h1>
-          <p className="text-gray-500 text-sm mt-1 hidden sm:block">Manage student records and track their waste collection</p>
+          <p className="text-gray-500 text-sm mt-1 hidden sm:block">{t('students.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
