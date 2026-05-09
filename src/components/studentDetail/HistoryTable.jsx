@@ -18,9 +18,11 @@ export default function HistoryTable({
 
   if (!dateGroups || dateGroups.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
-        <Package className="w-10 h-10 md:w-12 md:h-12 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-gray-900 font-medium mb-2">
+      <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100/50 p-8 md:p-12 text-center">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+          <Package className="w-8 h-8 md:w-10 md:h-10 text-green-400" />
+        </div>
+        <h3 className="text-gray-900 font-bold text-lg mb-2">
           {t('studentDetail.emptyState')}
         </h3>
         <p className="text-gray-500 text-sm">{t('studentDetail.emptyStateHint')}</p>
@@ -29,10 +31,10 @@ export default function HistoryTable({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="border-b border-gray-100 overflow-x-auto">
+    <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100/50 overflow-hidden">
+      <div className="border-b border-gray-100/50 overflow-x-auto">
         <div className="min-w-[600px]">
-          <div className="flex items-center px-3 md:px-4 py-2 md:py-3 bg-gray-50 text-xs font-medium text-gray-500 uppercase tracking-wider">
+          <div className="flex items-center px-3 md:px-4 py-3 md:py-4 bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 text-xs font-bold text-white uppercase tracking-wider shadow-sm">
             <div className="w-[10%]"></div>
             <div className="w-[20%]">{t('studentDetail.date')}</div>
             <div className="w-[20%] text-right">
@@ -65,8 +67,8 @@ export default function HistoryTable({
       </div>
 
       {hasActiveFilters && (
-        <div className="bg-orange-50 border-t border-orange-100 overflow-x-auto">
-          <div className="min-w-[600px] flex items-center px-3 md:px-4 py-2 md:py-3">
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-t border-orange-100/50 overflow-x-auto">
+          <div className="min-w-[600px] flex items-center px-3 md:px-4 py-3 md:py-4">
             <div className="w-[10%]"></div>
             <div className="w-[20%]">
               <span className="text-sm md:text-base font-bold text-orange-700">

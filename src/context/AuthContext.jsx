@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { useIdleTimeout } from '../hooks/useIdleTimeout';
@@ -14,13 +14,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showIdleWarning, setShowIdleWarning] = useState(false);
-  const warningShownRef = useRef(false);
 
   const logout = useCallback(() => {
     signOut(auth);
     setUser(null);
     setShowIdleWarning(false);
-    warningShownRef.current = false;
   }, []);
 
   useEffect(() => {
@@ -32,19 +30,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const { showWarning } = useIdleTimeout({
-    onLogout: logout
+    onLogout: logout,
+    enabled: !!user
   });
 
   useEffect(() => {
-    if (showWarning.current && user && !warningShownRef.current) {
-      warningShownRef.current = true;
+    if (showWarning && user) {
       setShowIdleWarning(true);
     }
   }, [showWarning, user]);
 
   const handleStayLoggedIn = useCallback(() => {
     setShowIdleWarning(false);
-    warningShownRef.current = false;
   }, []);
 
   return (
