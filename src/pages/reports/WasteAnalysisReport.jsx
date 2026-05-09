@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trash2, DollarSign, FileText, Recycle } from 'lucide-react';
 
-import PageHeader from '../../components/reports/PageHeader';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters } from '../../hooks/reports/useReportFilters';
 import { getWasteAnalysisData } from '../../firebase/reports';
@@ -68,11 +67,6 @@ export default function WasteAnalysisReport() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('reports.wasteAnalysis')}
-        description={t('reports.wasteAnalysisDesc')}
-      />
-
       <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
@@ -111,14 +105,39 @@ export default function WasteAnalysisReport() {
   );
 }
 
+function getKPIColor(label) {
+  if (!label) return 'emerald';
+  const lower = label.toLowerCase();
+  if (/waste|berat|sampah|total berat/i.test(lower)) return 'orange';
+  if (/earning|pendapatan|uang|total earnings|jumlah/i.test(lower)) return 'gold';
+  if (/student|siswa|people|active/i.test(lower)) return 'teal';
+  if (/entry|entri|count|jumlah entri/i.test(lower)) return 'rainbow';
+  if (/avg|rata|average|per entry|rata-rata/i.test(lower)) return 'violet';
+  if (/top|rank|peringkat|performer|class|peringkat/i.test(lower)) return 'rose';
+  return 'emerald';
+}
+
+const gradientColors = {
+  orange: 'from-orange-500 to-red-500',
+  gold: 'from-yellow-500 to-amber-500',
+  teal: 'from-teal-500 to-cyan-500',
+  rainbow: 'from-pink-500 via-purple-500 to-indigo-500',
+  violet: 'from-violet-500 to-purple-600',
+  rose: 'from-rose-500 to-pink-500',
+  emerald: 'from-emerald-500 to-teal-500',
+};
+
 function StatCard({ icon: Icon, label, value, change, suffix = '', prefix = '', isCurrency = false, loading }) {
+  const cardColor = getKPIColor(label);
+  const gradient = gradientColors[cardColor];
+  
   if (loading) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="glass-card p-5 relative overflow-hidden">
         <div className="animate-pulse">
-          <div className="h-10 w-10 rounded-xl bg-gray-100 mb-4" />
-          <div className="h-8 w-24 bg-gray-100 rounded mb-2" />
-          <div className="h-4 w-32 bg-gray-100 rounded" />
+          <div className="h-10 w-10 rounded-xl bg-gray-200 mb-4" />
+          <div className="h-8 w-24 bg-gray-200 rounded mb-2" />
+          <div className="h-4 w-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -130,10 +149,11 @@ function StatCard({ icon: Icon, label, value, change, suffix = '', prefix = '', 
     : typeof value === 'number' ? value.toFixed(2) : '0.00';
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:shadow-md transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div className="p-2.5 rounded-xl bg-emerald-100">
-          <Icon className="w-5 h-5 text-emerald-600" />
+    <div className="glass-card p-5 relative overflow-hidden group hover:scale-105 transition-all duration-300">
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.12] group-hover:opacity-[0.2] transition-opacity duration-300`} />
+      <div className="relative flex items-center justify-between mb-4">
+        <div className={`p-2.5 rounded-xl bg-gradient-to-br ${gradient} shadow-md`}>
+          <Icon className="w-5 h-5 text-white" />
         </div>
         {change !== undefined && (
           <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${
@@ -222,67 +242,82 @@ function MultiLineChart({ data, loading }) {
   );
 }
 
+function getWasteTypeGradient(typeName) {
+  if (!typeName) return 'from-gray-400 to-gray-500';
+  const lower = typeName.toLowerCase();
+  if (/plastic/i.test(lower)) return 'from-blue-500 to-blue-700';
+  if (/paper/i.test(lower)) return 'from-yellow-500 to-amber-500';
+  if (/glass/i.test(lower)) return 'from-teal-500 to-cyan-500';
+  if (/metal/i.test(lower)) return 'from-gray-500 to-gray-600';
+  if (/organic/i.test(lower)) return 'from-emerald-500 to-green-500';
+  if (/e.?waste|electronic/i.test(lower)) return 'from-violet-500 to-purple-600';
+  return 'from-emerald-500 to-teal-500';
+}
+
 function WasteTypeSummaryTable({ data, loading }) {
   const { t } = useTranslation();
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
+      <div className="glass-card p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('reports.wasteTypeSummary')}</h3>
         <div className="animate-pulse space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded-lg" />
+            <div key={i} className="h-14 bg-gray-200 rounded-xl" />
           ))}
         </div>
       </div>
     );
   }
 
+  const maxWeight = Math.max(...data.map(d => d.weight), 1);
+
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6">
+    <div className="glass-card p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('reports.wasteTypeSummary')}</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left text-xs font-semibold text-gray-500 uppercase py-3 px-2">{t('reports.wasteTypeCol')}</th>
-              <th className="text-right text-xs font-semibold text-gray-500 uppercase py-3 px-2">{t('reports.weightCol')}</th>
-              <th className="text-right text-xs font-semibold text-gray-500 uppercase py-3 px-2">{t('reports.percentageCol')}</th>
-              <th className="text-right text-xs font-semibold text-gray-500 uppercase py-3 px-2">{t('reports.earningsCol')}</th>
-              <th className="text-right text-xs font-semibold text-gray-500 uppercase py-3 px-2">{t('reports.avgRateCol')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-8 text-gray-400">
-                  {t('reports.noData')}
-                </td>
-              </tr>
-            ) : data.map((item, index) => (
-              <tr key={index} className="border-b border-gray-50 hover:bg-gray-50/50">
-                <td className="py-3 px-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="text-sm font-medium text-gray-900">{item.name}</span>
+      <div className="space-y-3">
+        {data.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">
+            {t('reports.noData')}
+          </div>
+        ) : data.map((item, index) => {
+          const gradient = getWasteTypeGradient(item.name);
+          const barWidth = (item.weight / maxWeight) * 100;
+          return (
+            <div 
+              key={index} 
+              className="relative overflow-hidden rounded-xl p-4 group hover:scale-[1.02] transition-all duration-300 cursor-default"
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.08] group-hover:opacity-[0.15] transition-opacity duration-300`} />
+              <div className={`absolute inset-y-0 left-0 bg-gradient-to-r ${gradient} opacity-[0.15] group-hover:opacity-[0.25] transition-opacity duration-300 rounded-l-xl`} style={{ width: `${barWidth}%` }} />
+              
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg bg-gradient-to-br ${gradient} shadow-md group-hover:shadow-lg transition-shadow duration-300`}>
+                    <div className={`w-3 h-3 rounded-full bg-white/30`} />
                   </div>
-                </td>
-                <td className="py-3 px-2 text-right text-sm font-semibold text-gray-900">
-                  {item.weight.toFixed(2)} kg
-                </td>
-                <td className="py-3 px-2 text-right text-sm text-gray-600">
-                  {item.percentage.toFixed(1)}%
-                </td>
-                <td className="py-3 px-2 text-right text-sm font-semibold text-green-600">
-                  Rp{item.earnings.toLocaleString('id-ID', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="py-3 px-2 text-right text-sm text-gray-600">
-                  Rp{item.avgRate.toFixed(2)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <div>
+                    <span className="text-sm font-semibold text-gray-900">{item.name}</span>
+                    <span className="ml-3 text-sm font-bold text-gray-700">{item.weight.toFixed(2)} kg</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <div className="text-xs font-semibold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      {item.percentage.toFixed(1)}%
+                    </div>
+                    <div className="text-sm font-semibold text-gray-900">
+                      Rp{item.earnings.toLocaleString('id-ID', { minimumFractionDigits: 2 })}
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    Rp{item.avgRate.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

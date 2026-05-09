@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Trash2, Building2, Users, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
 
-import PageHeader from '../../components/reports/PageHeader';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getClassReportData } from '../../firebase/reports';
@@ -63,11 +62,6 @@ export default function ClassReport() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={t('reports.class')}
-        description={t('reports.classDesc')}
-      />
-
       <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={updateDateRange}
@@ -104,14 +98,39 @@ export default function ClassReport() {
   );
 }
 
+function getKPIColor(label) {
+  if (!label) return 'emerald';
+  const lower = label.toLowerCase();
+  if (/waste|berat|sampah|total berat/i.test(lower)) return 'orange';
+  if (/earning|pendapatan|uang|total earnings|jumlah/i.test(lower)) return 'gold';
+  if (/student|siswa|people|active/i.test(lower)) return 'teal';
+  if (/entry|entri|count|jumlah entri/i.test(lower)) return 'rainbow';
+  if (/avg|rata|average|per entry|rata-rata/i.test(lower)) return 'violet';
+  if (/top|rank|peringkat|performer|class|peringkat/i.test(lower)) return 'rose';
+  return 'emerald';
+}
+
+const gradientColors = {
+  orange: 'from-orange-500 to-red-500',
+  gold: 'from-yellow-500 to-amber-500',
+  teal: 'from-teal-500 to-cyan-500',
+  rainbow: 'from-pink-500 via-purple-500 to-indigo-500',
+  violet: 'from-violet-500 to-purple-600',
+  rose: 'from-rose-500 to-pink-500',
+  emerald: 'from-emerald-500 to-teal-500',
+};
+
 function StatCard({ icon: Icon, label, value, suffix = '', loading }) {
+  const cardColor = getKPIColor(label);
+  const gradient = gradientColors[cardColor];
+  
   if (loading) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="glass-card p-5 relative overflow-hidden">
         <div className="animate-pulse">
-          <div className="h-10 w-10 rounded-xl bg-gray-100 mb-4" />
-          <div className="h-8 w-24 bg-gray-100 rounded mb-2" />
-          <div className="h-4 w-32 bg-gray-100 rounded" />
+          <div className="h-10 w-10 rounded-xl bg-gray-200 mb-4" />
+          <div className="h-8 w-24 bg-gray-200 rounded mb-2" />
+          <div className="h-4 w-32 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -120,10 +139,11 @@ function StatCard({ icon: Icon, label, value, suffix = '', loading }) {
   const displayValue = typeof value === 'number' ? value.toFixed(2) : '0.00';
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 hover:shadow-md transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div className="p-2.5 rounded-xl bg-emerald-100">
-          <Icon className="w-5 h-5 text-emerald-600" />
+    <div className="glass-card p-5 relative overflow-hidden group hover:scale-105 transition-all duration-300">
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-[0.12] group-hover:opacity-[0.2] transition-opacity duration-300`} />
+      <div className="relative flex items-center justify-between mb-4">
+        <div className={`p-2.5 rounded-xl bg-gradient-to-br ${gradient} shadow-md`}>
+          <Icon className="w-5 h-5 text-white" />
         </div>
       </div>
       <div className="text-2xl font-bold text-gray-900 mb-1">

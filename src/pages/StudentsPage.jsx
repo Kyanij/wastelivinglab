@@ -7,58 +7,14 @@ import { formatDateShort } from '../utils/dateHelpers';
 import AddStudentModal from '../components/students/AddStudentModal';
 import EditStudentModal from '../components/students/EditStudentModal';
 import Pagination from '../components/layout/Pagination';
-
-const getClassBadgeColor = (cls) => {
-  const colorMap = {
-    '6A': 'from-green-400 to-emerald-500',
-    '6B': 'from-blue-400 to-indigo-500', 
-    '6C': 'from-purple-400 to-violet-500',
-    '7A': 'from-amber-400 to-orange-500',
-    '7B': 'from-rose-400 to-pink-500',
-    '7C': 'from-cyan-400 to-teal-500',
-    '8A': 'from-lime-400 to-green-600',
-    '8B': 'from-fuchsia-400 to-purple-600',
-    '8C': 'from-red-400 to-rose-500',
-  };
-  return colorMap[cls] || 'from-gray-400 to-gray-500';
-};
-
-const avatarColorSchemes = [
-  { from: 'from-amber-100', to: 'to-orange-200', text: 'text-amber-700', ring: 'ring-amber-400/30' },
-  { from: 'from-sky-100', to: 'to-blue-200', text: 'text-sky-700', ring: 'ring-sky-400/30' },
-  { from: 'from-rose-100', to: 'to-pink-200', text: 'text-rose-700', ring: 'ring-rose-400/30' },
-  { from: 'from-violet-100', to: 'to-purple-200', text: 'text-violet-700', ring: 'ring-violet-400/30' },
-  { from: 'from-teal-100', to: 'to-cyan-200', text: 'text-teal-700', ring: 'ring-teal-400/30' },
-  { from: 'from-emerald-100', to: 'to-green-200', text: 'text-emerald-700', ring: 'ring-emerald-400/30' },
-  { from: 'from-lime-100', to: 'to-emerald-200', text: 'text-lime-700', ring: 'ring-lime-400/30' },
-  { from: 'from-fuchsia-100', to: 'to-pink-200', text: 'text-fuchsia-700', ring: 'ring-fuchsia-400/30' },
-  { from: 'from-indigo-100', to: 'to-blue-200', text: 'text-indigo-700', ring: 'ring-indigo-400/30' },
-  { from: 'from-cyan-100', to: 'to-sky-200', text: 'text-cyan-700', ring: 'ring-cyan-400/30' },
-  { from: 'from-orange-100', to: 'to-amber-200', text: 'text-orange-700', ring: 'ring-orange-400/30' },
-  { from: 'from-slate-100', to: 'to-gray-200', text: 'text-slate-700', ring: 'ring-slate-400/30' },
-];
-
-const getAvatarColor = (name, cls) => {
-  if (!name || !cls) return avatarColorSchemes[0];
-  const str = `${name}${cls}`.toLowerCase();
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const index = Math.abs(hash) % avatarColorSchemes.length;
-  return avatarColorSchemes[index];
-};
+import StudentAvatar from '../components/ui/StudentAvatar';
+import { getInitials, getClassGradient } from '../utils/studentUtils';
 
 function StudentRow({ student, index, onEdit }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   
-  const initials = student.name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+  const initials = getInitials(student.name);
 
   const formatLastEntry = (date) => {
     if (!date) return '-';
@@ -69,8 +25,7 @@ function StudentRow({ student, index, onEdit }) {
     }
   };
 
-  const avatarColor = getAvatarColor(student.name, student.class);
-  const classGradient = getClassBadgeColor(student.class);
+  const classGradient = getClassGradient(student.class);
 
   return (
     <tr 
@@ -80,9 +35,7 @@ function StudentRow({ student, index, onEdit }) {
       <td className="px-6 py-4 w-16 text-gray-400 font-medium group-hover:text-gray-600 transition-colors">{index}</td>
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarColor.from} ${avatarColor.to} flex items-center justify-center ring-2 ${avatarColor.ring} group-hover:scale-115 transition-all duration-300`}>
-            <span className={`text-sm font-bold ${avatarColor.text}`}>{initials}</span>
-          </div>
+          <StudentAvatar name={student.name} cls={student.class} size="md" />
           <div>
             <p className="font-semibold text-gray-900 group-hover:text-green-800 transition-colors">{student.name}</p>
             <p className="text-sm text-gray-500">{t('common.studentIdLabel')} {student.studentId}</p>
@@ -91,7 +44,7 @@ function StudentRow({ student, index, onEdit }) {
       </td>
       <td className="px-6 py-4">
         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-br ${classGradient} text-white shadow-md group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}>
-          <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+          <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-pulse" />
           {student.class}
         </span>
       </td>
@@ -206,53 +159,35 @@ export default function StudentsPage() {
 
   return (
     <div className="min-h-screen -mx-4 md:mx-0">
-      {/* Glass Card Header */}
-      <div className="glass-card p-5 md:p-6 mb-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-5">
-          {/* Icon + Title */}
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-200/50">
-              <Users className="w-6 h-6 md:w-7 md:h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-gray-900">{t('students.title')}</h1>
-              <p className="text-gray-500 text-sm hidden sm:block">{t('students.subtitle')}</p>
-            </div>
-          </div>
-          
-          {/* Add Student Button */}
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-200/50 hover:shadow-xl hover:shadow-green-300/50"
-          >
-            <Plus className="w-5 h-5" />
-            {t('students.addStudent')}
-          </button>
+      {/* Search & Filter Row */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4 md:mb-6">
+        <div className="flex-1 relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearchChange}
+            placeholder={t('students.searchPlaceholder')}
+            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200/80 bg-white/70 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all"
+          />
         </div>
-
-        {/* Search & Filter Row */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={handleSearchChange}
-              placeholder={t('students.searchPlaceholder')}
-              className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200/80 bg-white/70 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm transition-all"
-            />
-          </div>
-          <select
-            value={selectedClass}
-            onChange={handleClassChange}
-            className="px-4 py-3 rounded-xl border border-gray-200/80 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none cursor-pointer shadow-sm min-w-[140px]"
-          >
-            <option value="">{t('students.allClasses')}</option>
-            {classes.map((cls) => (
-              <option key={cls} value={cls}>{cls}</option>
-            ))}
-          </select>
-        </div>
+        <select
+          value={selectedClass}
+          onChange={handleClassChange}
+          className="px-4 py-3 rounded-xl border border-gray-200/80 bg-white/70 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 appearance-none cursor-pointer shadow-sm min-w-[140px]"
+        >
+          <option value="">{t('students.allClasses')}</option>
+          {classes.map((cls) => (
+            <option key={cls} value={cls}>{cls}</option>
+          ))}
+        </select>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg shadow-green-200/50 hover:shadow-xl hover:shadow-green-300/50"
+        >
+          <Plus className="w-5 h-5" />
+          {t('students.addStudent')}
+        </button>
       </div>
 
       {/* Table Container */}

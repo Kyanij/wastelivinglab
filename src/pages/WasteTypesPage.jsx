@@ -159,15 +159,11 @@ export default function WasteTypesPage() {
 
   return (
     <div className="relative">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 md:mb-6">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('wasteTypes.title')}</h1>
-          <p className="text-gray-500 mt-1 hidden sm:block">{t('wasteTypes.subtitle')}</p>
-        </div>
+      {/* Add Button */}
+      <div className="flex justify-end mb-4 md:mb-6">
         <button
           onClick={() => setShowAddPanel(true)}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
           {t('wasteTypes.addWasteType')}

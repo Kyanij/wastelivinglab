@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
 import LoginPage from '../pages/LoginPage';
@@ -13,29 +14,126 @@ import ClassReport from '../pages/reports/ClassReport';
 import WasteAnalysisReport from '../pages/reports/WasteAnalysisReport';
 import PublicPortal from '../pages/PublicPortal';
 
-export default function Router() {
+function AppRoutes() {
+  const { t } = useTranslation();
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/dev/seed" element={<SeedPage />} />
       
-      {/* Public Portal - No authentication required */}
       <Route path="/" element={<PublicPortal />} />
       
-      <Route element={<ProtectedRoute><AppLayout><Outlet /></AppLayout></ProtectedRoute>}>
+      {/* Dashboard */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('nav.dashboard')}
+            subtitle={t('dashboard.overviewByStudent')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/dashboard" element={<DashboardPage />} />
+      </Route>
+
+      {/* Students */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('nav.students')}
+            subtitle={t('students.subtitle')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentDetailPage />} />
+      </Route>
+
+      {/* Waste Types */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('nav.wasteTypes')}
+            subtitle={t('wasteTypes.subtitle')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/waste-types" element={<WasteTypesPage key="waste-types" />} />
-        
-        <Route path="/reports" element={<Navigate to="/reports/overview" replace />} />
+      </Route>
+      
+      {/* Reports - Individual layouts for each report type */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('reports.overview')}
+            subtitle={t('reports.overviewDesc')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/reports/overview" element={<OverviewReport />} />
+      </Route>
+
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('reports.student')}
+            subtitle={t('reports.studentDesc')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/reports/student" element={<StudentReport />} />
+      </Route>
+
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('reports.class')}
+            subtitle={t('reports.classDesc')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/reports/class" element={<ClassReport />} />
+      </Route>
+
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('reports.wasteAnalysis')}
+            subtitle={t('reports.wasteAnalysisDesc')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
         <Route path="/reports/waste-analysis" element={<WasteAnalysisReport />} />
+      </Route>
+
+      {/* Reports Index - Redirect */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout title={t('nav.reports')}>
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
+        <Route path="/reports" element={<Navigate to="/reports/overview" replace />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
+
+export default AppRoutes;

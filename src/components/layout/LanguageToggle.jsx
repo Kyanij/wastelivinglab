@@ -10,7 +10,7 @@ export default function LanguageToggle() {
   };
 
   return (
-    <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+    <div className="flex items-center gap-1 bg-white rounded-full p-1 shadow-sm">
       <button
         onClick={() => toggle('en')}
         className={`px-3 py-1 rounded-full text-sm font-medium transition-all

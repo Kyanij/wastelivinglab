@@ -1,38 +1,15 @@
 import { clsx } from 'clsx';
-
-const avatarColors = [
-  'bg-blue-100 text-blue-700',
-  'bg-green-100 text-green-700',
-  'bg-yellow-100 text-yellow-700',
-  'bg-pink-100 text-pink-700',
-  'bg-purple-100 text-purple-700',
-  'bg-teal-100 text-teal-700',
-  'bg-orange-100 text-orange-700',
-  'bg-indigo-100 text-indigo-700',
-];
-
-function getAvatarColor(name) {
-  const index = name?.charCodeAt(0) || 0;
-  return avatarColors[index % avatarColors.length];
-}
-
-function getInitials(name) {
-  if (!name) return '?';
-  const parts = name.trim().split(' ');
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.substring(0, 2).toUpperCase();
-}
+import StudentAvatar from '../ui/StudentAvatar';
+import { getClassGradient } from '../../utils/studentUtils';
 
 export default function StudentCard({ student, isActive, onClick }) {
-  const colorClass = getAvatarColor(student.name);
+  const classGradient = getClassGradient(student.class);
 
   return (
     <button
       onClick={onClick}
       className={clsx(
-        'w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-300',
+        'w-full flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-300 group',
         'border border-transparent hover:border-green-200',
         isActive
           ? 'bg-gradient-to-r from-green-50 to-green-100/50 border-l-4 border-l-green-600 shadow-sm'
@@ -40,21 +17,34 @@ export default function StudentCard({ student, isActive, onClick }) {
       )}
     >
       <div className={clsx(
-        'w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0',
-        colorClass
+        'transition-all duration-300 group-hover:scale-110',
+        isActive ? 'ring-2 ring-green-400 rounded-full' : ''
       )}>
-        {getInitials(student.name)}
+        <StudentAvatar name={student.name} cls={student.class} size="md" />
       </div>
       <div className="flex-1 min-w-0 text-left">
-        <h4 className="font-semibold text-gray-800 text-sm truncate">{student.name}</h4>
-        <p className="text-xs text-gray-500 truncate">
-          {student.class} · {student.studentId}
-        </p>
+        <h4 className={clsx(
+          'font-semibold text-sm truncate transition-colors',
+          isActive ? 'text-green-800' : 'text-gray-800 group-hover:text-green-700'
+        )}>
+          {student.name}
+        </h4>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className={clsx(
+            'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold transition-all',
+            isActive 
+              ? `bg-gradient-to-r ${classGradient} text-white shadow-sm` 
+              : `bg-gray-100 text-gray-600 group-hover:bg-gradient-to-r group-hover:${classGradient} group-hover:text-white`
+          )}>
+            {student.class}
+          </span>
+          <span className="text-xs text-gray-400">{student.studentId}</span>
+        </div>
       </div>
       <svg
         className={clsx(
           'w-4 h-4 flex-shrink-0 transition-colors',
-          isActive ? 'text-green-600' : 'text-gray-300'
+          isActive ? 'text-green-600' : 'text-gray-300 group-hover:text-green-500'
         )}
         fill="none"
         stroke="currentColor"

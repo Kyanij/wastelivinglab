@@ -98,14 +98,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
-          <p className="text-sm text-gray-500 mt-1">{t('dashboard.overviewByStudent')}</p>
-        </div>
-      </div>
-
       {/* Filter Bar */}
       <div className="bg-white rounded-2xl border border-gray-200 p-4">
         <div className="flex flex-col lg:flex-row lg:items-center gap-4">

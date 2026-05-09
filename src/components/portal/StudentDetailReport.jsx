@@ -6,34 +6,8 @@ import { groupEntriesByDate } from '../../hooks/studentDetail/useStudentDetail';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import PortalDateGroupRow from './PortalDateGroupRow';
 import { formatDateForInput } from '../../utils/dateHelpers';
-
-function getInitials(name) {
-  if (!name) return '??';
-  const parts = name.trim().split(' ');
-  if (parts.length > 1) {
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  }
-  return name.substring(0, 2).toUpperCase();
-}
-
-function getAvatarColor(name) {
-  if (!name) return 'bg-gray-500';
-  const colors = [
-    'bg-green-500',
-    'bg-blue-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-teal-500',
-    'bg-orange-500',
-    'bg-cyan-500'
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  return colors[Math.abs(hash) % colors.length];
-}
+import StudentAvatar from '../ui/StudentAvatar';
+import { getInitials, getAvatarColor, getClassGradient } from '../../utils/studentUtils';
 
 function formatKg(kg) {
   if (kg === 0) return '0 kg';
@@ -134,8 +108,6 @@ export default function StudentDetailReport({ student }) {
     return <PortalEmptyState />;
   }
 
-  const colorClass = getAvatarColor(student.name || '');
-
   const toggleDateExpansion = (dateKey) => {
     setExpandedDates(prev => ({
       ...prev,
@@ -164,36 +136,35 @@ export default function StudentDetailReport({ student }) {
       `}</style>
 
       {/* Student Header */}
-      <div className="flex items-center gap-5 animate-fade-in">
-        <div className={`w-16 h-16 rounded-full ${colorClass} flex items-center justify-center font-bold text-2xl shadow-md`}>
-          {getInitials(student.name)}
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">{student.name}</h2>
-          <div className="flex items-center gap-3 text-sm text-gray-500">
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              {student.class}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-              </svg>
-              {student.studentId}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              {entries.length} {t('portal.collections')}
-              <span className="text-gray-400 text-xs ml-1">
-                ({formatDateForInput(dateRange.from)} - {formatDateForInput(dateRange.to)})
+      <div className="relative group">
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+        <div className="relative flex items-center gap-5 animate-fade-in p-4 bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200/50 shadow-lg">
+          <StudentAvatar name={student.name} cls={student.class} size="lg" />
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl font-bold text-gray-800 mb-1 truncate">{student.name}</h2>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-gradient-to-r ${getClassGradient(student.class)} text-white shadow-sm`}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-pulse" />
+                {student.class}
               </span>
-            </span>
+              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+                ID: {student.studentId}
+              </span>
+              <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {entries.length} {t('portal.collections')}
+                <span className="text-gray-400 text-xs ml-1">
+                  ({formatDateForInput(dateRange.from)} - {formatDateForInput(dateRange.to)})
+                </span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
