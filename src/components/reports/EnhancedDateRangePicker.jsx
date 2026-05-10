@@ -34,7 +34,7 @@ const presets = [
   { key: 'thisYear', label: 'reports.thisYear', getValue: () => ({ from: startOfYear(new Date()), to: endOfYear(new Date()) }) },
 ];
 
-export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters, reportType }) {
+export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters, reportType, classDropdown, classValue, classOnChange }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(dateRange.from);
@@ -180,6 +180,23 @@ export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, 
               </button>
             ))}
           </div>
+
+          {/* Class Dropdown (if provided) */}
+          {classDropdown && (
+            <div className="relative">
+              <select
+                value={classValue}
+                onChange={classOnChange}
+                className="appearance-none w-[140px] px-3 py-1.5 pr-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200 text-xs font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500/50 cursor-pointer hover:border-green-300/50 transition-all duration-200"
+              >
+                <option value="all">{t('students.allClasses')}</option>
+                {classDropdown.map((cls) => (
+                  <option key={cls} value={cls}>{cls}</option>
+                ))}
+              </select>
+              <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+            </div>
+          )}
 
           {/* Refresh Button - moved to right */}
           <div className="ml-auto flex items-center gap-2">

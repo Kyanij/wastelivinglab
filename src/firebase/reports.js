@@ -289,19 +289,47 @@ export async function getStudentReportData(studentId, dateRange, comparisonRange
   };
 }
 
-export async function getClassReportData(dateRange, comparisonRange) {
+export async function getClassReportData(dateRange, comparisonRange, selectedClass = null) {
+  const { from: currFrom, to: currTo } = dateRange;
+  const { from: compFrom, to: compTo } = comparisonRange;
+
+  // Current period query
   const entriesQuery = query(
     wasteEntriesCollection,
-    where('date', '>=', toTimestamp(dateRange.from)),
-    where('date', '<=', toTimestamp(dateRange.to))
+    where('date', '>=', toTimestamp(currFrom)),
+    where('date', '<=', toTimestamp(currTo))
   );
 
-  const studentsSnapshot = await getDocs(studentsCollection);
+  // Previous period query for comparison
+  const prevQuery = query(
+    wasteEntriesCollection,
+    where('date', '>=', toTimestamp(compFrom)),
+    where('date', '<=', toTimestamp(compTo))
+  );
+
+  const [entriesSnapshot, prevSnapshot, studentsSnapshot, wasteTypesSnapshot] = await Promise.all([
+    getDocs(entriesQuery),
+    getDocs(prevQuery),
+    getDocs(studentsCollection),
+    getDocs(wasteTypesCollection)
+  ]);
+
   const students = studentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  const wasteTypes = wasteTypesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
-  const entriesSnapshot = await getDocs(entriesQuery);
-  const entries = entriesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  let entries = entriesSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  const prevEntries = prevSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
+  // Filter by selected class if provided
+  if (selectedClass && selectedClass !== 'all') {
+    entries = entries.filter(e => e.studentClass === selectedClass);
+    // Also filter previous period for comparison
+  }
+
+  // Get all unique classes from students for dropdown
+  const allClasses = [...new Set(students.map(s => s.class).filter(Boolean))].sort();
+
+  // Calculate class-level stats
   const classStats = {};
   const classStudentCount = {};
 
@@ -319,39 +347,181 @@ export async function getClassReportData(dateRange, comparisonRange) {
     classStats[cls].studentIds.add(entry.studentId);
   });
 
-  const totalWaste = Object.values(classStats).reduce((sum, c) => sum + c.totalWaste, 0);
-  const activeClasses = Object.keys(classStats).length;
-  const totalStudents = students.length;
-  const avgPerClass = activeClasses > 0 ? totalWaste / activeClasses : 0;
+  // Previous period stats for comparison
+  const prevClassStats = {};
+  prevEntries.forEach(entry => {
+    const cls = entry.studentClass || 'Unknown';
+    if (!prevClassStats[cls]) {
+      prevClassStats[cls] = 0;
+    }
+    prevClassStats[cls] += entry.weight || 0;
+  });
 
-  const ranking = Object.entries(classStats)
+  // Calculate KPI values with comparison
+  const totalWaste = entries.reduce((sum, e) => sum + (e.weight || 0), 0);
+  const totalEarnings = entries.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const prevTotalWaste = prevEntries.reduce((sum, e) => sum + (e.weight || 0), 0);
+  const prevTotalEarnings = prevEntries.reduce((sum, e) => sum + (e.amount || 0), 0);
+
+  const wasteChange = prevTotalWaste > 0 ? ((totalWaste - prevTotalWaste) / prevTotalWaste) * 100 : 0;
+  const earningsChange = prevTotalEarnings > 0 ? ((totalEarnings - prevTotalEarnings) / prevTotalEarnings) * 100 : 0;
+
+  const activeClasses = Object.keys(classStats).length;
+  const prevActiveClasses = Object.keys(prevClassStats).length;
+  const classesChange = activeClasses - prevActiveClasses;
+
+  const uniqueStudents = new Set(entries.map(e => e.studentId).filter(Boolean));
+  const activeStudents = uniqueStudents.size;
+  const prevUniqueStudents = new Set(prevEntries.map(e => e.studentId).filter(Boolean));
+  const prevActiveStudents = prevUniqueStudents.size;
+  const studentsChange = activeStudents - prevActiveStudents;
+
+  const avgPerClass = activeClasses > 0 ? totalWaste / activeClasses : 0;
+  const avgPerStudent = activeStudents > 0 ? totalWaste / activeStudents : 0;
+  const prevAvgPerClass = prevActiveClasses > 0 ? prevTotalWaste / prevActiveClasses : 0;
+  const prevAvgPerStudent = prevActiveStudents > 0 ? prevTotalWaste / prevActiveStudents : 0;
+  const avgChange = selectedClass && selectedClass !== 'all' 
+    ? (prevAvgPerStudent > 0 ? ((avgPerStudent - prevAvgPerStudent) / prevAvgPerStudent) * 100 : 0)
+    : (prevAvgPerClass > 0 ? ((avgPerClass - prevAvgPerClass) / prevAvgPerClass) * 100 : 0);
+
+  // Class distribution for bar chart (all classes)
+  const classDistribution = Object.entries(classStats)
     .map(([cls, stats]) => ({
       class: cls,
       totalWaste: Math.round(stats.totalWaste * 100) / 100,
-      studentCount: classStudentCount[cls] || 0,
-      avgPerStudent: classStudentCount[cls] ? Math.round((stats.totalWaste / classStudentCount[cls]) * 100) / 100 : 0
+      studentCount: classStudentCount[cls] || 0
     }))
     .sort((a, b) => b.totalWaste - a.totalWaste);
 
-  const barChartData = ranking.map(c => ({
-    class: c.class,
-    waste: c.totalWaste
-  }));
+  // Student stats for selected class
+  let studentStats = {};
+  if (selectedClass && selectedClass !== 'all') {
+    entries.forEach(entry => {
+      const sid = entry.studentId;
+      if (!studentStats[sid]) {
+        studentStats[sid] = {
+          studentId: sid,
+          studentName: entry.studentName || 'Unknown',
+          studentClass: entry.studentClass || 'N/A',
+          totalWaste: 0,
+          totalEarnings: 0
+        };
+      }
+      studentStats[sid].totalWaste += entry.weight || 0;
+      studentStats[sid].totalEarnings += entry.amount || 0;
+    });
 
-  const leadingClass = ranking[0]?.class || 'N/A';
+    // Add students with zero waste (from the selected class)
+    students
+      .filter(s => s.class === selectedClass)
+      .forEach(s => {
+        if (!studentStats[s.id]) {
+          studentStats[s.id] = {
+            studentId: s.id,
+            studentName: s.name || 'Unknown',
+            studentClass: s.class || 'N/A',
+            totalWaste: 0,
+            totalEarnings: 0
+          };
+        }
+      });
+  }
+
+  const studentRanking = Object.values(studentStats)
+    .map(s => ({
+      ...s,
+      totalWaste: Math.round(s.totalWaste * 100) / 100,
+      totalEarnings: Math.round(s.totalEarnings * 100) / 100
+    }))
+    .sort((a, b) => b.totalWaste - a.totalWaste);
+
+  // Trend data for line chart - daily aggregation
+  const dailyData = {};
+  const weeklyData = {};
+  const monthlyData = {};
+
+  entries.forEach(entry => {
+    if (!entry.date) return;
+    const date = fromTimestamp(entry.date);
+    const dateKey = format(date, 'yyyy-MM-dd');
+    const weekKey = format(date, 'yyyy-ww');
+    const monthKey = format(date, 'yyyy-MM');
+
+    dailyData[dateKey] = (dailyData[dateKey] || 0) + (entry.weight || 0);
+    weeklyData[weekKey] = (weeklyData[weekKey] || 0) + (entry.weight || 0);
+    monthlyData[monthKey] = (monthlyData[monthKey] || 0) + (entry.weight || 0);
+  });
+
+  const trendData = Object.entries(dailyData)
+    .map(([date, waste]) => ({ date, waste: Math.round(waste * 100) / 100 }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const trendWeekly = Object.entries(weeklyData)
+    .map(([date, waste]) => ({ date, waste: Math.round(waste * 100) / 100 }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  const trendMonthly = Object.entries(monthlyData)
+    .map(([date, waste]) => ({ date, waste: Math.round(waste * 100) / 100 }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  // Insights data
+  const isClassSelected = selectedClass && selectedClass !== 'all';
+  
+  // Top performing class
+  const totalAllClassesWaste = Object.values(classStats).reduce((sum, c) => sum + c.totalWaste, 0);
+  const topClassData = classDistribution[0] || null;
+  const topClassPercent = topClassData && totalAllClassesWaste > 0 
+    ? Math.round((topClassData.totalWaste / totalAllClassesWaste) * 100) 
+    : 0;
+
+  // Waste by type for insights
+  const wasteByType = {};
+  entries.forEach(entry => {
+    const typeName = entry.wasteTypeName || 'Unknown';
+    wasteByType[typeName] = (wasteByType[typeName] || 0) + (entry.weight || 0);
+  });
+  const wasteTypeData = Object.entries(wasteByType)
+    .map(([name, value]) => ({ 
+      name, 
+      value: Math.round(value * 100) / 100,
+      percentage: totalWaste > 0 ? Math.round((value / totalWaste) * 100) : 0
+    }))
+    .sort((a, b) => b.value - a.value);
+
+  const topWasteType = wasteTypeData[0] || null;
+
+  // Best student when class selected
+  const bestStudent = isClassSelected && studentRanking.length > 0 ? studentRanking[0] : null;
 
   return {
     kpis: {
-      totalWaste: { value: totalWaste },
-      activeClasses: { value: activeClasses },
-      totalStudents: { value: totalStudents },
-      avgPerClass: { value: avgPerClass }
+      totalWaste: { value: totalWaste, change: wasteChange },
+      totalEarnings: { value: totalEarnings, change: earningsChange },
+      activeClasses: { value: activeClasses, change: classesChange },
+      activeStudents: { value: activeStudents, change: studentsChange },
+      avgPerClass: { value: avgPerClass, change: avgChange },
+      avgPerStudent: { value: avgPerStudent, change: avgChange }
     },
     charts: {
-      classDistribution: barChartData
+      classDistribution,
+      studentRanking,
+      trend: trendData,
+      weeklyTrend: trendWeekly,
+      monthlyTrend: trendMonthly,
+      wasteByType: wasteTypeData
     },
-    ranking,
-    leadingClass
+    allClasses,
+    selectedClass,
+    isClassSelected,
+    insights: {
+      topClass: topClassData,
+      topClassPercent,
+      topWasteType,
+      bestStudent,
+      totalClasses: activeClasses,
+      avgPerClass: avgPerClass,
+      avgPerStudent: avgPerStudent
+    }
   };
 }
 

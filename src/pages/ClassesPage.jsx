@@ -4,18 +4,17 @@ import { Link } from 'react-router-dom';
 import { Plus, Loader2, GraduationCap, Package, Wallet, Calendar } from 'lucide-react';
 import { useClasses, useClassesStats } from '../hooks/useClasses';
 import { formatNumber } from '../utils/portalHelpers';
-import AddClassModal from '../components/classes/AddClassModal';
 import AddClassWasteEntryModal from '../components/classes/AddClassWasteEntryModal';
 
 const CLASS_COLORS = [
-  { from: 'from-indigo-500', to: 'to-purple-500' },
-  { from: 'from-amber-500', to: 'to-orange-500' },
-  { from: 'from-emerald-500', to: 'to-teal-500' },
-  { from: 'from-rose-500', to: 'to-pink-500' },
-  { from: 'from-cyan-500', to: 'to-blue-500' },
-  { from: 'from-violet-500', to: 'to-fuchsia-500' },
-  { from: 'from-sky-500', to: 'to-indigo-500' },
-  { from: 'from-lime-500', to: 'to-green-500' },
+  { from: 'from-indigo-100', to: 'to-purple-100', text: 'text-indigo-700', border: 'border-indigo-200' },
+  { from: 'from-amber-100', to: 'to-orange-100', text: 'text-amber-700', border: 'border-amber-200' },
+  { from: 'from-emerald-100', to: 'to-teal-100', text: 'text-emerald-700', border: 'border-emerald-200' },
+  { from: 'from-rose-100', to: 'to-pink-100', text: 'text-rose-700', border: 'border-rose-200' },
+  { from: 'from-cyan-100', to: 'to-blue-100', text: 'text-cyan-700', border: 'border-cyan-200' },
+  { from: 'from-violet-100', to: 'to-fuchsia-100', text: 'text-violet-700', border: 'border-violet-200' },
+  { from: 'from-sky-100', to: 'to-indigo-100', text: 'text-sky-700', border: 'border-sky-200' },
+  { from: 'from-lime-100', to: 'to-green-100', text: 'text-lime-700', border: 'border-lime-200' },
 ];
 
 function getClassColor(className) {
@@ -33,58 +32,58 @@ function ClassCard({ classData, index }) {
   const lastEntry = classData.lastEntryDate?.toDate ? classData.lastEntryDate.toDate() : classData.lastEntryDate;
   
   const formattedDate = lastEntry 
-    ? new Date(lastEntry).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    ? new Date(lastEntry).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })
     : '-';
 
   return (
     <Link
       to={`/classes/${classData.id}`}
-      className={`group relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${color.from} ${color.to} 
-        hover:scale-[1.02] transition-all duration-300 shadow-lg hover:shadow-2xl`}
+      className={`group relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${color.from} ${color.to} border ${color.border}
+        hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-2xl`}
     >
-      <div className="absolute inset-0 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl" />
+      <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/30 rounded-2xl" />
       
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className={`w-12 h-12 rounded-xl bg-white/60 backdrop-blur flex items-center justify-center shadow-sm`}>
+              <GraduationCap className={`w-6 h-6 ${color.text}`} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white">{classData.name}</h3>
-              <p className="text-white/70 text-sm">Class</p>
+              <h3 className={`text-xl font-bold ${color.text}`}>{classData.name}</h3>
+              <p className="text-gray-500 text-sm">Class</p>
             </div>
           </div>
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="text-white text-sm">→</span>
+          <div className={`w-8 h-8 rounded-full bg-white/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}>
+            <span className={`${color.text} text-sm`}>→</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+          <div className="bg-white/40 backdrop-blur rounded-xl p-3 border border-white/50">
             <div className="flex items-center gap-2 mb-1">
-              <Package className="w-4 h-4 text-white/80" />
-              <span className="text-white/70 text-xs">{t('classes.totalWaste')}</span>
+              <Package className={`w-4 h-4 ${color.text}`} />
+              <span className="text-gray-500 text-xs">{t('classes.totalWaste')}</span>
             </div>
-            <p className="text-white font-bold text-lg">{formatNumber(classData.totalWaste || 0)} <span className="text-sm font-normal">kg</span></p>
+            <p className={`${color.text} font-bold text-lg`}>{formatNumber(classData.totalWaste || 0)} <span className="text-sm font-normal">kg</span></p>
           </div>
-          <div className="bg-white/10 backdrop-blur rounded-xl p-3">
+          <div className="bg-white/40 backdrop-blur rounded-xl p-3 border border-white/50">
             <div className="flex items-center gap-2 mb-1">
-              <Wallet className="w-4 h-4 text-white/80" />
-              <span className="text-white/70 text-xs">{t('classes.totalEarnings')}</span>
+              <Wallet className={`w-4 h-4 ${color.text}`} />
+              <span className="text-gray-500 text-xs">{t('classes.totalEarnings')}</span>
             </div>
-            <p className="text-white font-bold text-lg">Rp {formatNumber(classData.totalEarnings || 0)}</p>
+            <p className={`${color.text} font-bold text-lg`}>Rp {formatNumber(classData.totalEarnings || 0)}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-white/70 text-sm">
+        <div className="flex items-center gap-2 text-gray-500 text-sm">
           <Calendar className="w-4 h-4" />
           <span>{t('classes.lastEntry')}: {formattedDate}</span>
         </div>
       </div>
 
-      <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
-      <div className="absolute -top-4 -left-4 w-16 h-16 bg-white/10 rounded-full blur-xl" />
+      <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
+      <div className="absolute -top-4 -left-4 w-16 h-16 bg-white/20 rounded-full blur-xl" />
     </Link>
   );
 }
@@ -93,7 +92,6 @@ export default function ClassesPage() {
   const { t } = useTranslation();
   const { classes, loading, error, refetch } = useClasses();
   const { stats, loading: statsLoading } = useClassesStats();
-  const [showAddClassModal, setShowAddClassModal] = useState(false);
   const [showAddEntryModal, setShowAddEntryModal] = useState(false);
 
   const sortedClasses = useMemo(() => {
@@ -132,13 +130,6 @@ export default function ClassesPage() {
         </div>
         <div className="flex gap-3">
           <button
-            onClick={() => setShowAddClassModal(true)}
-            className="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            {t('classes.addClass')}
-          </button>
-          <button
             onClick={() => setShowAddEntryModal(true)}
             className="px-4 py-2.5 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors flex items-center gap-2 shadow-lg shadow-green-600/25"
           >
@@ -149,38 +140,38 @@ export default function ClassesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-              <GraduationCap className="w-5 h-5 text-indigo-600" />
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-gray-500 text-sm">{t('classes.totalClasses')}</p>
-              <p className="text-2xl font-bold text-gray-900">{statsLoading ? '...' : stats.totalClasses}</p>
+              <p className="text-white/80 text-sm">{t('classes.totalClasses')}</p>
+              <p className="text-2xl font-bold">{statsLoading ? '...' : stats.totalClasses}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-orange-500/30 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-              <Package className="w-5 h-5 text-amber-600" />
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+              <Package className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-gray-500 text-sm">{t('classes.totalWasteAll')}</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {statsLoading ? '...' : formatNumber(stats.totalWaste)} <span className="text-sm font-normal text-gray-500">kg</span>
+              <p className="text-white/80 text-sm">{t('classes.totalWasteAll')}</p>
+              <p className="text-2xl font-bold">
+                {statsLoading ? '...' : formatNumber(stats.totalWaste)} <span className="text-sm font-normal text-white/80">kg</span>
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-teal-500/30 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-gray-500 text-sm">{t('classes.totalEarningsAll')}</p>
-              <p className="text-2xl font-bold text-gray-900">
+              <p className="text-white/80 text-sm">{t('classes.totalEarningsAll')}</p>
+              <p className="text-2xl font-bold">
                 {statsLoading ? '...' : `Rp ${formatNumber(stats.totalEarnings)}`}
               </p>
             </div>
@@ -210,15 +201,6 @@ export default function ClassesPage() {
           ))}
         </div>
       )}
-
-      <AddClassModal
-        isOpen={showAddClassModal}
-        onClose={() => setShowAddClassModal(false)}
-        onSuccess={() => {
-          setShowAddClassModal(false);
-          refetch();
-        }}
-      />
 
       <AddClassWasteEntryModal
         isOpen={showAddEntryModal}

@@ -135,6 +135,14 @@
     "focusReducing": "Focus on reducing plastic waste.",
     "noData": "No data available for selected filters",
     "date": "Date",
+    "wasteByClass": "Waste by Class",
+    "studentsInClass": "Students in {{class}}",
+    "classLeads": "Class {{class}} leads with {{percent}}%",
+    "classesActive": "{{count}} classes were active during this period",
+    "avgClassWaste": "Average waste per class is {{value}} kg",
+    "bestStudent": "{{name}} is the top collector with {{waste}} kg",
+    "studentsInClassCount": "{{count}} students participated in collection",
+    "avgStudentWaste": "Average waste per student is {{value}} kg",
     "wasteType": "Waste Type",
     "weight": "Weight (kg)",
     "price": "Price (Rp/kg)",
@@ -210,7 +218,7 @@
     "totalEarnings": "Total Earnings",
     "totalEntries": "Total Entries",
     "averagePerEntry": "Average per Entry",
-    "addWasteEntry": "+ Add Class Waste Entry",
+    "addWasteEntry": "Add Waste Entry",
     "allWasteTypes": "All Waste Types",
     "export": "Export",
     "date": "Date",
@@ -277,7 +285,8 @@
     "next": "Next",
     "selectWasteTypes": "Select Waste Types",
     "addItems": "Add Waste Items",
-    "newClassWillBeCreated": "New class will be created automatically"
+    "newClassWillBeCreated": "New class will be created automatically",
+    "changeClass": "Change Class"
   },
   "class": {
     "errors": {
@@ -316,7 +325,7 @@
     "totalWeightLabel": "Total Weight",
     "totalEarningsLabel": "Total Earnings",
     "averagePerEntry": "Average per Entry",
-    "addWasteEntry": "+ Add Waste Entry",
+    "addWasteEntry": "Add Waste Entry",
     "allWasteTypes": "All Waste Types",
     "export": "Export",
     "date": "Date",
@@ -409,6 +418,8 @@
     "insights": "Insights",
     "wasteTrend": "Waste Trend",
     "wasteCollectionTrend": "Waste Collection Trend",
+    "wasteByClass": "Waste by Class",
+    "studentsInClass": "Students in {{class}}",
     "increased": "increased",
     "decreased": "decreased",
     "topClass": "Top Class",
@@ -416,7 +427,12 @@
     "topWasteType": "Top Waste Type",
     "classLeads": "Class {{class}} leads with {{percent}}%",
     "wasteIncreased": "Waste {{status}} by {{percent}}%",
-    "noDataAvailable": "No data available"
+    "noDataAvailable": "No data available",
+    "classesActive": "{{count}} classes were active during this period",
+    "avgClassWaste": "Average waste per class is {{value}} kg",
+    "bestStudent": "{{name}} is the top collector with {{waste}} kg",
+    "studentsInClassCount": "{{count}} students participated in collection",
+    "avgStudentWaste": "Average waste per student is {{value}} kg"
   },
   "wasteTypes": {
     "title": "Waste Types",

@@ -135,6 +135,14 @@
     "focusReducing": "Fokus pada pengurangan sampah plastik.",
     "noData": "Tidak ada data untuk filter yang dipilih",
     "date": "Tanggal",
+    "wasteByClass": "Sampah per Kelas",
+    "studentsInClass": "Siswa di {{class}}",
+    "classLeads": "Kelas {{class}} memimpin dengan {{percent}}%",
+    "classesActive": "{{count}} kelas aktif selama periode ini",
+    "avgClassWaste": "Rata-rata sampah per kelas adalah {{value}} kg",
+    "bestStudent": "{{name}} adalah pengcollect terbaik dengan {{waste}} kg",
+    "studentsInClassCount": "{{count}} siswa berpartisipasi dalam pengumpulan",
+    "avgStudentWaste": "Rata-rata sampah per siswa adalah {{value}} kg",
     "wasteType": "Jenis Sampah",
     "weight": "Berat (kg)",
     "price": "Harga (Rp/kg)",
@@ -210,7 +218,7 @@
     "totalEarnings": "Total Pendapatan",
     "totalEntries": "Total Entri",
     "averagePerEntry": "Rata-rata per Entri",
-    "addWasteEntry": "+ Tambah Entri Sampah Kelas",
+    "addWasteEntry": "Tambah Entri Sampah",
     "allWasteTypes": "Semua Jenis Sampah",
     "export": "Ekspor",
     "date": "Tanggal",
@@ -277,7 +285,8 @@
     "next": "Lanjut",
     "selectWasteTypes": "Pilih Jenis Sampah",
     "addItems": "Tambah Item Sampah",
-    "newClassWillBeCreated": "Kelas baru akan dibuat secara otomatis"
+    "newClassWillBeCreated": "Kelas baru akan dibuat secara otomatis",
+    "changeClass": "Ubah Kelas"
   },
   "class": {
     "errors": {
@@ -316,7 +325,7 @@
     "totalWeightLabel": "Total Berat",
     "totalEarningsLabel": "Total Pendapatan",
     "averagePerEntry": "Rata-rata per Entri",
-    "addWasteEntry": "+ Tambah Entri Sampah",
+    "addWasteEntry": "Tambah Entri Sampah",
     "allWasteTypes": "Semua Jenis Sampah",
     "export": "Ekspor",
     "date": "Tanggal",
@@ -409,6 +418,8 @@
     "insights": "Wawasan",
     "wasteTrend": "Tren Sampah",
     "wasteCollectionTrend": "Tren Pengumpulan Sampah",
+    "wasteByClass": "Sampah per Kelas",
+    "studentsInClass": "Siswa di {{class}}",
     "increased": "meningkat",
     "decreased": "menurun",
     "topClass": "Kelas Terbaik",
@@ -416,7 +427,12 @@
     "topWasteType": "Jenis Sampah Utama",
     "classLeads": "Kelas {{class}} memimpin dengan {{percent}}%",
     "wasteIncreased": "Sampah {{status}} sebesar {{percent}}%",
-    "noDataAvailable": "Tidak ada data"
+    "noDataAvailable": "Tidak ada data",
+    "classesActive": "{{count}} kelas aktif selama periode ini",
+    "avgClassWaste": "Rata-rata sampah per kelas adalah {{value}} kg",
+    "bestStudent": "{{name}} adalah pengcollect terbaik dengan {{waste}} kg",
+    "studentsInClassCount": "{{count}} siswa berpartisipasi dalam pengumpulan",
+    "avgStudentWaste": "Rata-rata sampah per siswa adalah {{value}} kg"
   },
   "wasteTypes": {
     "title": "Jenis Sampah",

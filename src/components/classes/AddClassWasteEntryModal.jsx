@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Loader2, AlertCircle, ChevronRight, ChevronLeft, Plus, Trash2, Calendar } from 'lucide-react';
+import { X, Loader2, AlertCircle, ChevronRight, ChevronLeft, Plus, Trash2, Calendar, Check } from 'lucide-react';
 import { addClassWasteEntry, validateClassName, getAllClasses } from '../../firebase/classes';
 import { getAllWasteTypes } from '../../firebase/wasteTypes';
 import toast from 'react-hot-toast';
@@ -17,14 +17,15 @@ const WASTE_TYPE_ICONS = {
   'Other': '📦',
 };
 
-export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess }) {
+export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess, preSelectedClass = null }) {
   const { t } = useTranslation();
-  const [step, setStep] = useState(1);
+  const getInitialStep = () => preSelectedClass ? 2 : 1;
+  const [step, setStep] = useState(getInitialStep);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  const [className, setClassName] = useState('');
-  const [classInputValue, setClassInputValue] = useState('');
+  const [className, setClassName] = useState(preSelectedClass || '');
+  const [classInputValue, setClassInputValue] = useState(preSelectedClass || '');
   const [existingClasses, setExistingClasses] = useState([]);
   const [classError, setClassError] = useState('');
   
@@ -48,9 +49,9 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess }) 
   }, [isOpen]);
 
   const resetForm = () => {
-    setStep(1);
-    setClassName('');
-    setClassInputValue('');
+    setStep(preSelectedClass ? 2 : 1);
+    setClassName(preSelectedClass || '');
+    setClassInputValue(preSelectedClass || '');
     setClassError('');
     setDate(new Date());
     setSelectedTypes([]);
@@ -238,12 +239,36 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess }) 
             ))}
           </div>
           <div className="flex justify-between text-xs text-gray-500 mb-4">
-            <span>{t('classEntry.selectClass')}</span>
-            <span>{t('classEntry.selectDate')}</span>
-            <span>{t('classEntry.addItems')}</span>
-            <span>{t('classEntry.reviewConfirm')}</span>
+            {preSelectedClass ? (
+              <>
+                <span className={step >= 2 ? 'text-green-600 font-medium' : ''}>{t('classEntry.selectDate')}</span>
+                <span className={step >= 3 ? 'text-green-600 font-medium' : ''}>{t('classEntry.addItems')}</span>
+                <span className={step >= 4 ? 'text-green-600 font-medium' : ''}>{t('classEntry.reviewConfirm')}</span>
+              </>
+            ) : (
+              <>
+                <span>{t('classEntry.selectClass')}</span>
+                <span>{t('classEntry.selectDate')}</span>
+                <span>{t('classEntry.addItems')}</span>
+                <span>{t('classEntry.reviewConfirm')}</span>
+              </>
+            )}
           </div>
         </div>
+
+        {preSelectedClass && (
+          <div className="px-6 pb-2">
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <Check className="w-4 h-4 text-green-600" />
+              </div>
+              <div>
+                <span className="text-sm text-gray-500">Class</span>
+                <span className="ml-2 font-semibold text-gray-900">{preSelectedClass}</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {step === 1 && (
@@ -471,7 +496,7 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess }) 
         </div>
 
         <div className="p-4 md:p-6 border-t border-gray-100 flex justify-between">
-          {step > 1 ? (
+          {step > (preSelectedClass ? 2 : 1) ? (
             <button
               type="button"
               onClick={handleBack}

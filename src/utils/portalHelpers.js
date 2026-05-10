@@ -107,5 +107,5 @@ export const WASTE_TYPE_CONFIG = [
 
 export function formatNumber(num) {
   if (num === null || num === undefined) return '0';
-  return new Intl.NumberFormat('id-ID').format(num);
+  return new Intl.NumberFormat('en-US').format(num);
 }
