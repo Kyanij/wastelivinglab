@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Package } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 import DateGroupRow from './DateGroupRow';
 
 export default function HistoryTable({
@@ -77,12 +78,12 @@ export default function HistoryTable({
             </div>
             <div className="w-[20%] text-right">
               <span className="text-sm md:text-base font-bold text-gray-900">
-                {(filteredTotalWeight || 0).toFixed(2)} kg
+                {formatNumber(filteredTotalWeight || 0)} kg
               </span>
             </div>
             <div className="w-[20%] text-right">
               <span className="text-sm md:text-base font-bold text-green-600">
-                Rp{(filteredTotalEarnings || 0).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                Rp {formatNumber(filteredTotalEarnings || 0)}
               </span>
             </div>
             <div className="w-[20%]"></div>

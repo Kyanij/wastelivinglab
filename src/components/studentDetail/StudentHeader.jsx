@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import { Plus } from 'lucide-react';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { getInitials, getClassGradient } from '../../utils/studentUtils';
@@ -16,8 +17,7 @@ export default function StudentHeader({ student, getInitials: getInit, onAddEntr
   const classGradient = getClassGradient(student.class);
 
   const formatWeight = (weight) => {
-    const w = weight || 0;
-    return w.toFixed(2);
+    return formatNumber(weight || 0);
   };
 
   const formatDate = (timestamp) => {
@@ -28,7 +28,7 @@ export default function StudentHeader({ student, getInitials: getInit, onAddEntr
   return (
     <div className="relative group">
       <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-      <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-200/50 p-4 md:p-6 shadow-lg shadow-gray-200/30 hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300">
+      <div className="relative bg-white/80 backdrop-blur-xl rounded-2xl border border-2 border-green-600/60 p-4 md:p-6 shadow-lg shadow-gray-200/30 hover:shadow-xl hover:shadow-gray-200/40 transition-all duration-300">
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 via-emerald-500/5 to-teal-500/5 pointer-events-none" />
         <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3 md:gap-4">

@@ -4,7 +4,7 @@ import { X, Plus, Trash2 } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
 import { db } from '../../firebase/config';
 import { COLLECTIONS } from '../../firebase/collections';
-import { toLocalDateString } from '../../utils/portalHelpers';
+import { toLocalDateString, formatNumber } from '../../utils/portalHelpers';
 import { formatCurrency } from '../../utils/formatCurrency';
 import {
   collection,
@@ -302,7 +302,7 @@ export default function AddWasteEntryModal({
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">{t('wasteEntry.totalWeight')}</span>
-              <span className="font-medium">{totalWeight.toFixed(2)} kg</span>
+              <span className="font-medium">{formatNumber(totalWeight)} kg</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">

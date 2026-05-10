@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 import { formatCurrency } from '../../utils/formatCurrency';
 
 const wasteTypeKeyMap = {
@@ -28,7 +29,7 @@ export default function EntrySubTable({
   };
 
   const formatWeight = (weight) => {
-    return (weight || 0).toFixed(2);
+    return formatNumber(weight || 0);
   };
 
   return (

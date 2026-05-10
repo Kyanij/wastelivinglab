@@ -5,6 +5,7 @@ import { Trash2, DollarSign, FileText, Recycle } from 'lucide-react';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters } from '../../hooks/reports/useReportFilters';
 import { getWasteAnalysisData } from '../../firebase/reports';
+import { formatNumber } from '../../utils/portalHelpers';
 
 import WasteDistributionChart from '../../components/dashboard/WasteDistributionChart';
 
@@ -221,7 +222,7 @@ function MultiLineChart({ data, loading }) {
             <div key={type} className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-gray-900">{type}</span>
-                <span className="text-gray-600">{total.toFixed(2)} kg</span>
+                <span className="text-gray-600">{formatNumber(total)} kg</span>
               </div>
               <div className="h-6 bg-gray-100 rounded-lg overflow-hidden">
                 <div 
@@ -298,7 +299,7 @@ function WasteTypeSummaryTable({ data, loading }) {
                   </div>
                   <div>
                     <span className="text-sm font-semibold text-gray-900">{item.name}</span>
-                    <span className="ml-3 text-sm font-bold text-gray-700">{item.weight.toFixed(2)} kg</span>
+                    <span className="ml-3 text-sm font-bold text-gray-700">{formatNumber(item.weight)} kg</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -311,7 +312,7 @@ function WasteTypeSummaryTable({ data, loading }) {
                     </div>
                   </div>
                   <div className="text-sm text-gray-500">
-                    Rp{item.avgRate.toFixed(2)}
+                    Rp {formatNumber(item.avgRate)}
                   </div>
                 </div>
               </div>

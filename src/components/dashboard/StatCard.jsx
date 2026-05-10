@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 
 const kpiColors = {
   waste: { 
@@ -96,7 +97,7 @@ export default function StatCard({ icon: Icon, label, value, trend, suffix = '',
       </div>
       
       <div className="text-2xl font-bold text-gray-900 mb-1">
-        {prefix}{typeof value === 'number' ? value.toFixed(2) : value}{suffix}
+        {prefix}{typeof value === 'number' ? formatNumber(value) : value}{suffix}
       </div>
       <div className="text-sm text-gray-500">{label}</div>
     </div>

@@ -4,6 +4,7 @@ import { Search, Plus, Loader2, Users, Pencil, ChevronRight as ChevronRightIcon 
 import { useNavigate } from 'react-router-dom';
 import { getAllStudents, getUniqueClasses } from '../firebase/students';
 import { formatDateShort } from '../utils/dateHelpers';
+import { formatNumber } from '../utils/portalHelpers';
 import AddStudentModal from '../components/students/AddStudentModal';
 import EditStudentModal from '../components/students/EditStudentModal';
 import Pagination from '../components/layout/Pagination';
@@ -48,9 +49,9 @@ function StudentRow({ student, index, onEdit }) {
           {student.class}
         </span>
       </td>
-      <td className="px-6 py-4 text-gray-900 font-semibold group-hover:text-green-800 transition-colors">{student.totalWaste?.toFixed(1) || '0.0'} kg</td>
+      <td className="px-6 py-4 text-gray-900 font-semibold group-hover:text-green-800 transition-colors">{formatNumber(student.totalWaste || 0)} kg</td>
       <td className="px-6 py-4">
-        <span className="text-green-600 font-bold group-hover:text-green-800 transition-colors">Rp{student.totalEarnings?.toFixed(2) || '0.00'}</span>
+        <span className="text-green-600 font-bold group-hover:text-green-800 transition-colors">Rp {formatNumber(student.totalEarnings || 0)}</span>
       </td>
       <td className="px-6 py-4 text-gray-500 group-hover:text-gray-700 transition-colors">{formatLastEntry(student.lastEntryDate)}</td>
       <td className="px-6 py-4">

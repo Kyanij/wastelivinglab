@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import { ChevronDown, ChevronRight, Calendar, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import EntrySubTable from './EntrySubTable';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -35,7 +36,7 @@ export default function DateGroupRow({
   };
 
   const formatWeight = (weight) => {
-    return (weight || 0).toFixed(2);
+    return formatNumber(weight || 0);
   };
 
   const entryCountText =

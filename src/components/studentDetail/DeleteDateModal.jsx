@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import { formatDateLong } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import { formatCurrency } from '../../utils/formatCurrency';
 
 export default function DeleteDateModal({ dateGroup, isOpen, onClose, onConfirm, loading }) {
@@ -11,7 +12,7 @@ export default function DeleteDateModal({ dateGroup, isOpen, onClose, onConfirm,
   const formattedDate = formatDateLong(dateGroup.dateKey);
 
   const formatWeight = (weight) => {
-    return (weight || 0).toFixed(2);
+    return formatNumber(weight || 0);
   };
 
   return (

@@ -10,6 +10,7 @@ import {
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters } from '../../hooks/reports/useReportFilters';
 import { getClassReportData } from '../../firebase/reports';
+import { formatNumber } from '../../utils/portalHelpers';
 import StudentAvatar from '../../components/ui/StudentAvatar';
 import StatCard from '../../components/dashboard/StatCard';
 import WasteTrendChart from '../../components/dashboard/WasteTrendChart';
@@ -228,7 +229,7 @@ function HorizontalBarChart({ data, isClassSelected, selectedClass, loading }) {
                   </p>
                   {isClassSelected && (
                     <p className="text-xs text-gray-500">
-                      Rp {item.totalEarnings?.toFixed(2) || '0.00'}
+                      Rp {formatNumber(item.totalEarnings || 0)}
                     </p>
                   )}
                 </div>
@@ -236,7 +237,7 @@ function HorizontalBarChart({ data, isClassSelected, selectedClass, loading }) {
                 {/* Value */}
                 <div className="text-right">
                   <p className="text-sm font-bold text-gray-700">
-                    {value.toFixed(2)} kg
+                    {formatNumber(value)} kg
                   </p>
                 </div>
               </div>

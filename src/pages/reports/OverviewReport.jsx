@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getOverviewData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
+import { formatNumber } from '../../utils/portalHelpers';
 
 import WasteTrendChart from '../../components/dashboard/WasteTrendChart';
 import WasteDistributionChart from '../../components/dashboard/WasteDistributionChart';
@@ -276,7 +277,7 @@ function TopStudentsTable({ students, loading }) {
                 </div>
                 
                 <div className="text-right">
-                  <p className="text-sm font-bold text-gray-900">{student.totalWaste.toFixed(2)} kg</p>
+                  <p className="text-sm font-bold text-gray-900">{formatNumber(student.totalWaste)} kg</p>
                   <p className="text-xs font-semibold text-emerald-600">Rp{student.totalEarnings.toLocaleString('id-ID', { minimumFractionDigits: 2 })}</p>
                 </div>
               </div>

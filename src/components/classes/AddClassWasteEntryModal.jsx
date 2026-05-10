@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X, Loader2, AlertCircle, ChevronRight, ChevronLeft, Plus, Trash2, Calendar, Check } from 'lucide-react';
 import { addClassWasteEntry, validateClassName, getAllClasses } from '../../firebase/classes';
 import { getAllWasteTypes } from '../../firebase/wasteTypes';
+import { formatNumber } from '../../utils/portalHelpers';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 
@@ -418,7 +419,7 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess, pr
                           <div>
                             <label className="block text-xs text-gray-500 mb-1">{t('classEntry.amount')}</label>
                             <div className="px-3 py-2 bg-gray-100 rounded-lg text-gray-900 font-medium">
-                              Rp {item.amount.toFixed(2)}
+                              Rp {formatNumber(item.amount)}
                             </div>
                           </div>
                         </div>
@@ -430,11 +431,11 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess, pr
                     <div className="flex justify-between items-center">
                       <div>
                         <span className="text-sm text-gray-600">{t('classEntry.totalWeight')}: </span>
-                        <span className="font-bold text-gray-900">{totals.weight.toFixed(2)} kg</span>
+                        <span className="font-bold text-gray-900">{formatNumber(totals.weight)} kg</span>
                       </div>
                       <div>
                         <span className="text-sm text-gray-600">{t('classEntry.totalEarnings')}: </span>
-                        <span className="font-bold text-green-600">Rp {totals.amount.toFixed(2)}</span>
+                        <span className="font-bold text-green-600">Rp {formatNumber(totals.amount)}</span>
                       </div>
                     </div>
                   </div>
@@ -475,7 +476,7 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess, pr
                       </div>
                       <div className="text-right">
                         <div className="text-sm text-gray-600">{item.weight} kg × Rp {item.price}</div>
-                        <div className="font-medium text-green-600">Rp {item.amount.toFixed(2)}</div>
+                        <div className="font-medium text-green-600">Rp {formatNumber(item.amount)}</div>
                       </div>
                     </div>
                   );
@@ -486,8 +487,8 @@ export default function AddClassWasteEntryModal({ isOpen, onClose, onSuccess, pr
                 <div className="flex justify-between items-center">
                   <div className="text-lg font-medium text-gray-900">{t('common.total')}</div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-green-600">Rp {totals.amount.toFixed(2)}</div>
-                    <div className="text-sm text-gray-500">{totals.weight.toFixed(2)} kg</div>
+                    <div className="text-2xl font-bold text-green-600">Rp {formatNumber(totals.amount)}</div>
+                    <div className="text-sm text-gray-500">{formatNumber(totals.weight)} kg</div>
                   </div>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Awa
 import ExportPDFButton from '../../components/reports/ExportPDFButton';
 import StudentSearchInput from '../../components/reports/StudentSearchInput';
 import { formatDateShort } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
 import { getStudentReportData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
@@ -447,7 +448,7 @@ function EntriesTable({ entries, expandedDates, toggleDate }) {
                 </div>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="text-right">
-                    <div className="font-semibold text-gray-900">{entry.totalWeight.toFixed(2)} kg</div>
+                    <div className="font-semibold text-gray-900">{formatNumber(entry.totalWeight)} kg</div>
                     <div className="text-xs text-gray-500">weight</div>
                   </div>
                   <div className="w-px h-8 bg-gray-200" />
@@ -481,7 +482,7 @@ function EntriesTable({ entries, expandedDates, toggleDate }) {
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="text-xs text-gray-500 uppercase tracking-wide">{t('reports.weight')}</span>
-                              <span className="font-bold text-gray-900">{item.weight?.toFixed(2)} kg</span>
+                              <span className="font-bold text-gray-900">{formatNumber(item.weight)} kg</span>
                             </div>
                             <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
                               <div 
@@ -492,7 +493,7 @@ function EntriesTable({ entries, expandedDates, toggleDate }) {
                             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                               <div>
                                 <span className="text-xs text-gray-400">Rate</span>
-                                <div className="font-medium text-gray-700">Rp{item.rate?.toFixed(2)}</div>
+                                <div className="font-medium text-gray-700">Rp {formatNumber(item.rate)}</div>
                               </div>
                               <div className="text-right">
                                 <span className="text-xs text-gray-400">{t('reports.amount')}</span>

@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Users } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 
 export default function WasteOverviewByStudent({ students, isLoading }) {
   const { t } = useTranslation();
@@ -78,10 +79,10 @@ export default function WasteOverviewByStudent({ students, isLoading }) {
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">{student.class}</td>
                       <td className="py-3 px-4 text-sm text-right font-medium text-gray-900">
-                        {(student.totalWaste || 0).toFixed(2)} kg
+                        {formatNumber(student.totalWaste || 0)} kg
                       </td>
                       <td className="py-3 px-4 text-sm text-right font-medium text-emerald-600">
-                        Rp {(student.totalEarnings || 0).toFixed(2)}
+                        Rp {formatNumber(student.totalEarnings || 0)}
                       </td>
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -103,7 +104,7 @@ export default function WasteOverviewByStudent({ students, isLoading }) {
 
           <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
             <span className="text-sm text-gray-500">Total Students: {students.length}</span>
-            <span className="text-sm font-medium text-gray-900">Total Waste: {totalWaste.toFixed(2)} kg</span>
+            <span className="text-sm font-medium text-gray-900">Total Waste: {formatNumber(totalWaste)} kg</span>
           </div>
         </>
       )}

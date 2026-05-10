@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { X, Loader2, AlertTriangle } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 import toast from 'react-hot-toast';
 
 export default function DeleteClassItemModal({ entry, isOpen, onClose, onConfirm, loading }) {
@@ -33,7 +34,7 @@ export default function DeleteClassItemModal({ entry, isOpen, onClose, onConfirm
             <div>
               <p className="text-sm text-gray-700">{t('classDetail.deleteItemWarning')}</p>
               <p className="mt-1 font-medium text-gray-900">
-                {entry.wasteTypeName} — {entry.weight} kg — Rp {entry.amount?.toFixed(2)}
+                {entry.wasteTypeName} — {entry.weight} kg — Rp {formatNumber(entry.amount)}
               </p>
               <p className="text-sm text-gray-500 mt-1">
                 {t('classDetail.deleteItemFrom', { date: entry.date?.toDate?.()?.toLocaleDateString() })}

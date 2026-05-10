@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Loader2 } from 'lucide-react';
 import { getAllWasteTypes } from '../../firebase/wasteTypes';
+import { formatNumber } from '../../utils/portalHelpers';
 import toast from 'react-hot-toast';
 
 const WASTE_TYPE_ICONS = {
@@ -156,7 +157,7 @@ export default function EditClassItemModal({ entry, isOpen, onClose, onSave, loa
           <div className="bg-gray-50 rounded-xl p-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">{t('classEntry.amount')}</span>
-              <span className="text-xl font-bold text-green-600">Rp {amount.toFixed(2)}</span>
+              <span className="text-xl font-bold text-green-600">Rp {formatNumber(amount)}</span>
             </div>
           </div>
 

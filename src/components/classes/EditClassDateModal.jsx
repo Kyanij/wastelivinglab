@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Loader2, Plus, Trash2 } from 'lucide-react';
 import { getAllWasteTypes } from '../../firebase/wasteTypes';
+import { formatNumber } from '../../utils/portalHelpers';
 import toast from 'react-hot-toast';
 
 const WASTE_TYPE_ICONS = {
@@ -212,7 +213,7 @@ export default function EditClassDateModal({ dateGroup, isOpen, onClose, onSave,
                   </td>
                   <td className="py-2 pr-2">
                     <div className="px-3 py-2 bg-gray-100 rounded-lg text-sm font-medium">
-                      Rp {((parseFloat(row.weight) || 0) * (parseFloat(row.price) || 0)).toFixed(2)}
+                      Rp {formatNumber((parseFloat(row.weight) || 0) * (parseFloat(row.price) || 0))}
                     </div>
                   </td>
                   <td className="py-2">
@@ -242,11 +243,11 @@ export default function EditClassDateModal({ dateGroup, isOpen, onClose, onSave,
             <div className="flex justify-between items-center">
               <div>
                 <span className="text-sm text-gray-600">{t('classEntry.totalWeight')}: </span>
-                <span className="font-medium text-gray-900">{totals.weight.toFixed(2)} kg</span>
+                <span className="font-medium text-gray-900">{formatNumber(totals.weight)} kg</span>
               </div>
               <div>
                 <span className="text-sm text-gray-600">{t('classEntry.totalEarnings')}: </span>
-                <span className="font-bold text-green-600">Rp {totals.amount.toFixed(2)}</span>
+                <span className="font-bold text-green-600">Rp {formatNumber(totals.amount)}</span>
               </div>
             </div>
           </div>

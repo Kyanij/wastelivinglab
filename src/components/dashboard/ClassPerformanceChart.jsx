@@ -11,6 +11,7 @@ import {
   LabelList,
 } from 'recharts';
 import { BarChart3 } from 'lucide-react';
+import { formatNumber } from '../../utils/portalHelpers';
 
 const defaultData = [
   { name: '6A', value: 85.4 },
@@ -116,7 +117,7 @@ export default function ClassPerformanceChart({ data, isLoading }) {
                     fontWeight: 600,
                     fontFamily: 'Inter, sans-serif',
                   }}
-                  formatter={(value) => value.toFixed(2)}
+                  formatter={(value) => formatNumber(value)}
                 />
               </Bar>
             </BarChart>

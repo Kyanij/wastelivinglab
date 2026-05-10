@@ -6,6 +6,7 @@ import { groupEntriesByDate } from '../../hooks/studentDetail/useStudentDetail';
 import { getStudents } from '../../firebase/students';
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { formatDateForInput } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import StudentAvatar from '../ui/StudentAvatar';
 import { getClassGradient } from '../../utils/studentUtils';
 import WasteTrendChart from '../dashboard/WasteTrendChart';
@@ -549,7 +550,7 @@ export default function StudentDetailReport({ student }) {
                 </div>
                 <div className="flex items-center gap-8">
                   <div className="text-right">
-                    <span className="text-lg font-bold text-gray-800">{totalWeight.toFixed(2)} kg</span>
+                    <span className="text-lg font-bold text-gray-800">{formatNumber(totalWeight)} kg</span>
                   </div>
                   <div className="text-right min-w-[120px]">
                     <span className="text-lg font-bold text-green-600">{formatFullCurrency(totalEarnings)}</span>

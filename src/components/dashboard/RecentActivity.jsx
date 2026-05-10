@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { formatDateTime } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Recycle } from 'lucide-react';
 
@@ -69,7 +70,7 @@ export default function RecentActivity({ activities, isLoading }) {
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-medium text-gray-700">Rp {activity.amount.toFixed(0)}</p>
+                  <p className="text-sm font-medium text-gray-700">Rp {formatNumber(activity.amount)}</p>
                 </div>
               </div>
             ))}

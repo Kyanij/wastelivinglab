@@ -1,10 +1,10 @@
 import { ChevronDown, ChevronRight, Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { formatDateShort } from '../../utils/dateHelpers';
-import { formatCurrency } from '../../utils/portalHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 
 function formatWeight(weight) {
-  return (weight || 0).toFixed(2);
+  return formatNumber(weight || 0);
 }
 
 export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) {

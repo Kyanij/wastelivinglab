@@ -1,23 +1,23 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Plus, Loader2, GraduationCap, Package, Wallet, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Loader2, GraduationCap, Package, Wallet, Pencil, ChevronRight as ChevronRightIcon } from 'lucide-react';
 import { useClasses, useClassesStats } from '../hooks/useClasses';
 import { formatNumber } from '../utils/portalHelpers';
 import AddClassWasteEntryModal from '../components/classes/AddClassWasteEntryModal';
 
 const CLASS_COLORS = [
-  { from: 'from-indigo-100', to: 'to-purple-100', text: 'text-indigo-700', border: 'border-indigo-200' },
-  { from: 'from-amber-100', to: 'to-orange-100', text: 'text-amber-700', border: 'border-amber-200' },
-  { from: 'from-emerald-100', to: 'to-teal-100', text: 'text-emerald-700', border: 'border-emerald-200' },
-  { from: 'from-rose-100', to: 'to-pink-100', text: 'text-rose-700', border: 'border-rose-200' },
-  { from: 'from-cyan-100', to: 'to-blue-100', text: 'text-cyan-700', border: 'border-cyan-200' },
-  { from: 'from-violet-100', to: 'to-fuchsia-100', text: 'text-violet-700', border: 'border-violet-200' },
-  { from: 'from-sky-100', to: 'to-indigo-100', text: 'text-sky-700', border: 'border-sky-200' },
-  { from: 'from-lime-100', to: 'to-green-100', text: 'text-lime-700', border: 'border-lime-200' },
+  'from-blue-100 to-blue-200',
+  'from-emerald-100 to-emerald-200',
+  'from-amber-100 to-amber-200',
+  'from-violet-100 to-violet-200',
+  'from-rose-100 to-rose-200',
+  'from-cyan-100 to-cyan-200',
+  'from-orange-100 to-orange-200',
+  'from-teal-100 to-teal-200',
 ];
 
-function getClassColor(className) {
+function getClassGradient(className) {
   if (!className) return CLASS_COLORS[0];
   let hash = 0;
   for (let i = 0; i < className.length; i++) {
@@ -26,9 +26,11 @@ function getClassColor(className) {
   return CLASS_COLORS[Math.abs(hash) % CLASS_COLORS.length];
 }
 
-function ClassCard({ classData, index }) {
+function ClassRow({ classData, index, onEdit }) {
   const { t } = useTranslation();
-  const color = getClassColor(classData.name);
+  const navigate = useNavigate();
+  
+  const gradient = getClassGradient(classData.name);
   const lastEntry = classData.lastEntryDate?.toDate ? classData.lastEntryDate.toDate() : classData.lastEntryDate;
   
   const formattedDate = lastEntry 
@@ -36,55 +38,46 @@ function ClassCard({ classData, index }) {
     : '-';
 
   return (
-    <Link
-      to={`/classes/${classData.id}`}
-      className={`group relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${color.from} ${color.to} border ${color.border}
-        hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-2xl`}
+    <tr 
+      onClick={() => navigate(`/classes/${classData.id}`)}
+      className="cursor-pointer group border-b border-gray-100/30 last:border-0 transition-all duration-300 hover:bg-gradient-to-r hover:from-green-100/90 hover:to-emerald-100/90 hover:shadow-lg hover:shadow-green-200/50 hover:-translate-y-0.5"
     >
-      <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/30 rounded-2xl" />
-      
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 rounded-xl bg-white/60 backdrop-blur flex items-center justify-center shadow-sm`}>
-              <GraduationCap className={`w-6 h-6 ${color.text}`} />
-            </div>
-            <div>
-              <h3 className={`text-xl font-bold ${color.text}`}>{classData.name}</h3>
-              <p className="text-gray-500 text-sm">Class</p>
-            </div>
+      <td className="px-6 py-4 w-16 text-gray-400 font-medium group-hover:text-gray-600 transition-colors">{index}</td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
+            <span className="text-sm font-bold text-gray-700">{classData.name?.charAt(0) || 'C'}</span>
           </div>
-          <div className={`w-8 h-8 rounded-full bg-white/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity`}>
-            <span className={`${color.text} text-sm`}>→</span>
+          <div>
+            <p className="font-semibold text-gray-900 group-hover:text-green-800 transition-colors">{classData.name}</p>
+            <p className="text-sm text-gray-500">Class</p>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-white/40 backdrop-blur rounded-xl p-3 border border-white/50">
-            <div className="flex items-center gap-2 mb-1">
-              <Package className={`w-4 h-4 ${color.text}`} />
-              <span className="text-gray-500 text-xs">{t('classes.totalWaste')}</span>
-            </div>
-            <p className={`${color.text} font-bold text-lg`}>{formatNumber(classData.totalWaste || 0)} <span className="text-sm font-normal">kg</span></p>
-          </div>
-          <div className="bg-white/40 backdrop-blur rounded-xl p-3 border border-white/50">
-            <div className="flex items-center gap-2 mb-1">
-              <Wallet className={`w-4 h-4 ${color.text}`} />
-              <span className="text-gray-500 text-xs">{t('classes.totalEarnings')}</span>
-            </div>
-            <p className={`${color.text} font-bold text-lg`}>Rp {formatNumber(classData.totalEarnings || 0)}</p>
-          </div>
+      </td>
+      <td className="px-6 py-4 text-gray-900 font-semibold group-hover:text-green-800 transition-colors">{formatNumber(classData.totalWaste || 0)} kg</td>
+      <td className="px-6 py-4">
+        <span className="text-green-600 font-bold group-hover:text-green-800 transition-colors">Rp {formatNumber(classData.totalEarnings || 0)}</span>
+      </td>
+      <td className="px-6 py-4 text-gray-500 group-hover:text-gray-700 transition-colors">{formattedDate}</td>
+      <td className="px-6 py-4">
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={(e) => { e.stopPropagation(); onEdit(); }}
+            className="pointer-events-auto relative z-10 w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 text-sm font-medium text-green-600 bg-green-50/50 border border-green-200/50 rounded-lg hover:bg-green-100 hover:border-green-300 hover:shadow-lg hover:shadow-green-100/50 hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            <Pencil className="w-4 h-4" />
+            <span className="sm:hidden">Edit</span>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); navigate(`/classes/${classData.id}`); }}
+            className="pointer-events-auto relative z-10 w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 sm:py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50/50 border border-emerald-200/50 rounded-lg hover:bg-emerald-100 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50 hover:scale-105 active:scale-95 transition-all duration-200"
+          >
+            <ChevronRightIcon className="w-4 h-4" />
+          </button>
+          <ChevronRightIcon className="w-4 h-4 text-green-500 opacity-0 group-hover:opacity-100 transition-all duration-200" />
         </div>
-
-        <div className="flex items-center gap-2 text-gray-500 text-sm">
-          <Calendar className="w-4 h-4" />
-          <span>{t('classes.lastEntry')}: {formattedDate}</span>
-        </div>
-      </div>
-
-      <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-white/20 rounded-full blur-2xl" />
-      <div className="absolute -top-4 -left-4 w-16 h-16 bg-white/20 rounded-full blur-xl" />
-    </Link>
+      </td>
+    </tr>
   );
 }
 
@@ -140,38 +133,38 @@ export default function ClassesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-purple-500/30 hover:scale-[1.02] transition-all duration-300">
+        <div className="bg-blue-100 rounded-2xl p-5 border border-blue-200 shadow-sm hover:bg-blue-200 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shadow-md">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-white/80 text-sm">{t('classes.totalClasses')}</p>
-              <p className="text-2xl font-bold">{statsLoading ? '...' : stats.totalClasses}</p>
+              <p className="text-gray-500 text-sm">{t('classes.totalClasses')}</p>
+              <p className="text-2xl font-bold text-gray-900">{statsLoading ? '...' : stats.totalClasses}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-orange-500/30 hover:scale-[1.02] transition-all duration-300">
+        <div className="bg-amber-100 rounded-2xl p-5 border border-amber-200 shadow-sm hover:bg-amber-200 hover:shadow-lg hover:shadow-amber-500/20 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-md">
               <Package className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-white/80 text-sm">{t('classes.totalWasteAll')}</p>
-              <p className="text-2xl font-bold">
-                {statsLoading ? '...' : formatNumber(stats.totalWaste)} <span className="text-sm font-normal text-white/80">kg</span>
+              <p className="text-gray-500 text-sm">{t('classes.totalWasteAll')}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {statsLoading ? '...' : formatNumber(stats.totalWaste)} <span className="text-sm font-normal text-gray-500">kg</span>
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 text-white shadow-lg hover:shadow-xl hover:shadow-teal-500/30 hover:scale-[1.02] transition-all duration-300">
+        <div className="bg-emerald-100 rounded-2xl p-5 border border-emerald-200 shadow-sm hover:bg-emerald-200 hover:shadow-lg hover:shadow-emerald-500/20 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md">
               <Wallet className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-white/80 text-sm">{t('classes.totalEarningsAll')}</p>
-              <p className="text-2xl font-bold">
+              <p className="text-gray-500 text-sm">{t('classes.totalEarningsAll')}</p>
+              <p className="text-2xl font-bold text-gray-900">
                 {statsLoading ? '...' : `Rp ${formatNumber(stats.totalEarnings)}`}
               </p>
             </div>
@@ -195,10 +188,31 @@ export default function ClassesPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sortedClasses.map((classData, index) => (
-            <ClassCard key={classData.id} classData={classData} index={index} />
-          ))}
+        <div className="glass-card overflow-hidden">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full min-w-[600px]">
+              <thead>
+                <tr className="bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 text-white">
+                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4 w-16">#</th>
+                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">Class</th>
+                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">{t('classes.totalWaste')}</th>
+                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">{t('classes.totalEarnings')}</th>
+                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">{t('classes.lastEntry')}</th>
+                  <th className="text-right text-sm font-bold uppercase tracking-wider px-6 py-4 w-32">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedClasses.map((classData, index) => (
+                  <ClassRow
+                    key={classData.id}
+                    classData={classData}
+                    index={index + 1}
+                    onEdit={() => {}}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

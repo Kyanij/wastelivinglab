@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import { useWasteTypes } from '../../hooks/useWasteTypes';
 import { formatDateLong } from '../../utils/dateHelpers';
+import { formatNumber } from '../../utils/portalHelpers';
 
 export default function EditItemModal({ entry, isOpen, onClose, onSave, loading }) {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ export default function EditItemModal({ entry, isOpen, onClose, onSave, loading 
 
   if (!isOpen) return null;
 
-  const amount = (parseFloat(formData.weight || 0) * parseFloat(formData.rate || 0)).toFixed(2);
+  const amount = formatNumber((parseFloat(formData.weight || 0) * parseFloat(formData.rate || 0)));
 
   const handleWasteTypeChange = (e) => {
     const selectedType = wasteTypes.find((wt) => wt.id === e.target.value);
