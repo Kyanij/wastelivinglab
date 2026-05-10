@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Recycle, Leaf } from 'lucide-react';
+import { LayoutDashboard, Users, Recycle, Leaf, GraduationCap } from 'lucide-react';
 import NavItem from './NavItem';
 import ReportsNavItem from './ReportsNavItem';
 import LogoutButton from '../auth/LogoutButton';
@@ -14,6 +14,7 @@ export default function Sidebar() {
   const navItems = [
     { to: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard') },
     { to: '/students', icon: Users, label: t('nav.students') },
+    { to: '/classes', icon: GraduationCap, label: t('nav.classes') },
     { to: '/waste-types', icon: Recycle, label: t('nav.wasteTypes') },
   ];
 

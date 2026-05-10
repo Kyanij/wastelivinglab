@@ -7,6 +7,8 @@ import SeedPage from '../pages/SeedPage';
 import WasteTypesPage from '../pages/WasteTypesPage';
 import StudentsPage from '../pages/StudentsPage';
 import StudentDetailPage from '../pages/StudentDetailPage';
+import ClassesPage from '../pages/ClassesPage';
+import ClassDetailPage from '../pages/ClassDetailPage';
 import DashboardPage from '../pages/DashboardPage';
 import OverviewReport from '../pages/reports/OverviewReport';
 import StudentReport from '../pages/reports/StudentReport';
@@ -51,6 +53,21 @@ function AppRoutes() {
       }>
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentDetailPage />} />
+      </Route>
+
+      {/* Classes */}
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('nav.classes')}
+            subtitle={t('classes.subtitle')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
+        <Route path="/classes" element={<ClassesPage />} />
+        <Route path="/classes/:id" element={<ClassDetailPage />} />
       </Route>
 
       {/* Waste Types */}

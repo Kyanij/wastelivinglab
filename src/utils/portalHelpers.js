@@ -104,3 +104,8 @@ export const WASTE_TYPE_CONFIG = [
   { name: 'Metal', color: '#dc2626', icon: '🥫' },
   { name: 'E-Waste', color: '#16a34a', icon: '🖥️' }
 ];
+
+export function formatNumber(num) {
+  if (num === null || num === undefined) return '0';
+  return new Intl.NumberFormat('id-ID').format(num);
+}
