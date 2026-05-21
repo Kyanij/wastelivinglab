@@ -131,34 +131,31 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
 {/* Logo and branding */}
           <div className="text-center mb-8">
-            {/* 3 Logos in horizontal row with impressive design */}
             <div className="flex items-center justify-center gap-3 mb-5">
-              <div className="relative">
-                <img 
-                  src="/assests/logo/1.jpeg" 
-                  alt="Logo 1" 
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
-                  style={{ animationDelay: '0ms' }}
-                />
-                <div className="absolute inset-0 rounded-full ring-2 ring-white/10"></div>
-              </div>
-              <div className="relative">
-                <img 
-                  src="/assests/logo/2.jpeg" 
-                  alt="Logo 2" 
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/30 shadow-lg shadow-green-500/30 animate-fadeInUp"
-                  style={{ animationDelay: '150ms' }}
-                />
-                <div className="absolute inset-0 rounded-full ring-2 ring-white/20 bg-gradient-to-tr from-green-400/20 to-transparent"></div>
-              </div>
-              <div className="relative">
-                <img 
-                  src="/assests/logo/3.jpeg" 
-                  alt="Logo 3" 
-                  className="w-24 h-auto rounded-lg object-cover border-2 border-white/20 shadow-lg shadow-green-500/20 animate-fadeInUp"
-                  style={{ animationDelay: '300ms' }}
-                />
-              </div>
+              <img
+                src="/assests/logo/1.png"
+                alt="Logo 1"
+                className="w-16 h-16 rounded-full object-cover animate-fadeInUp"
+                style={{ animationDelay: '0ms' }}
+              />
+              <img
+                src="/assests/logo/2.png"
+                alt="Logo 2"
+                className="w-16 h-16 rounded-full object-cover animate-fadeInUp"
+                style={{ animationDelay: '100ms' }}
+              />
+              <img
+                src="/assests/logo/3.png"
+                alt="Logo 3"
+                className="w-16 h-16 rounded-full object-cover animate-fadeInUp"
+                style={{ animationDelay: '200ms' }, {background: 'rgb(255, 255, 255)'}}
+              />
+              <img
+                src="/assests/logo/4.png"
+                alt="Logo 4"
+                className="w-16 h-16 rounded-full object-cover animate-fadeInUp"
+                style={{ animationDelay: '300ms' }}
+              />
             </div>
             <h1 className="text-3xl font-bold text-white tracking-tight">Tabungan Sampah Digital</h1>
             <p className="mt-1 text-white/80 text-base">Model School-Based Living Lab</p>

@@ -58,6 +58,9 @@ export default function ExportPDFButton({ reportType, data, filters }) {
     pageInfo: t('pdf.pageInfo'),
     generatedOn: t('pdf.generatedOn'),
     locale: i18n.language,
+    subtotal: t('pdf.subtotal'),
+    grandTotal: t('pdf.grandTotal'),
+    dateEntries: t('pdf.dateEntries'),
   };
 
   const getPDFComponent = () => {

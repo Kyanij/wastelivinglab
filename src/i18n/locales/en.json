@@ -47,7 +47,7 @@
     "totalCollections": "total collections",
     "averageWeight": "average weight",
     "totalEarned": "total earned",
-    "rate": "Rate",
+    "rate": "Price",
     "insights": "Insights",
     "yourRank": "Your Rank",
     "rankChampion": "Amazing! You're a waste collection champion!",
@@ -599,7 +599,10 @@
     "secondMost": "{{type}} is the second most ({{percent}}%).",
     "moreEntries": "... and {{count}} more entries",
     "pageInfo": "Page {{page}} of {{total}} | Generated: {{date}}",
-    "generatedOn": "Generated on {{date}}"
+    "generatedOn": "Generated on {{date}}",
+    "subtotal": "Subtotal",
+    "grandTotal": "Grand Total",
+    "dateEntries": "entries"
   },
   "idleWarning": {
     "title": "Session Expiring",

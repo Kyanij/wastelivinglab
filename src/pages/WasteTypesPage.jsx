@@ -302,7 +302,7 @@ export default function WasteTypesPage() {
                     )}
                   </div>
 
-                  {/* Rate Input */}
+                  {/* Price Input */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       {t('wasteTypes.defaultRate')} *
@@ -405,7 +405,7 @@ export default function WasteTypesPage() {
                 )}
               </div>
 
-              {/* Rate Input */}
+              {/* Price Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('wasteTypes.defaultRate')} *

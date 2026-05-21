@@ -47,7 +47,7 @@
     "totalCollections": "total pengumpulan",
     "averageWeight": "rata-rata berat",
     "totalEarned": "total diperoleh",
-    "rate": "Tarif",
+    "rate": "Harga",
     "insights": "Wawasan",
     "yourRank": "Peringkatmu",
     "rankChampion": "Luar biasa! Kamu adalah champion pengumpulan sampah!",
@@ -599,7 +599,10 @@
     "secondMost": "{{type}} adalah yang kedua terbanyak ({{percent}}%).",
     "moreEntries": "... dan {{count}} entri lainnya",
     "pageInfo": "Halaman {{page}} dari {{total}} | Dibuat: {{date}}",
-    "generatedOn": "Dibuat pada {{date}}"
+    "generatedOn": "Dibuat pada {{date}}",
+    "subtotal": "Subtotal",
+    "grandTotal": "Total Keseluruhan",
+    "dateEntries": "entri"
   },
   "idleWarning": {
     "title": "Sesi Akan Berakhir",

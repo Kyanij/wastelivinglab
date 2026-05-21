@@ -492,8 +492,8 @@ function EntriesTable({ entries, expandedDates, toggleDate }) {
                             </div>
                             <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                               <div>
-                                <span className="text-xs text-gray-400">Rate</span>
-                                <div className="font-medium text-gray-700">Rp {formatNumber(item.rate)}</div>
+                                  <span className="text-xs text-gray-400">Price</span>
+                                  <div className="font-medium text-gray-700">Rp {formatNumber(item.rate)}</div>
                               </div>
                               <div className="text-right">
                                 <span className="text-xs text-gray-400">{t('reports.amount')}</span>

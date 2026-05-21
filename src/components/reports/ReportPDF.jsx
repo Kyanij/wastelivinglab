@@ -1,6 +1,7 @@
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { logo1, logo2, logo3, logo4 } from '../../firebase/logoImages';
 
 const styles = StyleSheet.create({
   page: {
@@ -172,6 +173,83 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#9ca3af',
   },
+
+  dateGroupHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    backgroundColor: '#f0fdf4',
+    borderRadius: 4,
+    marginTop: 6,
+    marginBottom: 4,
+  },
+  dateGroupTitle: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#15803d',
+    flex: 2,
+  },
+  dateGroupBadge: {
+    fontSize: 8,
+    color: '#16a34a',
+    backgroundColor: '#dcfce7',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 6,
+    textAlign: 'center',
+    marginHorizontal: 4,
+  },
+  dateGroupWeight: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#111827',
+    flex: 1,
+    textAlign: 'right',
+  },
+  dateGroupEarnings: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#16a34a',
+    flex: 1,
+    textAlign: 'right',
+  },
+  subtotalRow: {
+    flexDirection: 'row',
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    backgroundColor: '#f0fdf4',
+    borderTopWidth: 1,
+    borderTopColor: '#bbf7d0',
+    borderBottomWidth: 1,
+    borderBottomColor: '#bbf7d0',
+    marginBottom: 4,
+  },
+  grandTotalRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: '#dcfce7',
+    borderTopWidth: 2,
+    borderTopColor: '#16a34a',
+    borderRadius: 4,
+    marginTop: 6,
+  },
+  dateGroupRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    flexDirection: 'row',
+    gap: 4,
+    alignItems: 'flex-start',
+  },
+  logoImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+  },
 });
 
 const formatDate = (date, locale) => {
@@ -197,6 +275,37 @@ const formatCurrency = (value) => {
 const formatNumber = (value, decimals = 2) => {
   if (typeof value !== 'number') return '0.00';
   return value.toFixed(decimals);
+};
+
+const groupEntriesByDate = (entries, locale) => {
+  const groups = {};
+  entries.forEach(entry => {
+    let entryDate;
+    if (typeof entry.date?.toDate === 'function') {
+      entryDate = entry.date.toDate();
+    } else if (entry.date instanceof Date) {
+      entryDate = entry.date;
+    } else if (entry.date) {
+      entryDate = new Date(entry.date);
+    } else {
+      entryDate = new Date();
+    }
+    if (isNaN(entryDate.getTime())) entryDate = new Date();
+    const normalizedKey = format(entryDate, 'yyyy-MM-dd');
+    if (!groups[normalizedKey]) {
+      groups[normalizedKey] = {
+        dateLabel: formatDate(entry.date || entryDate, locale),
+        sortDate: entryDate,
+        items: [],
+        totalWeight: 0,
+        totalAmount: 0,
+      };
+    }
+    groups[normalizedKey].items.push(entry);
+    groups[normalizedKey].totalWeight += entry.weight || 0;
+    groups[normalizedKey].totalAmount += entry.amount || 0;
+  });
+  return Object.values(groups).sort((a, b) => b.sortDate - a.sortDate);
 };
 
 const TableHeader = ({ cols }) => (
@@ -291,12 +400,22 @@ export const OverviewPDF = ({ data, filters, translations }) => {
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.title}>{trans.overviewTitle}</Text>
-          <Text style={styles.subtitle}>{trans.title}</Text>
-          <Text style={styles.subtitle}>{trans.subtitle}</Text>
-          <Text style={styles.dateRange}>
-            {trans.dateRange}: {dateRangeStr} | {trans.class}: {selectedClassLabel} | {trans.wasteType}: {selectedWasteLabel}
-          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.overviewTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>
+                {trans.dateRange}: {dateRangeStr} | {trans.class}: {selectedClassLabel} | {trans.wasteType}: {selectedWasteLabel}
+              </Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
         </View>
 
         <View style={styles.kpiGrid}>
@@ -367,15 +486,28 @@ export const StudentPDF = ({ data, filters, translations }) => {
   const student = data?.student || {};
   const entries = data?.entries || [];
   const trans = { ...defaultTrans, ...translations };
+  const grouped = groupEntriesByDate(entries, trans.locale);
+  const grandTotalWeight = grouped.reduce((s, g) => s + g.totalWeight, 0);
+  const grandTotalAmount = grouped.reduce((s, g) => s + g.totalAmount, 0);
 
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.title}>{trans.studentTitle}</Text>
-          <Text style={styles.subtitle}>{trans.title}</Text>
-          <Text style={styles.subtitle}>{trans.subtitle}</Text>
-          <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.studentTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
         </View>
 
         <View style={[styles.row, styles.rowHeader, { marginBottom: 10 }]}>
@@ -394,36 +526,46 @@ export const StudentPDF = ({ data, filters, translations }) => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{trans.wasteEntries}</Text>
+          <Text style={styles.sectionTitle}>{trans.collectionDetails}</Text>
           <View style={styles.table}>
-            <TableHeader
-              cols={[
-                { label: trans.tableDate, width: 1.5 },
-                { label: trans.tableWasteType, width: 1.5 },
-                { label: trans.tableWeight, width: 1, align: 'right' },
-                { label: trans.tablePrice, width: 0.8, align: 'right' },
-                { label: trans.tableAmount, width: 1.2, align: 'right' },
-              ]}
-            />
-            {entries.slice(0, 30).map((entry, index) => (
-              <TableRow
-                key={index}
-                cols={[
-                  { key: 'date', width: 1.5, render: (val) => formatDate(val, trans.locale) },
-                  { key: 'wasteTypeName', width: 1.5 },
-                  { key: 'weight', width: 1, align: 'right', render: (val) => formatNumber(val) },
-                  { key: 'rate', width: 0.8, align: 'right', render: (val) => formatCurrency(val) },
-                  { key: 'amount', width: 1.2, align: 'right', render: (val) => formatCurrency(val) },
-                ]}
-                data={{
-                  date: entry.date,
-                  wasteTypeName: entry.wasteTypeName,
-                  weight: entry.weight,
-                  rate: entry.rate,
-                  amount: entry.amount,
-                }}
-              />
+            {grouped.map((group, gi) => (
+              <View key={gi} wrap={false}>
+                <View style={styles.dateGroupHeader}>
+                  <Text style={styles.dateGroupTitle}>{group.dateLabel}</Text>
+                  <Text style={styles.dateGroupBadge}>{group.items.length} {trans.dateEntries}</Text>
+                  <Text style={styles.dateGroupWeight}>{formatNumber(group.totalWeight)} {trans.kg}</Text>
+                  <Text style={styles.dateGroupEarnings}>{formatCurrency(group.totalAmount)}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.col, { flex: 1.5 }]}>{trans.tableWasteType}</Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right' }]}>{trans.tableWeight}</Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}>{trans.tablePrice}</Text>
+                  <Text style={[styles.col, { flex: 1.2, textAlign: 'right' }]}>{trans.tableAmount}</Text>
+                </View>
+                {group.items.map((item, ii) => (
+                  <View key={ii} style={styles.tableRow}>
+                    <Text style={[styles.col, { flex: 1.5 }]}>{item.wasteTypeName || item.wasteType || 'Other'}</Text>
+                    <Text style={[styles.col, { flex: 1, textAlign: 'right' }]}>{formatNumber(item.weight)}</Text>
+                    <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}>{formatCurrency(item.rate || 0)}</Text>
+                    <Text style={[styles.col, { flex: 1.2, textAlign: 'right' }]}>{formatCurrency(item.amount || 0)}</Text>
+                  </View>
+                ))}
+                <View style={styles.subtotalRow}>
+                  <Text style={[styles.col, { flex: 1.5, fontWeight: 'bold' }]}>{trans.subtotal}</Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>{formatNumber(group.totalWeight)} {trans.kg}</Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}></Text>
+                  <Text style={[styles.col, { flex: 1.2, textAlign: 'right', fontWeight: 'bold' }]}>{formatCurrency(group.totalAmount)}</Text>
+                </View>
+              </View>
             ))}
+            {grouped.length > 0 && (
+              <View style={styles.grandTotalRow}>
+                <Text style={[styles.col, { flex: 1.5, fontWeight: 'bold' }]}>{trans.grandTotal}</Text>
+                <Text style={[styles.col, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>{formatNumber(grandTotalWeight)} {trans.kg}</Text>
+                <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}></Text>
+                <Text style={[styles.col, { flex: 1.2, textAlign: 'right', fontWeight: 'bold' }]}>{formatCurrency(grandTotalAmount)}</Text>
+              </View>
+            )}
           </View>
         </View>
 
@@ -449,10 +591,20 @@ export const ClassPDF = ({ data, filters, translations }) => {
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.title}>{trans.classTitle}</Text>
-          <Text style={styles.subtitle}>{trans.title}</Text>
-          <Text style={styles.subtitle}>{trans.subtitle}</Text>
-          <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.classTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
         </View>
 
         <View style={styles.kpiGrid}>
@@ -515,10 +667,20 @@ export const WasteAnalysisPDF = ({ data, filters, translations }) => {
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.title}>{trans.wasteAnalysisTitle}</Text>
-          <Text style={styles.subtitle}>{trans.title}</Text>
-          <Text style={styles.subtitle}>{trans.subtitle}</Text>
-          <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.wasteAnalysisTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
         </View>
 
         <View style={styles.kpiGrid}>
@@ -592,20 +754,31 @@ export const PortalPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
   const student = data?.student || {};
   const entries = data?.entries || [];
-  const totalWeight = entries.reduce((sum, e) => sum + (e.weight || 0), 0);
-  const totalEarnings = entries.reduce((sum, e) => sum + (e.amount || 0), 0);
   const trans = { ...defaultTrans, ...translations };
+  const grouped = groupEntriesByDate(entries, trans.locale);
+  const grandTotalWeight = grouped.reduce((s, g) => s + g.totalWeight, 0);
+  const grandTotalAmount = grouped.reduce((s, g) => s + g.totalAmount, 0);
 
   return (
     <Document>
       <Page size="A4" style={styles.page} wrap>
         <View style={styles.header}>
-          <Text style={styles.title}>{trans.studentCollectionTitle}</Text>
-          <Text style={styles.subtitle}>{trans.title}</Text>
-          <Text style={styles.subtitle}>{trans.subtitle}</Text>
-          <Text style={styles.dateRange}>
-            {trans.period}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}
-          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.studentCollectionTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>
+                {trans.period}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}
+              </Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
         </View>
 
         <View style={[styles.row, styles.rowHeader, { marginBottom: 10 }]}>
@@ -616,46 +789,54 @@ export const PortalPDF = ({ data, filters, translations }) => {
         </View>
 
         <View style={styles.kpiGrid}>
-          <KPICard label={trans.totalWaste} value={student.totalWaste || totalWeight} />
-          <KPICard label={trans.totalEarnings} value={student.totalEarnings || totalEarnings} isCurrency />
+          <KPICard label={trans.totalWaste} value={student.totalWaste || grandTotalWeight} />
+          <KPICard label={trans.totalEarnings} value={student.totalEarnings || grandTotalAmount} isCurrency />
           <KPICard label={trans.totalEntries} value={entries.length} />
-          <KPICard label={trans.avgPerEntry} value={entries.length > 0 ? (student.totalWaste || totalWeight) / entries.length : 0} />
+          <KPICard label={trans.avgPerEntry} value={entries.length > 0 ? (student.totalWaste || grandTotalWeight) / entries.length : 0} />
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>{trans.collectionDetails}</Text>
           <View style={styles.table}>
-            <TableHeader
-              cols={[
-                { label: trans.tableDate, width: 1.5 },
-                { label: trans.tableWasteType, width: 1.5 },
-                { label: trans.tableWeight, width: 1, align: 'right' },
-                { label: trans.tableAmount, width: 1.2, align: 'right' },
-              ]}
-            />
-            {entries.slice(0, 30).map((entry, index) => (
-              <TableRow
-                key={index}
-                cols={[
-                  { key: 'date', width: 1.5, render: (val) => formatDate(val, trans.locale) },
-                  { key: 'wasteTypeName', width: 1.5 },
-                  { key: 'weight', width: 1, align: 'right', render: (val) => formatNumber(val) },
-                  { key: 'amount', width: 1.2, align: 'right', render: (val) => formatCurrency(val) },
-                ]}
-                data={{
-                  date: entry.date,
-                  wasteTypeName: entry.wasteTypeName || entry.wasteType || 'Other',
-                  weight: entry.weight,
-                  amount: entry.amount,
-                }}
-              />
+            {grouped.map((group, gi) => (
+              <View key={gi} wrap={false}>
+                <View style={styles.dateGroupHeader}>
+                  <Text style={styles.dateGroupTitle}>{group.dateLabel}</Text>
+                  <Text style={styles.dateGroupBadge}>{group.items.length} {trans.dateEntries}</Text>
+                  <Text style={styles.dateGroupWeight}>{formatNumber(group.totalWeight)} {trans.kg}</Text>
+                  <Text style={styles.dateGroupEarnings}>{formatCurrency(group.totalAmount)}</Text>
+                </View>
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.col, { flex: 1.5 }]}>{trans.tableWasteType}</Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right' }]}>{trans.tableWeight}</Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}>{trans.tablePrice}</Text>
+                  <Text style={[styles.col, { flex: 1.2, textAlign: 'right' }]}>{trans.tableAmount}</Text>
+                </View>
+                {group.items.map((item, ii) => (
+                  <View key={ii} style={styles.tableRow}>
+                    <Text style={[styles.col, { flex: 1.5 }]}>{item.wasteTypeName || item.wasteType || 'Other'}</Text>
+                    <Text style={[styles.col, { flex: 1, textAlign: 'right' }]}>{formatNumber(item.weight)}</Text>
+                    <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}>{formatCurrency(item.rate || 0)}</Text>
+                    <Text style={[styles.col, { flex: 1.2, textAlign: 'right' }]}>{formatCurrency(item.amount || 0)}</Text>
+                  </View>
+                ))}
+                <View style={styles.subtotalRow}>
+                  <Text style={[styles.col, { flex: 1.5, fontWeight: 'bold' }]}>{trans.subtotal}</Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>{formatNumber(group.totalWeight)} {trans.kg}</Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}></Text>
+                  <Text style={[styles.col, { flex: 1.2, textAlign: 'right', fontWeight: 'bold' }]}>{formatCurrency(group.totalAmount)}</Text>
+                </View>
+              </View>
             ))}
+            {grouped.length > 0 && (
+              <View style={styles.grandTotalRow}>
+                <Text style={[styles.col, { flex: 1.5, fontWeight: 'bold' }]}>{trans.grandTotal}</Text>
+                <Text style={[styles.col, { flex: 1, textAlign: 'right', fontWeight: 'bold' }]}>{formatNumber(grandTotalWeight)} {trans.kg}</Text>
+                <Text style={[styles.col, { flex: 0.8, textAlign: 'right' }]}></Text>
+                <Text style={[styles.col, { flex: 1.2, textAlign: 'right', fontWeight: 'bold' }]}>{formatCurrency(grandTotalAmount)}</Text>
+              </View>
+            )}
           </View>
-          {entries.length > 30 && (
-            <Text style={[styles.gray, { marginTop: 10 }]}>
-              {tpl(trans.moreEntries, { count: entries.length - 30 })}
-            </Text>
-          )}
         </View>
 
         <View style={[styles.footer, { marginTop: 20 }]}>
