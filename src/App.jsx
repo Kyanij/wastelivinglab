@@ -1,5 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import SessionMonitor from './components/layout/SessionMonitor';
 import Router from './router';
 import { Toaster } from 'react-hot-toast';
 
@@ -7,6 +8,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <SessionMonitor />
         <Router />
         <Toaster 
           position="top-right"

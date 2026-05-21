@@ -74,6 +74,7 @@ export default function WasteAnalysisReport() {
         onRefresh={loadData}
         reportType="waste"
         pdfData={data}
+        filters={{ dateFrom: dateRange.from, dateTo: dateRange.to }}
       />
 
       {/* KPI Cards */}

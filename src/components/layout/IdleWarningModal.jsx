@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AlertTriangle, LogOut } from 'lucide-react';
+import { WARNING_MINUTES_BEFORE } from '../../constants/config';
 
 export default function IdleWarningModal({ show, onStayLoggedIn, onLogoutNow }) {
   const { t } = useTranslation();
-  const [countdown, setCountdown] = useState(120);
+  const countdownSeconds = WARNING_MINUTES_BEFORE * 60;
+  const [countdown, setCountdown] = useState(countdownSeconds);
 
   useEffect(() => {
     if (!show) return;
-    setCountdown(120);
+    setCountdown(countdownSeconds);
     const interval = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
@@ -19,7 +21,7 @@ export default function IdleWarningModal({ show, onStayLoggedIn, onLogoutNow }) 
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [show]);
+  }, [show, countdownSeconds]);
 
   if (!show) return null;
 

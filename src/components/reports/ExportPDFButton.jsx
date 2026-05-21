@@ -4,13 +4,62 @@ import { useTranslation } from 'react-i18next';
 import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF, PortalPDF } from './ReportPDF';
 
 export default function ExportPDFButton({ reportType, data, filters }) {
-  const { t } = useTranslation();
-  
-  const pdfTitle = t('pdf.title', 'Tabungan Sampah Digital');
-  const pdfSubtitle = t('pdf.subtitle', 'Model School-Based Living Lab');
-  const pdfSystem = t('pdf.system', 'Waste Collection System');
-  const pdfTranslations = { title: pdfTitle, subtitle: pdfSubtitle, system: pdfSystem };
-  
+  const { t, i18n } = useTranslation();
+
+  const pdfTranslations = {
+    title: t('pdf.title'),
+    subtitle: t('pdf.subtitle'),
+    system: t('pdf.system'),
+    overviewTitle: t('pdf.overviewTitle'),
+    studentTitle: t('pdf.studentTitle'),
+    classTitle: t('pdf.classTitle'),
+    wasteAnalysisTitle: t('pdf.wasteAnalysisTitle'),
+    studentCollectionTitle: t('pdf.studentCollectionTitle'),
+    dateRange: t('pdf.dateRange'),
+    period: t('pdf.period'),
+    class: t('pdf.class'),
+    wasteType: t('pdf.wasteType'),
+    all: t('pdf.all'),
+    studentId: t('pdf.studentId'),
+    joined: t('pdf.joined'),
+    kg: t('pdf.kg'),
+    totalWaste: t('pdf.totalWaste'),
+    totalEarnings: t('pdf.totalEarnings'),
+    activeStudents: t('pdf.activeStudents'),
+    avgPerStudent: t('pdf.avgPerStudent'),
+    totalEntries: t('pdf.totalEntries'),
+    avgPerEntry: t('pdf.avgPerEntry'),
+    activeClasses: t('pdf.activeClasses'),
+    totalStudents: t('pdf.totalStudents'),
+    avgPerClass: t('pdf.avgPerClass'),
+    wasteTypesCount: t('pdf.wasteTypesCount'),
+    topStudents: t('pdf.topStudents'),
+    classRankings: t('pdf.classRankings'),
+    wasteTypeSummary: t('pdf.wasteTypeSummary'),
+    wasteEntries: t('pdf.wasteEntries'),
+    collectionDetails: t('pdf.collectionDetails'),
+    insights: t('pdf.insights'),
+    tableRank: t('pdf.tableRank'),
+    tableStudent: t('pdf.tableStudent'),
+    tableClass: t('pdf.tableClass'),
+    tableWeight: t('pdf.tableWeight'),
+    tableEarnings: t('pdf.tableEarnings'),
+    tableDate: t('pdf.tableDate'),
+    tableWasteType: t('pdf.tableWasteType'),
+    tablePrice: t('pdf.tablePrice'),
+    tableAmount: t('pdf.tableAmount'),
+    tablePercentage: t('pdf.tablePercentage'),
+    tableAvgPrice: t('pdf.tableAvgPrice'),
+    wasteIncreased: t('pdf.wasteIncreased'),
+    classLeading: t('pdf.classLeading'),
+    mostCollected: t('pdf.mostCollected'),
+    secondMost: t('pdf.secondMost'),
+    moreEntries: t('pdf.moreEntries'),
+    pageInfo: t('pdf.pageInfo'),
+    generatedOn: t('pdf.generatedOn'),
+    locale: i18n.language,
+  };
+
   const getPDFComponent = () => {
     switch (reportType) {
       case 'overview':

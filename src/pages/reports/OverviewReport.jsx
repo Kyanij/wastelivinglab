@@ -98,6 +98,7 @@ export default function OverviewReport() {
         onWasteTypeChange={updateWasteType}
         reportType="overview"
         pdfData={data}
+        filters={{ dateFrom: dateRange.from, dateTo: dateRange.to, selectedClass, selectedWasteType }}
       />
 
       {/* KPI Cards */}

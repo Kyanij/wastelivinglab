@@ -105,6 +105,7 @@ export default function ClassReport() {
         onRefresh={loadData}
         reportType="class"
         pdfData={data}
+        filters={{ dateFrom: dateRange.from, dateTo: dateRange.to }}
         classDropdown={data?.allClasses}
         classValue={selectedClass}
         classOnChange={handleClassChange}
