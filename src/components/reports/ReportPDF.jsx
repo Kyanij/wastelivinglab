@@ -250,6 +250,57 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
   },
+
+  barRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  barTrack: {
+    height: 14,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 7,
+    overflow: 'hidden',
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  barFill: {
+    height: 14,
+    backgroundColor: '#16a34a',
+    borderRadius: 7,
+  },
+  medalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+    backgroundColor: '#f0fdf4',
+  },
+  typeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f3f4f6',
+  },
+  typeBarTrack: {
+    height: 10,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 5,
+    overflow: 'hidden',
+    flex: 1,
+    marginHorizontal: 6,
+  },
+  typeBarFill: {
+    height: 10,
+    borderRadius: 5,
+  },
 });
 
 const formatDate = (date, locale) => {
@@ -375,6 +426,7 @@ const defaultTrans = {
   tableAmount: 'Amount', tablePercentage: 'Percentage', tableAvgPrice: 'Avg Price',
   wasteIncreased: 'Waste collection increased by {{percent}}% compared to previous period.',
   classLeading: 'Class {{class}} is leading with {{percent}}% of total waste collected.',
+  classesActive: '{{count}} classes were active during this period.',
   mostCollected: '{{type}} is the most collected waste ({{percent}}%).',
   secondMost: '{{type}} is the second most ({{percent}}%).',
   moreEntries: '... and {{count}} more entries',
@@ -855,4 +907,135 @@ export const PortalPDF = ({ data, filters, translations }) => {
       </Page>
     </Document>
   );
-}
+};
+
+export const ClassWastePDF = ({ data, filters, translations }) => {
+  const { dateFrom, dateTo, selectedClass } = filters || {};
+  const ranking = data?.ranking || [];
+  const kpis = data?.kpis || {};
+  const wasteTypeBreakdown = data?.wasteTypeBreakdown || [];
+  const isClassSelected = data?.isClassSelected;
+  const trans = { ...defaultTrans, ...translations };
+  const dateRangeStr = `${formatDate(dateFrom, trans.locale)} - ${formatDate(dateTo, trans.locale)}`;
+  const classLabel = selectedClass && selectedClass !== 'all' ? selectedClass : trans.all;
+
+  return (
+    <Document>
+      <Page size="A4" style={styles.page} wrap>
+        <View style={styles.header}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.title}>{trans.classWasteTitle}</Text>
+              <Text style={styles.subtitle}>{trans.title}</Text>
+              <Text style={styles.subtitle}>{trans.subtitle}</Text>
+              <Text style={styles.dateRange}>
+                {trans.dateRange}: {dateRangeStr} | {trans.class}: {classLabel}
+              </Text>
+            </View>
+            <View style={styles.logoContainer}>
+              <Image src={logo1} style={styles.logoImage} />
+              <Image src={logo2} style={styles.logoImage} />
+              <Image src={logo3} style={styles.logoImage} />
+              <Image src={logo4} style={styles.logoImage} />
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.kpiGrid}>
+          <KPICard label={trans.totalWaste} value={kpis.totalWaste || 0} />
+          <KPICard label={trans.totalEarnings} value={kpis.totalEarnings || 0} isCurrency />
+          <KPICard label={trans.totalEntries} value={kpis.totalEntries || 0} />
+          <KPICard label={trans.avgPerEntry} value={kpis.avgPerEntry || 0} />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{trans.classRankings}</Text>
+          <View style={styles.table}>
+            <TableHeader
+              cols={[
+                { label: trans.tableRank, width: 0.6 },
+                { label: trans.tableClass, width: 1.2 },
+                { label: trans.tableWeight, width: 1, align: 'right' },
+                { label: trans.tableEarnings, width: 1, align: 'right' },
+              ]}
+            />
+            {ranking.map((cls, index) => {
+              const isMedal = index < 3;
+              return (
+                <View key={cls.className} style={isMedal ? styles.medalRow : styles.barRow}>
+                  <Text style={[styles.col, { flex: 0.6 }]}>
+                    {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`}
+                  </Text>
+                  <Text style={[styles.col, { flex: 1.2, fontWeight: 'bold' }]}>{cls.className}</Text>
+                  <View style={styles.barTrack}>
+                    <View style={[styles.barFill, { width: `${cls.barPercent || 0}%` }]} />
+                  </View>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right', fontSize: 9 }]}>
+                    {formatNumber(cls.totalWaste)} {trans.kg}
+                  </Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right', fontSize: 9 }]}>
+                    {formatCurrency(cls.totalEarnings)}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        {isClassSelected && wasteTypeBreakdown.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{trans.wasteTypeSummary}</Text>
+            <View style={styles.table}>
+              <TableHeader
+                cols={[
+                  { label: trans.tableWasteType, width: 1.2 },
+                  { label: trans.tablePercentage, width: 0.8, align: 'right' },
+                  { label: trans.tableWeight, width: 0.8, align: 'right' },
+                ]}
+              />
+              {wasteTypeBreakdown.map((type, idx) => {
+                const colors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
+                return (
+                  <View key={type.name} style={styles.typeRow}>
+                    <Text style={[styles.col, { flex: 1.2, fontSize: 9 }]}>{type.name}</Text>
+                    <View style={styles.typeBarTrack}>
+                      <View style={[styles.typeBarFill, { width: `${type.barPercent || 0}%`, backgroundColor: colors[idx % colors.length] }]} />
+                    </View>
+                    <Text style={[styles.col, { flex: 0.8, textAlign: 'right', fontSize: 9 }]}>
+                      {type.percentage}%
+                    </Text>
+                    <Text style={[styles.col, { flex: 0.8, textAlign: 'right', fontSize: 9 }]}>
+                      {formatNumber(type.weight)}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {data?.topClass && (
+          <View style={styles.insightsBox}>
+            <Text style={styles.insightsTitle}>{trans.insights}</Text>
+            <View style={styles.insightsList}>
+              <Text style={styles.insightsItem}>
+                • {tpl(trans.classLeading, { class: data.topClass.className, percent: data.topClassPercent })}
+              </Text>
+              <Text style={styles.insightsItem}>
+                • {tpl(trans.classesActive, { count: kpis.activeClasses })}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
+          tpl(trans.pageInfo, {
+            page: pageNumber,
+            total: totalPages,
+            date: format(new Date(), 'dd MMM yyyy HH:mm'),
+          })
+        } fixed />
+      </Page>
+    </Document>
+  );
+};

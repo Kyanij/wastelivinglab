@@ -7,6 +7,7 @@ const reportsSubItems = [
   { to: '/reports/overview', label: 'nav.overviewReport', icon: LayoutDashboard },
   { to: '/reports/student', label: 'nav.studentReport', icon: Users },
   { to: '/reports/class', label: 'nav.classReport', icon: GraduationCap },
+  { to: '/reports/class-waste', label: 'nav.classWasteReport', icon: Recycle },
   { to: '/reports/waste-analysis', label: 'nav.wasteAnalysis', icon: BarChart3 },
 ];
 

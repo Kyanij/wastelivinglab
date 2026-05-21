@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfMonth, format } from 'date-fns';
-import { BarChart3, TrendingUp, Package, Wallet, FileText, RotateCcw } from 'lucide-react';
+import { BarChart3, TrendingUp, Package, Wallet, FileText, RotateCcw, Download } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,
 } from 'recharts';
@@ -11,6 +11,10 @@ import { formatNumber } from '../../utils/portalHelpers';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import ExportPDFButton from '../reports/ExportPDFButton';
+import { prepareClassWasteDataFromHook } from '../../firebase/classWasteReports';
+
+const WASTE_TYPE_COLORS = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
 
 const CLASS_COLORS = [
   'from-blue-500 to-blue-700',
@@ -131,6 +135,18 @@ export default function ClassReportSection() {
 
   const formatDateInput = (d) => format(d, 'yyyy-MM-dd');
 
+  const pdfData = useMemo(() => {
+    return prepareClassWasteDataFromHook({
+      kpis, wasteByClass, wasteTypeBreakdown, allClasses, classFilter, dateFrom, dateTo,
+    }, { dateFrom, dateTo, classFilter });
+  }, [kpis, wasteByClass, wasteTypeBreakdown, allClasses, classFilter, dateFrom, dateTo]);
+
+  const pdfFilters = useMemo(() => ({
+    dateFrom,
+    dateTo,
+    selectedClass: classFilter,
+  }), [dateFrom, dateTo, classFilter]);
+
   const handleDateFromChange = (e) => {
     const val = e.target.value;
     if (val) setDateFrom(new Date(val));
@@ -150,11 +166,18 @@ export default function ClassReportSection() {
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center gap-2">
-        <div className="p-2 rounded-xl bg-emerald-50">
-          <BarChart3 className="w-5 h-5 text-emerald-600" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-xl bg-emerald-50">
+            <BarChart3 className="w-5 h-5 text-emerald-600" />
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">{t('classReport.title')}</h2>
         </div>
-        <h2 className="text-lg font-bold text-gray-900">{t('classReport.title')}</h2>
+        <ExportPDFButton
+          reportType="classWaste"
+          data={pdfData}
+          filters={pdfFilters}
+        />
       </div>
 
       {/* Filter Row */}

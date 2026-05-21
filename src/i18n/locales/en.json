@@ -68,6 +68,7 @@
     "overviewReport": "Overview Report",
     "studentReport": "Student Report",
     "classReport": "Class Report",
+    "classWasteReport": "Class Waste",
     "wasteAnalysis": "Waste Analysis"
   },
   "reports": {
@@ -162,6 +163,8 @@
     "last30Days": "Last 30 Days",
     "thisMonth": "This Month",
     "lastMonth": "Last Month",
+    "classWaste": "Class Waste Report",
+    "classWasteDesc": "Track waste collection by class entries",
     "thisYear": "This Year"
   },
   "students": {
@@ -556,6 +559,7 @@
     "overviewTitle": "Overview Report",
     "studentTitle": "Student Performance Report",
     "classTitle": "Class Performance Report",
+    "classWasteTitle": "Class Waste Collection Report",
     "wasteAnalysisTitle": "Waste Analysis Report",
     "studentCollectionTitle": "Student Collection Report",
     "dateRange": "Date Range",
@@ -594,6 +598,7 @@
     "tablePercentage": "Percentage",
     "tableAvgPrice": "Avg Price",
     "wasteIncreased": "Waste collection increased by {{percent}}% compared to previous period.",
+    "classesActive": "{{count}} classes were active during this period.",
     "classLeading": "Class {{class}} is leading with {{percent}}% of total waste collected.",
     "mostCollected": "{{type}} is the most collected waste ({{percent}}%).",
     "secondMost": "{{type}} is the second most ({{percent}}%).",

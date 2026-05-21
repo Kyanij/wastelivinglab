@@ -1,7 +1,7 @@
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { Download } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF, PortalPDF } from './ReportPDF';
+import { OverviewPDF, StudentPDF, ClassPDF, WasteAnalysisPDF, PortalPDF, ClassWastePDF } from './ReportPDF';
 
 export default function ExportPDFButton({ reportType, data, filters }) {
   const { t, i18n } = useTranslation();
@@ -13,6 +13,7 @@ export default function ExportPDFButton({ reportType, data, filters }) {
     overviewTitle: t('pdf.overviewTitle'),
     studentTitle: t('pdf.studentTitle'),
     classTitle: t('pdf.classTitle'),
+    classWasteTitle: t('pdf.classWasteTitle'),
     wasteAnalysisTitle: t('pdf.wasteAnalysisTitle'),
     studentCollectionTitle: t('pdf.studentCollectionTitle'),
     dateRange: t('pdf.dateRange'),
@@ -52,6 +53,7 @@ export default function ExportPDFButton({ reportType, data, filters }) {
     tableAvgPrice: t('pdf.tableAvgPrice'),
     wasteIncreased: t('pdf.wasteIncreased'),
     classLeading: t('pdf.classLeading'),
+    classesActive: t('pdf.classesActive'),
     mostCollected: t('pdf.mostCollected'),
     secondMost: t('pdf.secondMost'),
     moreEntries: t('pdf.moreEntries'),
@@ -75,6 +77,8 @@ export default function ExportPDFButton({ reportType, data, filters }) {
         return ClassPDF;
       case 'waste':
         return WasteAnalysisPDF;
+      case 'classWaste':
+        return ClassWastePDF;
       default:
         return OverviewPDF;
     }

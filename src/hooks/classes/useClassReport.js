@@ -61,11 +61,16 @@ export function useClassReport(filters = {}) {
     const map = {};
     filteredEntries.forEach(e => {
       const cls = e.className || 'Unknown';
-      if (!map[cls]) map[cls] = 0;
-      map[cls] += e.weight || 0;
+      if (!map[cls]) map[cls] = { weight: 0, earnings: 0 };
+      map[cls].weight += e.weight || 0;
+      map[cls].earnings += e.amount || 0;
     });
     return Object.entries(map)
-      .map(([name, value]) => ({ name, value: Math.round(value * 100) / 100 }))
+      .map(([name, data]) => ({
+        name,
+        value: Math.round(data.weight * 100) / 100,
+        earnings: Math.round(data.earnings * 100) / 100,
+      }))
       .sort((a, b) => b.value - a.value);
   }, [filteredEntries]);
 

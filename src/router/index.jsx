@@ -13,6 +13,7 @@ import DashboardPage from '../pages/DashboardPage';
 import OverviewReport from '../pages/reports/OverviewReport';
 import StudentReport from '../pages/reports/StudentReport';
 import ClassReport from '../pages/reports/ClassReport';
+import ClassWasteReportPage from '../pages/reports/ClassWasteReportPage';
 import WasteAnalysisReport from '../pages/reports/WasteAnalysisReport';
 import PublicPortal from '../pages/PublicPortal';
 
@@ -122,6 +123,19 @@ function AppRoutes() {
         </ProtectedRoute>
       }>
         <Route path="/reports/class" element={<ClassReport />} />
+      </Route>
+
+      <Route element={
+        <ProtectedRoute>
+          <AppLayout 
+            title={t('reports.classWaste')}
+            subtitle={t('reports.classWasteDesc')}
+          >
+            <Outlet />
+          </AppLayout>
+        </ProtectedRoute>
+      }>
+        <Route path="/reports/class-waste" element={<ClassWasteReportPage />} />
       </Route>
 
       <Route element={

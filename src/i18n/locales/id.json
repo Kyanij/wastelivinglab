@@ -68,6 +68,7 @@
     "overviewReport": "Laporan Overview",
     "studentReport": "Laporan Siswa",
     "classReport": "Laporan Kelas",
+    "classWasteReport": "Sampah Kelas",
     "wasteAnalysis": "Analisis Sampah"
   },
   "reports": {
@@ -162,6 +163,8 @@
     "last30Days": "30 Hari Terakhir",
     "thisMonth": "Bulan Ini",
     "lastMonth": "Bulan Lalu",
+    "classWaste": "Laporan Sampah Kelas",
+    "classWasteDesc": "Lacak pengumpulan sampah berdasarkan entri kelas",
     "thisYear": "Tahun Ini"
   },
   "students": {
@@ -556,6 +559,7 @@
     "overviewTitle": "Laporan Ringkasan",
     "studentTitle": "Laporan Kinerja Siswa",
     "classTitle": "Laporan Kinerja Kelas",
+    "classWasteTitle": "Laporan Koleksi Sampah Kelas",
     "wasteAnalysisTitle": "Laporan Analisis Sampah",
     "studentCollectionTitle": "Laporan Koleksi Siswa",
     "dateRange": "Rentang Tanggal",
@@ -594,6 +598,7 @@
     "tablePercentage": "Persentase",
     "tableAvgPrice": "Harga Rata-rata",
     "wasteIncreased": "Pengumpulan sampah meningkat {{percent}}% dibandingkan periode sebelumnya.",
+    "classesActive": "{{count}} kelas aktif selama periode ini.",
     "classLeading": "Kelas {{class}} memimpin dengan {{percent}}% dari total sampah terkumpul.",
     "mostCollected": "{{type}} adalah sampah yang paling banyak terkumpul ({{percent}}%).",
     "secondMost": "{{type}} adalah yang kedua terbanyak ({{percent}}%).",
