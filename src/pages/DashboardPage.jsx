@@ -1,16 +1,18 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Leaf, Wallet, Users, BarChart2, Trophy,
+  Leaf, Wallet, Users, BarChart2, Trophy, School,
 } from 'lucide-react';
-import { startOfMonth, endOfMonth } from 'date-fns';
+import { startOfMonth } from 'date-fns';
 import StatCard from '../components/dashboard/StatCard';
 import EnhancedDateRangePicker from '../components/reports/EnhancedDateRangePicker';
 import WasteTrendChart from '../components/dashboard/WasteTrendChart';
 import WasteDistributionChart from '../components/dashboard/WasteDistributionChart';
 import ClassPerformanceChart from '../components/dashboard/ClassPerformanceChart';
 import TopStudentsLeaderboard from '../components/dashboard/TopStudentsLeaderboard';
+import TopClassesLeaderboard from '../components/dashboard/TopClassesLeaderboard';
 import RecentActivity from '../components/dashboard/RecentActivity';
+import RecentClassActivity from '../components/dashboard/RecentClassActivity';
 import Insights from '../components/dashboard/Insights';
 import { useDashboard } from '../hooks/dashboard/useDashboard';
 import { useWasteTypes } from '../hooks/useWasteTypes';
@@ -46,7 +48,9 @@ export default function DashboardPage() {
     weeklyTrendData,
     monthlyTrendData,
     topStudents,
+    topClasses,
     recentActivity,
+    recentClassActivity,
     uniqueClasses,
   } = useDashboard(filters);
 
@@ -149,7 +153,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         <StatCard
           icon={Leaf}
           label={t('dashboard.totalWasteKg')}
@@ -188,6 +192,13 @@ export default function DashboardPage() {
           isText={true}
           isLoading={loading}
         />
+        <StatCard
+          icon={School}
+          label={t('dashboard.topClass')}
+          value={topClasses[0]?.name || '-'}
+          isText={true}
+          isLoading={loading}
+        />
       </div>
 
       {/* Charts Row */}
@@ -204,14 +215,20 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Bottom Row */}
+      {/* Class Performance Chart */}
+      <ClassPerformanceChart
+        data={wasteByClass}
+        isLoading={loading}
+      />
+
+      {/* Leaderboards Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <ClassPerformanceChart
-          data={wasteByClass}
-          isLoading={loading}
-        />
         <TopStudentsLeaderboard
           students={topStudents}
+          isLoading={loading}
+        />
+        <TopClassesLeaderboard
+          classes={topClasses}
           isLoading={loading}
         />
       </div>
@@ -219,6 +236,12 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       <RecentActivity
         activities={recentActivity}
+        isLoading={loading}
+      />
+
+      {/* Recent Class Activity */}
+      <RecentClassActivity
+        activities={recentClassActivity}
         isLoading={loading}
       />
 

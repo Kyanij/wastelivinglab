@@ -344,3 +344,15 @@ export async function getClassesTotalStats() {
     totalEarnings: classes.reduce((sum, c) => sum + (c.totalEarnings || 0), 0),
   };
 }
+
+export async function getAllClassWasteEntries() {
+  const q = query(
+    collection(db, CLASS_WASTE_ENTRIES_COLLECTION),
+    orderBy('date', 'desc')
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+}
