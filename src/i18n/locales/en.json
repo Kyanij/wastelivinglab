@@ -210,6 +210,21 @@
     "noClasses": "No classes found",
     "noClassesHint": "Add a class or create a class waste entry to get started."
   },
+  "classReport": {
+    "title": "Class Waste Report",
+    "class": "Class",
+    "allClasses": "All Classes",
+    "from": "From",
+    "to": "To",
+    "totalWaste": "Total Waste",
+    "totalEarnings": "Total Earnings",
+    "totalEntries": "Total Entries",
+    "avgPerEntry": "Avg per Entry",
+    "kg": "kg",
+    "wasteByClass": "Waste by Class",
+    "wasteByType": "Waste by Type",
+    "wasteTypeBreakdown": "Waste Type Breakdown"
+  },
   "classDetail": {
     "backToClasses": "Back to Classes",
     "pageTitle": "Class Waste History",

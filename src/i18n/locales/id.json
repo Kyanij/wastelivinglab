@@ -210,6 +210,21 @@
     "noClasses": "Kelas tidak ditemukan",
     "noClassesHint": "Tambahkan kelas atau buat entri sampah kelas untuk memulai."
   },
+  "classReport": {
+    "title": "Laporan Sampah Kelas",
+    "class": "Kelas",
+    "allClasses": "Semua Kelas",
+    "from": "Dari",
+    "to": "Ke",
+    "totalWaste": "Total Sampah",
+    "totalEarnings": "Total Pendapatan",
+    "totalEntries": "Total Entri",
+    "avgPerEntry": "Rata-rata per Entri",
+    "kg": "kg",
+    "wasteByClass": "Sampah per Kelas",
+    "wasteByType": "Sampah per Jenis",
+    "wasteTypeBreakdown": "Rincian Jenis Sampah"
+  },
   "classDetail": {
     "backToClasses": "Kembali ke Kelas",
     "pageTitle": "Riwayat Sampah Kelas",

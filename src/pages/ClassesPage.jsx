@@ -5,6 +5,7 @@ import { Plus, Loader2, GraduationCap, Package, Wallet, Pencil, ChevronRight as 
 import { useClasses, useClassesStats } from '../hooks/useClasses';
 import { formatNumber } from '../utils/portalHelpers';
 import AddClassWasteEntryModal from '../components/classes/AddClassWasteEntryModal';
+import ClassReportSection from '../components/classes/ClassReportSection';
 
 const CLASS_COLORS = [
   'from-blue-100 to-blue-200',
@@ -132,7 +133,7 @@ export default function ClassesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-blue-100 rounded-2xl p-5 border border-blue-200 shadow-sm hover:bg-blue-200 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] transition-all duration-300">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shadow-md">
@@ -170,7 +171,7 @@ export default function ClassesPage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {classes.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
@@ -215,6 +216,10 @@ export default function ClassesPage() {
           </div>
         </div>
       )}
+
+      <div className="pt-4">
+        <ClassReportSection />
+      </div>
 
       <AddClassWasteEntryModal
         isOpen={showAddEntryModal}
