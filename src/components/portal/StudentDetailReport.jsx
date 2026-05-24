@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2, Package, Coins, FileText, TrendingUp, Trophy, Target, Award } from 'lucide-react';
+import { Loader2, Package, Coins, FileText, TrendingUp, Target, Award } from 'lucide-react';
+import DateGroupRow from '../studentDetail/DateGroupRow';
 import { getEntriesByStudentAndDateRange } from '../../firebase/wasteEntries';
 import { groupEntriesByDate } from '../../hooks/studentDetail/useStudentDetail';
 import { getStudents } from '../../firebase/students';
@@ -418,7 +419,7 @@ export default function StudentDetailReport({ student }) {
         </div>
       )}
 
-      {/* Card-based Detailed Report - Expandable by Date */}
+      {/* Detailed Report - Date Group Cards */}
       <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-gray-100">
         <div className="p-5 border-b border-gray-100 flex items-center gap-3 bg-gradient-to-r from-white to-green-50/30">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white shadow-md">
@@ -444,121 +445,25 @@ export default function StudentDetailReport({ student }) {
             <p className="text-gray-400 text-sm">{t('portal.noCollectionsFound')}</p>
           </div>
         ) : (
-          <>
-            {/* Card-based Date Groups */}
-            <div className="divide-y divide-gray-100">
-              {dateGroups.map((dateGroup, index) => {
-                const dateWeight = dateGroup.entries.reduce((sum, e) => sum + (e.weight || 0), 0);
-                const dateEarnings = dateGroup.entries.reduce((sum, e) => sum + (e.amount || 0), 0);
-                const firstType = dateGroup.entries[0]?.wasteTypeName || dateGroup.entries[0]?.wasteType || 'Other';
-                const typeColors = {
-                  'Plastic': 'from-blue-500 to-blue-600',
-                  'Paper': 'from-yellow-500 to-amber-500',
-                  'Metal': 'from-slate-500 to-gray-600',
-                  'E-Waste': 'from-emerald-500 to-green-600',
-                  'Glass': 'from-cyan-500 to-teal-600',
-                  'Other': 'from-violet-500 to-purple-600'
-                };
-                const badgeColor = typeColors[firstType] || typeColors['Other'];
-                
-                return (
-                  <div key={dateGroup.dateKey}>
-                    <div 
-                      className={`flex items-center gap-4 p-5 cursor-pointer hover:bg-green-50/80 transition-all duration-300 group/date ${isDateExpanded(dateGroup.dateKey) ? 'bg-green-50/50' : ''}`}
-                      onClick={() => toggleDateExpansion(dateGroup.dateKey)}
-                    >
-                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${badgeColor} flex items-center justify-center text-white font-bold text-sm shadow-md group-hover/date:scale-110 transition-transform duration-300`}>
-                        {index + 1}
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-base font-bold text-gray-800">
-                          {format(new Date(dateGroup.dateKey), 'MMMM d, yyyy')}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${badgeColor} text-white`}>
-                            {dateGroup.entries.length} {t('portal.entries')}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-gray-800">{formatKg(dateWeight)}</p>
-                        <p className="text-sm text-green-600 font-medium">{formatCurrency(dateEarnings)}</p>
-                      </div>
-                      
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${isDateExpanded(dateGroup.dateKey) ? 'rotate-180' : ''}`}>
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-                    
-                    {isDateExpanded(dateGroup.dateKey) && (
-                      <div className="px-5 pb-5 bg-gray-50/50 animate-slide-down">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 pl-14">
-                          {dateGroup.entries.map((entry, entryIndex) => {
-                            const entryPercentage = dateWeight > 0 ? ((entry.weight / dateWeight) * 100).toFixed(0) : 0;
-                            const entryTypeColors = typeColors[entry.wasteTypeName || entry.wasteType] || typeColors['Other'];
-                            return (
-                              <div 
-                                key={entryIndex}
-                                className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300"
-                              >
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${entryTypeColors} text-white`}>
-                                    {entry.wasteTypeName || entry.wasteType || 'Other'}
-                                  </span>
-                                  <span className="text-xs text-gray-400">{entryPercentage}%</span>
-                                </div>
-                                <div className="space-y-2">
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-500">{t('portal.weight')}</span>
-                                    <span className="text-sm font-bold text-gray-800">{formatKg(entry.weight)}</span>
-                                  </div>
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-xs text-gray-500">{t('portal.rate')}</span>
-                                    <span className="text-sm font-medium text-gray-600">Rp {entry.rate}/kg</span>
-                                  </div>
-                                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                                    <div className={`h-full bg-gradient-to-r ${entryTypeColors} rounded-full`} style={{ width: `${entryPercentage}%` }} />
-                                  </div>
-                                  <div className="flex justify-between items-center pt-1 border-t border-gray-100">
-                                    <span className="text-xs text-gray-500">{t('portal.amount')}</span>
-                                    <span className="text-sm font-bold text-green-600">{formatFullCurrency(entry.amount)}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Grand Total */}
-            <div className="bg-gradient-to-r from-green-50 to-green-100/50 border-t border-green-200 px-5 py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white">
-                    <Package className="w-5 h-5" />
-                  </div>
-                  <span className="text-lg font-bold text-gray-800">{t('portal.total')}</span>
-                </div>
-                <div className="flex items-center gap-8">
-                  <div className="text-right">
-                    <span className="text-lg font-bold text-gray-800">{formatNumber(totalWeight)} kg</span>
-                  </div>
-                  <div className="text-right min-w-[120px]">
-                    <span className="text-lg font-bold text-green-600">{formatFullCurrency(totalEarnings)}</span>
-                  </div>
-                </div>
+          <div className="p-4 space-y-3">
+            {dateGroups.map((dateGroup, index) => (
+              <DateGroupRow
+                key={dateGroup.dateKey}
+                dateGroup={dateGroup}
+                colorIndex={index}
+                isExpanded={isDateExpanded(dateGroup.dateKey)}
+                onToggle={() => toggleDateExpansion(dateGroup.dateKey)}
+              />
+            ))}
+            {/* Grand Total Summary */}
+            <div className="bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl px-5 py-3 flex items-center justify-between shadow-md">
+              <span className="text-sm font-semibold text-white/90">{t('portal.total')}</span>
+              <div className="flex items-center gap-6">
+                <span className="text-sm font-bold text-white">{formatNumber(totalWeight)} kg</span>
+                <span className="text-sm font-bold text-white">{formatFullCurrency(totalEarnings)}</span>
               </div>
             </div>
-          </>
+          </div>
         )}
       </div>
 

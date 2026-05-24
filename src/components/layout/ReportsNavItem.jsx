@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { FileBarChart, ChevronDown, ChevronRight, LayoutDashboard, Users, TrendingUp, GraduationCap, BarChart3, Recycle } from 'lucide-react';
+import { FileBarChart, ChevronDown, ChevronRight, LayoutDashboard, Users, TrendingUp, GraduationCap, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +7,6 @@ const reportsSubItems = [
   { to: '/reports/overview', label: 'nav.overviewReport', icon: LayoutDashboard },
   { to: '/reports/student', label: 'nav.studentReport', icon: Users },
   { to: '/reports/class', label: 'nav.classReport', icon: GraduationCap },
-  { to: '/reports/class-waste', label: 'nav.classWasteReport', icon: Recycle },
   { to: '/reports/waste-analysis', label: 'nav.wasteAnalysis', icon: BarChart3 },
 ];
 

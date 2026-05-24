@@ -138,6 +138,11 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#9ca3af',
   },
+  footerCredit: {
+    fontSize: 9,
+    color: '#9ca3af',
+    textAlign: 'right',
+  },
 
   insightsBox: {
     backgroundColor: '#dcfce7',
@@ -408,6 +413,7 @@ const defaultTrans = {
   overviewTitle: 'Overview Report',
   studentTitle: 'Student Performance Report',
   classTitle: 'Class Performance Report',
+  classStudentWasteTitle: 'Class Waste Based on Student Collection Report',
   wasteAnalysisTitle: 'Waste Analysis Report',
   studentCollectionTitle: 'Student Collection Report',
   dateRange: 'Date Range', period: 'Period', class: 'Class', wasteType: 'Waste Type',
@@ -521,13 +527,16 @@ export const OverviewPDF = ({ data, filters, translations }) => {
           </View>
         </View>
 
-        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
-          tpl(trans.pageInfo, {
-            page: pageNumber,
-            total: totalPages,
-            date: format(new Date(), 'dd MMM yyyy HH:mm'),
-          })
-        } fixed />
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) =>
+            tpl(trans.pageInfo, {
+              page: pageNumber,
+              total: totalPages,
+              date: format(new Date(), 'dd MMM yyyy HH:mm'),
+            })
+          } />
+          <Text style={styles.footerCredit}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
+        </View>
       </Page>
     </Document>
   );
@@ -621,13 +630,16 @@ export const StudentPDF = ({ data, filters, translations }) => {
           </View>
         </View>
 
-        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
-          tpl(trans.pageInfo, {
-            page: pageNumber,
-            total: totalPages,
-            date: format(new Date(), 'dd MMM yyyy HH:mm'),
-          })
-        } fixed />
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) =>
+            tpl(trans.pageInfo, {
+              page: pageNumber,
+              total: totalPages,
+              date: format(new Date(), 'dd MMM yyyy HH:mm'),
+            })
+          } />
+          <Text style={styles.footerCredit}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
+        </View>
       </Page>
     </Document>
   );
@@ -635,7 +647,10 @@ export const StudentPDF = ({ data, filters, translations }) => {
 
 export const ClassPDF = ({ data, filters, translations }) => {
   const { dateFrom, dateTo } = filters || {};
-  const classData = data?.ranking || [];
+  const isClassSelected = data?.isClassSelected || false;
+  const ranking = isClassSelected
+    ? (data?.charts?.studentRanking || [])
+    : (data?.charts?.classDistribution || []);
   const kpis = data?.kpis || {};
   const trans = { ...defaultTrans, ...translations };
 
@@ -645,7 +660,7 @@ export const ClassPDF = ({ data, filters, translations }) => {
         <View style={styles.header}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.title}>{trans.classTitle}</Text>
+              <Text style={styles.title}>{trans.classStudentWasteTitle}</Text>
               <Text style={styles.subtitle}>{trans.title}</Text>
               <Text style={styles.subtitle}>{trans.subtitle}</Text>
               <Text style={styles.dateRange}>{trans.dateRange}: {formatDate(dateFrom, trans.locale)} - {formatDate(dateTo, trans.locale)}</Text>
@@ -661,9 +676,9 @@ export const ClassPDF = ({ data, filters, translations }) => {
 
         <View style={styles.kpiGrid}>
           <KPICard label={trans.totalWaste} value={kpis.totalWaste?.value || 0} />
-          <KPICard label={trans.activeClasses} value={kpis.activeClasses?.value || 0} />
-          <KPICard label={trans.totalStudents} value={kpis.totalStudents?.value || 0} />
-          <KPICard label={trans.avgPerClass} value={kpis.avgPerClass?.value || 0} />
+          <KPICard label={trans.totalEarnings} value={kpis.totalEarnings?.value || 0} isCurrency />
+          <KPICard label={isClassSelected ? trans.activeStudents : trans.activeClasses} value={isClassSelected ? kpis.activeStudents?.value || 0 : kpis.activeClasses?.value || 0} />
+          <KPICard label={isClassSelected ? trans.avgPerStudent : trans.avgPerClass} value={isClassSelected ? kpis.avgPerStudent?.value || 0 : kpis.avgPerClass?.value || 0} />
         </View>
 
         <View style={styles.section}>
@@ -671,38 +686,41 @@ export const ClassPDF = ({ data, filters, translations }) => {
           <View style={styles.table}>
             <TableHeader
               cols={[
-                { label: trans.tableRank, width: 0.8 },
-                { label: trans.tableClass, width: 1 },
-                { label: trans.tableWeight, width: 1.5, align: 'right' },
-                { label: trans.avgPerStudent, width: 1.5, align: 'right' },
+                { label: isClassSelected ? trans.tableStudent : trans.tableClass, width: 1.5 },
+                { label: trans.tableWeight, width: 1, align: 'right' },
+                { label: isClassSelected ? trans.tableEarnings : trans.activeStudents, width: 1, align: 'right' },
               ]}
             />
-            {classData.map((cls, index) => (
+            {ranking.map((item, index) => (
               <TableRow
-                key={cls.class}
+                key={isClassSelected ? item.studentId : item.class}
                 cols={[
+                  { key: isClassSelected ? 'studentName' : 'class', width: 1.5, bold: true },
+                  { key: 'totalWaste', width: 1, align: 'right', render: (val) => `${formatNumber(val)} ${trans.kg}` },
                   {
-                    width: 0.8,
-                    render: () =>
-                      index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`,
+                    width: 1,
+                    align: 'right',
+                    render: (val, row) => isClassSelected
+                      ? formatCurrency(row.totalEarnings || 0)
+                      : `${row.studentCount || 0}`,
                   },
-                  { key: 'class', width: 1, bold: true },
-                  { key: 'totalWaste', width: 1.5, align: 'right', render: (val) => `${formatNumber(val)} ${trans.kg}` },
-                  { key: 'avgPerStudent', width: 1.5, align: 'right', render: (val) => `${formatNumber(val)} ${trans.kg}` },
                 ]}
-                data={cls}
+                data={item}
               />
             ))}
           </View>
         </View>
 
-        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
-          tpl(trans.pageInfo, {
-            page: pageNumber,
-            total: totalPages,
-            date: format(new Date(), 'dd MMM yyyy HH:mm'),
-          })
-        } fixed />
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) =>
+            tpl(trans.pageInfo, {
+              page: pageNumber,
+              total: totalPages,
+              date: format(new Date(), 'dd MMM yyyy HH:mm'),
+            })
+          } />
+          <Text style={styles.footerCredit}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
+        </View>
       </Page>
     </Document>
   );
@@ -790,13 +808,16 @@ export const WasteAnalysisPDF = ({ data, filters, translations }) => {
           </View>
         </View>
 
-        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
-          tpl(trans.pageInfo, {
-            page: pageNumber,
-            total: totalPages,
-            date: format(new Date(), 'dd MMM yyyy HH:mm'),
-          })
-        } fixed />
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) =>
+            tpl(trans.pageInfo, {
+              page: pageNumber,
+              total: totalPages,
+              date: format(new Date(), 'dd MMM yyyy HH:mm'),
+            })
+          } />
+          <Text style={styles.footerCredit}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
+        </View>
       </Page>
     </Document>
   );
@@ -895,6 +916,7 @@ export const PortalPDF = ({ data, filters, translations }) => {
           <Text style={styles.footerText}>
             {tpl(trans.generatedOn, { date: format(new Date(), 'dd MMM yyyy HH:mm') })} | {trans.title} - {trans.system}
           </Text>
+          <Text style={[styles.footerCredit]}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
         </View>
 
         <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) =>
@@ -953,19 +975,14 @@ export const ClassWastePDF = ({ data, filters, translations }) => {
           <View style={styles.table}>
             <TableHeader
               cols={[
-                { label: trans.tableRank, width: 0.6 },
                 { label: trans.tableClass, width: 1.2 },
                 { label: trans.tableWeight, width: 1, align: 'right' },
                 { label: trans.tableEarnings, width: 1, align: 'right' },
               ]}
             />
             {ranking.map((cls, index) => {
-              const isMedal = index < 3;
               return (
-                <View key={cls.className} style={isMedal ? styles.medalRow : styles.barRow}>
-                  <Text style={[styles.col, { flex: 0.6 }]}>
-                    {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`}
-                  </Text>
+                <View key={cls.className} style={styles.barRow}>
                   <Text style={[styles.col, { flex: 1.2, fontWeight: 'bold' }]}>{cls.className}</Text>
                   <View style={styles.barTrack}>
                     <View style={[styles.barFill, { width: `${cls.barPercent || 0}%` }]} />
@@ -1028,13 +1045,16 @@ export const ClassWastePDF = ({ data, filters, translations }) => {
           </View>
         )}
 
-        <Text style={styles.footer} render={({ pageNumber, totalPages }) =>
-          tpl(trans.pageInfo, {
-            page: pageNumber,
-            total: totalPages,
-            date: format(new Date(), 'dd MMM yyyy HH:mm'),
-          })
-        } fixed />
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText} render={({ pageNumber, totalPages }) =>
+            tpl(trans.pageInfo, {
+              page: pageNumber,
+              total: totalPages,
+              date: format(new Date(), 'dd MMM yyyy HH:mm'),
+            })
+          } />
+          <Text style={styles.footerCredit}>Research by Apri Yulda, S.K.M., M.K.M.</Text>
+        </View>
       </Page>
     </Document>
   );

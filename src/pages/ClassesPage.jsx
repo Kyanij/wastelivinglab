@@ -27,7 +27,7 @@ function getClassGradient(className) {
   return CLASS_COLORS[Math.abs(hash) % CLASS_COLORS.length];
 }
 
-function ClassRow({ classData, index, onEdit }) {
+function ClassRow({ classData, onEdit }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   
@@ -43,7 +43,7 @@ function ClassRow({ classData, index, onEdit }) {
       onClick={() => navigate(`/classes/${classData.id}`)}
       className="cursor-pointer group border-b border-gray-100/30 last:border-0 transition-all duration-300 hover:bg-gradient-to-r hover:from-green-100/90 hover:to-emerald-100/90 hover:shadow-lg hover:shadow-green-200/50 hover:-translate-y-0.5"
     >
-      <td className="px-6 py-4 w-16 text-gray-400 font-medium group-hover:text-gray-600 transition-colors">{index}</td>
+
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}>
@@ -194,7 +194,7 @@ export default function ClassesPage() {
             <table className="w-full min-w-[600px]">
               <thead>
                 <tr className="bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 text-white">
-                  <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4 w-16">#</th>
+
                   <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">Class</th>
                   <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">{t('classes.totalWaste')}</th>
                   <th className="text-left text-sm font-bold uppercase tracking-wider px-6 py-4">{t('classes.totalEarnings')}</th>
@@ -207,7 +207,6 @@ export default function ClassesPage() {
                   <ClassRow
                     key={classData.id}
                     classData={classData}
-                    index={index + 1}
                     onEdit={() => {}}
                   />
                 ))}

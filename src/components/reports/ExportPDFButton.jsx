@@ -13,6 +13,7 @@ export default function ExportPDFButton({ reportType, data, filters }) {
     overviewTitle: t('pdf.overviewTitle'),
     studentTitle: t('pdf.studentTitle'),
     classTitle: t('pdf.classTitle'),
+    classStudentWasteTitle: t('pdf.classStudentWasteTitle'),
     classWasteTitle: t('pdf.classWasteTitle'),
     wasteAnalysisTitle: t('pdf.wasteAnalysisTitle'),
     studentCollectionTitle: t('pdf.studentCollectionTitle'),

@@ -36,10 +36,11 @@ export default function DateGroupRow({
     return formatNumber(weight || 0);
   };
 
+  const entryCount = dateGroup.entryCount ?? dateGroup.entries?.length ?? 0;
   const entryCountText =
-    dateGroup.entryCount === 1
+    entryCount === 1
       ? `1 ${t('studentDetail.entries').slice(0, -1)}`
-      : `${dateGroup.entryCount} ${t('studentDetail.entries')}`;
+      : `${entryCount} ${t('studentDetail.entries')}`;
 
   return (
     <div className={`group bg-gradient-to-r ${colors.bg} rounded-2xl border ${colors.border} shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}>

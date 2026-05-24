@@ -209,11 +209,6 @@ function HorizontalBarChart({ data, isClassSelected, selectedClass, loading }) {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <div className="flex items-center gap-3">
-                {/* Rank */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-gray-100 text-gray-500`}>
-                  {index + 1}
-                </div>
-
                 {/* Avatar or Class Icon */}
                 {isClassSelected ? (
                   <StudentAvatar name={item.studentName} size="sm" />
