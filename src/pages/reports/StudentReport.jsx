@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Trash2, DollarSign, FileText, BarChart3, ChevronDown, ChevronRight, Award, Calendar, User, TrendingUp, Target } from 'lucide-react';
+import { Trash2, DollarSign, FileText, BarChart3, Award, Calendar, User, TrendingUp, Target } from 'lucide-react';
 
 import ExportPDFButton from '../../components/reports/ExportPDFButton';
 import StudentSearchInput from '../../components/reports/StudentSearchInput';
@@ -11,6 +11,7 @@ import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/us
 import { getStudentReportData, getAllClasses, getAllWasteTypes } from '../../firebase/reports';
 import StudentAvatar from '../../components/ui/StudentAvatar';
 import { getClassGradient } from '../../utils/studentUtils';
+import DateGroupRow from '../../components/studentDetail/DateGroupRow';
 
 import WasteTrendChart from '../../components/dashboard/WasteTrendChart';
 import WasteDistributionChart from '../../components/dashboard/WasteDistributionChart';
@@ -131,17 +132,31 @@ export default function StudentReport() {
     dateTo: dateRange.to,
   };
 
+  const dateGroups = useMemo(() => {
+    if (!data?.entries) return [];
+    return (data.entries || []).map(entry => ({
+      dateKey: entry.date,
+      entries: (entry.items || []).map(item => ({
+        id: `${entry.date}-${item.wasteTypeName || 'unknown'}-${Math.random().toString(36).slice(2, 6)}`,
+        wasteTypeName: item.wasteTypeName || 'Unknown',
+        weight: item.weight || 0,
+        rate: item.rate || 0,
+        amount: item.amount || 0,
+        date: entry.date,
+      })),
+      totalWeight: entry.totalWeight || 0,
+      totalEarnings: entry.totalAmount || 0,
+      entryCount: (entry.items || []).length,
+    }));
+  }, [data]);
+
+  const totals = useMemo(() => ({
+    totalWeight: (data?.entries || []).reduce((s, e) => s + (e.totalWeight || 0), 0),
+    totalEarnings: (data?.entries || []).reduce((s, e) => s + (e.totalAmount || 0), 0),
+  }), [data]);
+
   return (
     <div className="space-y-6">
-      <EnhancedDateRangePicker
-        dateRange={dateRange}
-        onDateRangeChange={updateDateRange}
-        onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
-        reportType="student"
-        pdfData={pdfData}
-        filters={filters}
-      />
-
       {/* Student Search - Always Visible */}
       <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="flex items-center gap-3 mb-4">
@@ -165,14 +180,23 @@ export default function StudentReport() {
 
       {/* Date Range Picker - Only visible after student selected */}
       {selectedStudent && (
-        <EnhancedDateRangePicker
-          dateRange={dateRange}
-          onDateRangeChange={updateDateRange}
-          onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
-          reportType="student"
-          pdfData={pdfData}
-          filters={filters}
-        />
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <EnhancedDateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={updateDateRange}
+              onRefresh={() => selectedStudent?.id && loadData(selectedStudent.id)}
+              reportType="student"
+            />
+          </div>
+          {data && (
+            <ExportPDFButton
+              reportType="student"
+              data={pdfData}
+              filters={filters}
+            />
+          )}
+        </div>
       )}
 
       {!selectedStudent ? (
@@ -217,12 +241,48 @@ export default function StudentReport() {
             />
           </div>
 
-          {/* Entries Table with Expandable Rows */}
-          <EntriesTable 
-            entries={data.entries || []} 
-            expandedDates={expandedDates}
-            toggleDate={toggleDate}
-          />
+          {/* Entries */}
+          <div className="space-y-4">
+            {dateGroups.length === 0 ? (
+              <div className="rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-xl p-8 text-center">
+                <div className="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center mb-3">
+                  <FileText className="w-6 h-6 text-green-400" />
+                </div>
+                <p className="text-gray-500 text-sm">{t('reports.noData')}</p>
+              </div>
+            ) : (
+              dateGroups.map((dg, index) => (
+                <DateGroupRow
+                  key={dg.dateKey}
+                  dateGroup={dg}
+                  colorIndex={index}
+                  isExpanded={expandedDates[dg.dateKey]}
+                  onToggle={() => toggleDate(dg.dateKey)}
+                />
+              ))
+            )}
+            {dateGroups.length > 0 && (
+              <div className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl p-4 md:p-5 text-white shadow-xl shadow-emerald-500/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-white/80 text-xs md:text-sm font-medium">{t('common.total')}</p>
+                      <p className="text-lg md:text-xl font-bold">{dateGroups.length} {dateGroups.length === 1 ? 'day' : 'days'} of entries</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white/80 text-xs md:text-sm">{formatNumber(totals.totalWeight || 0)} kg total waste</p>
+                    <p className="text-xl md:text-2xl font-bold">Rp {formatNumber(totals.totalEarnings || 0)}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Highlights Panel */}
           <HighlightsPanel 
@@ -373,146 +433,6 @@ function StatCard({ icon: Icon, label, value, change, suffix = '', prefix = '', 
           {formatComparisonPeriod(comparisonRange.from, comparisonRange.to)}
         </div>
       )}
-    </div>
-  );
-}
-
-function getWasteTypeGradient(wasteTypeName) {
-  if (!wasteTypeName) return 'from-emerald-500 to-teal-500';
-  const lower = wasteTypeName.toLowerCase();
-  if (/plastic/i.test(lower)) return 'from-blue-500 to-blue-700';
-  if (/paper/i.test(lower)) return 'from-yellow-500 to-amber-500';
-  if (/glass/i.test(lower)) return 'from-teal-500 to-cyan-500';
-  if (/metal/i.test(lower)) return 'from-gray-500 to-gray-600';
-  if (/organic/i.test(lower)) return 'from-emerald-500 to-green-500';
-  if (/e.?waste|electronic/i.test(lower)) return 'from-violet-500 to-purple-600';
-  return 'from-emerald-500 to-teal-500';
-}
-
-function EntriesTable({ entries, expandedDates, toggleDate }) {
-  const { t } = useTranslation();
-
-  if (!entries || entries.length === 0) {
-    return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 backdrop-blur-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('reports.totalEntries')}</h3>
-        <p className="text-gray-400 text-center py-8">{t('reports.noData')}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="rounded-2xl border border-gray-200/50 bg-white/80 backdrop-blur-md p-6 shadow-lg shadow-gray-200/50">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 flex items-center justify-center shadow-lg shadow-fuchsia-500/30">
-          <FileText className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{t('reports.totalEntries')}</h3>
-          <p className="text-xs text-gray-500">{entries.length} {t('reports.totalEntries').toLowerCase()}</p>
-        </div>
-      </div>
-      <div className="space-y-3">
-        {entries.map((entry, entryIndex) => {
-          const gradient = getWasteTypeGradient(entry.items?.[0]?.wasteTypeName);
-          return (
-            <div 
-              key={entry.date} 
-              className="group border border-gray-200/50 rounded-xl overflow-hidden bg-white/90 backdrop-blur-sm shadow-sm hover:shadow-xl hover:shadow-gray-300/50 transition-all duration-300 hover:scale-[1.02]"
-            >
-              <button
-                onClick={() => toggleDate(entry.date)}
-                className="w-full flex items-center justify-between p-4 hover:bg-gradient-to-r hover:from-violet-50/50 hover:to-fuchsia-50/30 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  {expandedDates[entry.date] ? (
-                    <ChevronDown className="w-5 h-5 text-violet-500" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-violet-400 transition-colors" />
-                  )}
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300`}>
-                      <span className="text-white text-xs font-bold">{entryIndex + 1}</span>
-                    </div>
-                    <div>
-                      <span className="font-semibold text-gray-900 group-hover:text-violet-700 transition-colors">
-                        {formatDateShort(entry.date)}
-                      </span>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r ${gradient} text-white shadow-sm`}>
-                          {entry.items.length} {t('reports.totalEntries').toLowerCase()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="text-right">
-                    <div className="font-semibold text-gray-900">{formatNumber(entry.totalWeight)} kg</div>
-                    <div className="text-xs text-gray-500">weight</div>
-                  </div>
-                  <div className="w-px h-8 bg-gray-200" />
-                  <div className="text-right">
-                    <div className="font-bold text-green-600">
-                      Rp{entry.totalAmount.toLocaleString('id-ID', { minimumFractionDigits: 2 })}
-                    </div>
-                    <div className="text-xs text-gray-500">earnings</div>
-                  </div>
-                </div>
-              </button>
-              
-              {expandedDates[entry.date] && (
-                <div className="border-t border-gray-100 bg-gradient-to-b from-gray-50/50 to-white/80 backdrop-blur-sm p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {entry.items.map((item, idx) => {
-                      const itemGradient = getWasteTypeGradient(item.wasteTypeName);
-                      return (
-                        <div 
-                          key={idx} 
-                          className="rounded-xl border border-gray-100/50 bg-white/90 backdrop-blur-sm p-4 hover:shadow-lg hover:scale-105 transition-all duration-300 group/item"
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div className={`px-3 py-1.5 rounded-lg bg-gradient-to-r ${itemGradient} text-white text-sm font-semibold shadow-md group-hover/item:shadow-lg transition-shadow duration-300`}>
-                              {item.wasteTypeName || 'Unknown'}
-                            </div>
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center">
-                              <span className="text-violet-600 text-xs font-bold">{idx + 1}</span>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-gray-500 uppercase tracking-wide">{t('reports.weight')}</span>
-                              <span className="font-bold text-gray-900">{formatNumber(item.weight)} kg</span>
-                            </div>
-                            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
-                              <div 
-                                className={`h-full rounded-full bg-gradient-to-r ${itemGradient} transition-all duration-500`}
-                                style={{ width: `${Math.min((item.weight / entry.totalWeight) * 100, 100)}%` }}
-                              />
-                            </div>
-                            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                              <div>
-                                  <span className="text-xs text-gray-400">Price</span>
-                                  <div className="font-medium text-gray-700">Rp {formatNumber(item.rate)}</div>
-                              </div>
-                              <div className="text-right">
-                                <span className="text-xs text-gray-400">{t('reports.amount')}</span>
-                                <div className="font-bold text-green-600">
-                                  Rp{item.amount?.toLocaleString('id-ID', { minimumFractionDigits: 2 })}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

@@ -32,62 +32,38 @@ export default function HistoryTable({
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100/50 overflow-hidden">
-      <div className="border-b border-gray-100/50 overflow-x-auto">
-        <div className="min-w-[600px]">
-          <div className="flex items-center px-3 md:px-4 py-3 md:py-4 bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 text-xs font-bold text-white uppercase tracking-wider shadow-sm">
-            <div className="w-[10%]"></div>
-            <div className="w-[20%]">{t('studentDetail.date')}</div>
-            <div className="w-[20%] text-right">
-              {t('studentDetail.totalWeightHeader')}
+    <div className="space-y-4">
+      {dateGroups.map((dateGroup, index) => (
+        <DateGroupRow
+          key={dateGroup.dateKey}
+          dateGroup={dateGroup}
+          colorIndex={index}
+          isExpanded={isExpanded(dateGroup.dateKey)}
+          onToggle={() => onToggle(dateGroup.dateKey)}
+          onEditDate={() => onEditDate(dateGroup)}
+          onDeleteDate={() => onDeleteDate(dateGroup)}
+          onEditItem={onEditItem}
+          onDeleteItem={onDeleteItem}
+        />
+      ))}
+      {dateGroups.length > 0 && (
+        <div className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl p-4 md:p-5 text-white shadow-xl shadow-emerald-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-white/80 text-xs md:text-sm font-medium">{t('common.total')}</p>
+                <p className="text-lg md:text-xl font-bold">{dateGroups.length} {dateGroups.length === 1 ? 'day' : 'days'} of entries</p>
+              </div>
             </div>
-            <div className="w-[20%] text-right">
-              {t('studentDetail.totalEarningsHeader')}
+            <div className="text-right">
+              <p className="text-white/80 text-xs md:text-sm">{formatNumber(filteredTotalWeight || 0)} kg total waste</p>
+              <p className="text-xl md:text-2xl font-bold">Rp {formatNumber(filteredTotalEarnings || 0)}</p>
             </div>
-            <div className="w-[20%]">{t('studentDetail.entries')}</div>
-            <div className="w-[10%]"></div>
-          </div>
-        </div>
-      </div>
-
-      <div className="overflow-x-auto">
-        <div className="min-w-[600px]">
-          {dateGroups.map((dateGroup) => (
-            <DateGroupRow
-              key={dateGroup.dateKey}
-              dateGroup={dateGroup}
-              isExpanded={isExpanded(dateGroup.dateKey)}
-              onToggle={() => onToggle(dateGroup.dateKey)}
-              onEditDate={onEditDate}
-              onDeleteDate={onDeleteDate}
-              onEditItem={onEditItem}
-              onDeleteItem={onDeleteItem}
-            />
-          ))}
-        </div>
-      </div>
-
-      {hasActiveFilters && (
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-t border-orange-100/50 overflow-x-auto">
-          <div className="min-w-[600px] flex items-center px-3 md:px-4 py-3 md:py-4">
-            <div className="w-[10%]"></div>
-            <div className="w-[20%]">
-              <span className="text-sm md:text-base font-bold text-orange-700">
-                {t('common.total')}
-              </span>
-            </div>
-            <div className="w-[20%] text-right">
-              <span className="text-sm md:text-base font-bold text-gray-900">
-                {formatNumber(filteredTotalWeight || 0)} kg
-              </span>
-            </div>
-            <div className="w-[20%] text-right">
-              <span className="text-sm md:text-base font-bold text-green-600">
-                Rp {formatNumber(filteredTotalEarnings || 0)}
-              </span>
-            </div>
-            <div className="w-[20%]"></div>
-            <div className="w-[10%]"></div>
           </div>
         </div>
       )}
