@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { startOfMonth, format } from 'date-fns';
+import { format } from 'date-fns';
 import { BarChart3, TrendingUp, Package, Wallet, FileText, RotateCcw, Download } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList,
+  BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Legend,
 } from 'recharts';
 import { useClassReport } from '../../hooks/classes/useClassReport';
 import WasteTrendChart from '../dashboard/WasteTrendChart';
@@ -36,7 +36,7 @@ const WASTE_TYPE_GRADIENTS = {
   'EWaste': 'from-purple-500 to-violet-600',
 };
 
-const BarTooltip = ({ active, payload, label }) => {
+const BarTooltip = useMemo(() => ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border border-gray-100 rounded-lg px-3 py-2 shadow-md">
@@ -46,7 +46,31 @@ const BarTooltip = ({ active, payload, label }) => {
     );
   }
   return null;
-};
+}, []);
+
+
+// Skeleton loader component for smooth UX
+function ChartSkeleton({ height = 280 }) {
+  return (
+    <div className="animate-pulse space-y-3">
+      <div className="flex items-center gap-2">
+        <div className="h-3 bg-gray-200 rounded w-20" />
+        <div className="h-3 bg-gray-200 rounded w-16" />
+      </div>
+      <div className={`bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 rounded-xl`}
+           style={{ height: height + 'px' }} />
+    </div>
+  );
+}
+
+function KpiSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-3 bg-gray-200 rounded w-20 mb-2" />
+      <div className="h-6 bg-gray-200 rounded w-24" />
+    </div>
+  );
+}
 
 function KpiCard({ icon: Icon, label, value, gradient, prefix = '', suffix = '' }) {
   return (
@@ -112,12 +136,9 @@ function WasteTypeTable({ data }) {
 
 export default function ClassReportSection() {
   const { t } = useTranslation();
-  const today = new Date();
-  const defaultFrom = startOfMonth(today);
-  const defaultTo = today;
+  const [dateFrom, setDateFrom] = useState(null);
+  const [dateTo, setDateTo] = useState(null);
 
-  const [dateFrom, setDateFrom] = useState(defaultFrom);
-  const [dateTo, setDateTo] = useState(defaultTo);
   const [classFilter, setClassFilter] = useState('all');
 
   const {
@@ -128,10 +149,11 @@ export default function ClassReportSection() {
     weeklyTrendData,
     monthlyTrendData,
     wasteTypeBreakdown,
+    participationTrendData,
     allClasses,
   } = useClassReport({ dateFrom, dateTo, classFilter });
 
-  const hasFilters = classFilter !== 'all';
+  const hasFilters = classFilter !== 'all' || dateFrom !== null || dateTo !== null;
 
   const formatDateInput = (d) => format(d, 'yyyy-MM-dd');
 
@@ -158,8 +180,8 @@ export default function ClassReportSection() {
   };
 
   const resetFilters = () => {
-    setDateFrom(startOfMonth(new Date()));
-    setDateTo(new Date());
+    setDateFrom(null);
+    setDateTo(null);
     setClassFilter('all');
   };
 
@@ -204,14 +226,14 @@ export default function ClassReportSection() {
             <label className="text-sm text-gray-500">{t('classReport.from')}</label>
             <input
               type="date"
-              value={formatDateInput(dateFrom)}
+              value={dateFrom ? formatDateInput(dateFrom) : ''}
               onChange={handleDateFromChange}
               className="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <label className="text-sm text-gray-500">{t('classReport.to')}</label>
             <input
               type="date"
-              value={formatDateInput(dateTo)}
+              value={dateTo ? formatDateInput(dateTo) : ''}
               onChange={handleDateToChange}
               className="px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
@@ -228,10 +250,21 @@ export default function ClassReportSection() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-        <KpiCard icon={Package} label={t('classReport.totalWaste')} value={kpis.totalWaste} gradient="from-emerald-500 to-teal-500" suffix={t('classReport.kg')} />
-        <KpiCard icon={Wallet} label={t('classReport.totalEarnings')} value={kpis.totalEarnings} gradient="from-amber-500 to-orange-500" prefix="Rp " />
-        <KpiCard icon={FileText} label={t('classReport.totalEntries')} value={kpis.totalEntries} gradient="from-blue-500 to-blue-700" />
-        <KpiCard icon={TrendingUp} label={t('classReport.avgPerEntry')} value={kpis.avgPerEntry} gradient="from-violet-500 to-purple-600" suffix={t('classReport.kg')} />
+        {loading ? (
+          <>
+            <div className="glass-card p-4"><KpiSkeleton /></div>
+            <div className="glass-card p-4"><KpiSkeleton /></div>
+            <div className="glass-card p-4"><KpiSkeleton /></div>
+            <div className="glass-card p-4"><KpiSkeleton /></div>
+          </>
+        ) : (
+          <>
+            <KpiCard icon={Package} label={t('classReport.totalWaste')} value={kpis.totalWaste} gradient="from-emerald-500 to-teal-500" suffix={t('classReport.kg')} />
+            <KpiCard icon={Wallet} label={t('classReport.totalEarnings')} value={kpis.totalEarnings} gradient="from-amber-500 to-orange-500" prefix="Rp " />
+            <KpiCard icon={FileText} label={t('classReport.totalEntries')} value={kpis.totalEntries} gradient="from-blue-500 to-blue-700" />
+            <KpiCard icon={TrendingUp} label={t('classReport.avgPerEntry')} value={kpis.avgPerEntry} gradient="from-violet-500 to-purple-600" suffix={t('classReport.kg')} />
+          </>
+        )}
       </div>
 
       {/* Charts Row */}
@@ -295,6 +328,73 @@ export default function ClassReportSection() {
           isLoading={loading}
         />
       </div>
+
+      {/* Participation Trend Chart */}
+      <Card className="shadow-sm border-gray-100 bg-gray-50/50">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50">
+              <TrendingUp className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-base font-semibold text-gray-900">{t('classReport.participationTitle')}</CardTitle>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <ChartSkeleton height={280} />
+          ) : participationTrendData.length === 0 ? (
+            <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+              {t('common.noData')}
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={participationTrendData} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fill: '#6b7280', fontSize: 11 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(val) => {
+                    const d = new Date(val);
+                    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                  }}
+                />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} tickLine={false} axisLine={false} allowDecimals={false} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  formatter={(value, name) => [value, name === 'classes' ? t('classReport.participatingClasses') : t('classReport.individualStudents')]}
+                  labelFormatter={(label) => {
+                    const d = new Date(label);
+                    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                  }}
+                />
+                <Legend
+                  formatter={(value) => value === 'classes' ? t('classReport.participatingClasses') : t('classReport.individualStudents')}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="classes"
+                  stroke="#3b82f6"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="students"
+                  stroke="#22c55e"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: '#22c55e', strokeWidth: 2, stroke: '#fff' }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Waste Type Breakdown Table */}
       {hasFilters && wasteTypeBreakdown.length > 0 && (

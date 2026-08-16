@@ -165,7 +165,8 @@
     "lastMonth": "Last Month",
     "classWaste": "Class Waste Report",
     "classWasteDesc": "Track waste collection by class entries",
-    "thisYear": "This Year"
+    "thisYear": "This Year",
+    "allDates": "All Dates"
   },
   "students": {
     "title": "Students List",
@@ -226,7 +227,11 @@
     "kg": "kg",
     "wasteByClass": "Waste by Class",
     "wasteByType": "Waste by Type",
-    "wasteTypeBreakdown": "Waste Type Breakdown"
+    "wasteTypeBreakdown": "Waste Type Breakdown",
+    "participationTitle": "Participation in Waste Collection Activities",
+    "participationSubtitle": "Increase in participating classes and individual students over time",
+    "participatingClasses": "Participating Classes",
+    "individualStudents": "Individual Students"
   },
   "classDetail": {
     "backToClasses": "Back to Classes",

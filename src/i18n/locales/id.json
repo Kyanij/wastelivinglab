@@ -165,7 +165,8 @@
     "lastMonth": "Bulan Lalu",
     "classWaste": "Laporan Sampah Kelas",
     "classWasteDesc": "Lacak pengumpulan sampah berdasarkan entri kelas",
-    "thisYear": "Tahun Ini"
+    "thisYear": "Tahun Ini",
+    "allDates": "Semua Tanggal"
   },
   "students": {
     "title": "Daftar Siswa",
@@ -226,7 +227,11 @@
     "kg": "kg",
     "wasteByClass": "Sampah per Kelas",
     "wasteByType": "Sampah per Jenis",
-    "wasteTypeBreakdown": "Rincian Jenis Sampah"
+    "wasteTypeBreakdown": "Rincian Jenis Sampah",
+    "participationTitle": "Partisipasi dalam Kegiatan Pengumpulan Sampah",
+    "participationSubtitle": "Peningkatan kelas yang berpartisipasi dan siswa individual dari waktu ke waktu",
+    "participatingClasses": "Kelas yang Berpartisipasi",
+    "individualStudents": "Siswa Individual"
   },
   "classDetail": {
     "backToClasses": "Kembali ke Kelas",

@@ -201,13 +201,11 @@ export default function ClassDetailPage() {
   const { id: classId } = useParams();
 
   const { classData, entries, loading, error, refetch } = useClassDetail(classId);
-  const { filters, setFilters, hasActiveFilters, resetFilters, defaultDateFrom, defaultDateTo } = useFilters();
+  const { filters, setFilters, hasActiveFilters, resetFilters } = useFilters();
   const { expandedDates, toggleDate, isExpanded, expandAll } = useExpandedDates();
   const { loading: mutationLoading, updateEntry, updateDateEntries, deleteEntry, deleteEntriesByDate } = useClassMutations(classId, refetch);
 
-  const today = new Date();
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  const [dateRange, setDateRange] = useState({ from: firstDayOfMonth, to: today });
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
 
   const [editItemModal, setEditItemModal] = useState(null);
   const [editDateModal, setEditDateModal] = useState(null);
@@ -286,7 +284,11 @@ export default function ClassDetailPage() {
       <EnhancedDateRangePicker
         dateRange={dateRange}
         onDateRangeChange={handleDateRangeChange}
-        onRefresh={() => refetch()}
+        onRefresh={() => {
+          setDateRange({ from: null, to: null });
+          setFilters({ dateFrom: '', dateTo: '', wasteTypeId: 'all' });
+          refetch();
+        }}
       />
 
       {dateGroups.length === 0 ? (
