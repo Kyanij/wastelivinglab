@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { startOfMonth, endOfMonth, subMonths, format, isValid, parseISO } from 'date-fns';
+import { startOfYear, endOfYear, startOfMonth, endOfMonth, subMonths, format, isValid, parseISO } from 'date-fns';
 
 export function useReportFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,7 +17,8 @@ export function useReportFilters() {
       return { from: fromDate, to: toDate };
     }
 
-    return { from: null, to: null };
+    // Default to whole current year when no URL params
+    return { from: startOfYear(new Date()), to: endOfYear(new Date()) };
   };
 
   const [dateRange, setDateRange] = useState(getInitialDates);

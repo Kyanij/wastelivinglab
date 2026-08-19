@@ -31,26 +31,29 @@ function fromTimestamp(ts) {
 
 export async function getOverviewData(dateRange, comparisonRange, selectedClass = 'all', selectedWasteType = 'all') {
   const { from, to } = dateRange;
-  const { from: compFrom, to: compTo } = comparisonRange;
+  const compFrom = comparisonRange?.from || null;
+  const compTo = comparisonRange?.to || null;
 
-  const currentQuery = query(
-    wasteEntriesCollection,
-    where('date', '>=', toTimestamp(from)),
-    where('date', '<=', toTimestamp(to)),
-    orderBy('date', 'asc')
-  );
+  // Build current period query - skip date filters when dates are null (show all)
+  const currentConstraints = [];
+  if (from) currentConstraints.push(where('date', '>=', toTimestamp(from)));
+  if (to) currentConstraints.push(where('date', '<=', toTimestamp(to)));
+  currentConstraints.push(orderBy('date', 'asc'));
+  const currentQuery = query(wasteEntriesCollection, ...currentConstraints);
 
-  const prevQuery = query(
-    wasteEntriesCollection,
-    where('date', '>=', toTimestamp(compFrom)),
-    where('date', '<=', toTimestamp(compTo))
-  );
+  // Build previous period query - only if comparison dates exist
+  const prevConstraints = [];
+  if (compFrom) prevConstraints.push(where('date', '>=', toTimestamp(compFrom)));
+  if (compTo) prevConstraints.push(where('date', '<=', toTimestamp(compTo)));
+  const prevQuery = prevConstraints.length > 0
+    ? query(wasteEntriesCollection, ...prevConstraints)
+    : null;
 
-  const [currentSnapshot, prevSnapshot, studentsSnapshot, wasteTypesSnapshot] = await Promise.all([
+  const [currentSnapshot, studentsSnapshot, wasteTypesSnapshot, prevSnapshot] = await Promise.all([
     getDocs(currentQuery),
-    getDocs(prevQuery),
     getDocs(studentsCollection),
-    getDocs(wasteTypesCollection)
+    getDocs(wasteTypesCollection),
+    prevQuery ? getDocs(prevQuery) : Promise.resolve({ docs: [] })
   ]);
 
   const currentEntries = currentSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -146,6 +149,16 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   });
   const leadingClass = Object.entries(classStats).sort((a, b) => b[1] - a[1])[0];
 
+  // All students sorted by waste (for Waste by Student chart)
+  const wasteByStudent = Object.values(studentStats)
+    .sort((a, b) => b.totalWaste - a.totalWaste)
+    .map(s => ({
+      name: s.studentName,
+      value: Math.round(s.totalWaste * 100) / 100,
+      earnings: Math.round(s.totalEarnings * 100) / 100,
+      class: s.studentClass,
+    }));
+
   return {
     kpis: {
       totalWaste: { value: totalWaste, change: wasteChange },
@@ -157,6 +170,7 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
       trend: trendData,
       typeDistribution: typeData
     },
+    wasteByStudent,
     topStudents,
     uniqueClasses,
     topClass: leadingClass ? leadingClass[0] : 'N/A',
