@@ -97,31 +97,23 @@ export function useClassDetail(classId) {
 }
 
 export function useFilters() {
-  const today = new Date();
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-  const defaultDateFrom = toLocalDateString(firstDayOfMonth);
-  const defaultDateTo = toLocalDateString(today);
-
   const [filters, setFilters] = useState({
-    dateFrom: defaultDateFrom,
-    dateTo: defaultDateTo,
+    dateFrom: '',
+    dateTo: '',
     wasteTypeId: 'all',
   });
 
-  const hasActiveFilters = filters.dateFrom !== defaultDateFrom || filters.dateTo !== defaultDateTo || filters.wasteTypeId !== 'all';
+  const hasActiveFilters = filters.dateFrom !== '' || filters.dateTo !== '' || filters.wasteTypeId !== 'all';
 
   const resetFilters = () => {
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     setFilters({
-      dateFrom: toLocalDateString(firstDayOfMonth),
-      dateTo: toLocalDateString(today),
+      dateFrom: '',
+      dateTo: '',
       wasteTypeId: 'all',
     });
   };
 
-  return { filters, setFilters, hasActiveFilters, resetFilters, defaultDateFrom, defaultDateTo };
+  return { filters, setFilters, hasActiveFilters, resetFilters };
 }
 
 export function filterEntries(entries, filters) {

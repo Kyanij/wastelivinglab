@@ -137,6 +137,7 @@
     "noData": "Tidak ada data untuk filter yang dipilih",
     "date": "Tanggal",
     "wasteByClass": "Sampah per Kelas",
+    "wasteByStudent": "Sampah per Siswa",
     "studentsInClass": "Siswa di {{class}}",
     "classLeads": "Kelas {{class}} memimpin dengan {{percent}}%",
     "classesActive": "{{count}} kelas aktif selama periode ini",
@@ -165,7 +166,8 @@
     "lastMonth": "Bulan Lalu",
     "classWaste": "Laporan Sampah Kelas",
     "classWasteDesc": "Lacak pengumpulan sampah berdasarkan entri kelas",
-    "thisYear": "Tahun Ini"
+    "thisYear": "Tahun Ini",
+    "allDates": "Semua Tanggal"
   },
   "students": {
     "title": "Daftar Siswa",
@@ -226,7 +228,18 @@
     "kg": "kg",
     "wasteByClass": "Sampah per Kelas",
     "wasteByType": "Sampah per Jenis",
-    "wasteTypeBreakdown": "Rincian Jenis Sampah"
+    "wasteType": "Jenis Sampah",
+    "wasteTypeBreakdown": "Rincian Jenis Sampah",
+    "entriesByDate": "Entri per Tanggal",
+    "entriesByDateDesc": "Entri sampah dikelompokkan berdasarkan tanggal untuk kelas yang dipilih",
+    "entries": "entri",
+    "weight": "Berat",
+    "pricePerKg": "Harga/kg",
+    "amount": "Jumlah",
+    "participationTitle": "Partisipasi dalam Kegiatan Pengumpulan Sampah",
+    "participationSubtitle": "Peningkatan kelas yang berpartisipasi dan siswa individual dari waktu ke waktu",
+    "participatingClasses": "Kelas yang Berpartisipasi",
+    "individualStudents": "Siswa Individual"
   },
   "classDetail": {
     "backToClasses": "Kembali ke Kelas",
@@ -441,6 +454,7 @@
     "wasteTrend": "Tren Sampah",
     "wasteCollectionTrend": "Tren Pengumpulan Sampah",
     "wasteByClass": "Sampah per Kelas",
+    "wasteByStudent": "Sampah per Siswa",
     "studentsInClass": "Siswa di {{class}}",
     "increased": "meningkat",
     "decreased": "menurun",

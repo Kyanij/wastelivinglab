@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trash2, DollarSign, Users, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell,
+} from 'recharts';
 
 import EnhancedDateRangePicker from '../../components/reports/EnhancedDateRangePicker';
 import { useReportFilters, formatComparisonPeriod } from '../../hooks/reports/useReportFilters';
@@ -10,6 +13,7 @@ import { formatNumber } from '../../utils/portalHelpers';
 
 import WasteTrendChart from '../../components/dashboard/WasteTrendChart';
 import WasteDistributionChart from '../../components/dashboard/WasteDistributionChart';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 
 export default function OverviewReport() {
   const { t } = useTranslation();
@@ -110,14 +114,23 @@ export default function OverviewReport() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <WasteByStudentChart
+          data={data?.wasteByStudent || []}
+          isLoading={loading}
+        />
         <WasteTrendChart 
           dailyData={data?.charts?.trend || []}
           isLoading={loading}
         />
+      </div>
+
+      {/* Second Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WasteDistributionChart 
           data={data?.charts?.typeDistribution || []}
           isLoading={loading}
         />
+        <div /> {/* empty spacer */}
       </div>
 
       {/* Top Students + Insights */}
@@ -128,6 +141,81 @@ export default function OverviewReport() {
         <InsightsPanel data={data} loading={loading} />
       </div>
     </div>
+  );
+}
+
+function WasteByStudentChart({ data, isLoading }) {
+  const { t } = useTranslation();
+
+  if (isLoading) {
+    return (
+      <Card className="h-[380px]">
+        <CardHeader className="pb-2">
+          <div className="animate-pulse h-5 w-40 bg-gray-100 rounded" />
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse h-[280px] bg-gray-100 rounded-xl" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="h-[380px]">
+      <CardHeader className="pb-2">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-xl bg-emerald-50">
+            <BarChart3 className="w-4 h-4 text-emerald-600" />
+          </div>
+          <CardTitle className="text-base">{t('reports.wasteByStudent')}</CardTitle>
+          <span className="ml-2 px-2 py-0.5 text-xs font-medium text-white bg-emerald-500 rounded-md">
+            kg
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {data.length === 0 ? (
+          <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
+            {t('common.noData')}
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart
+              data={data}
+              margin={{ top: 20, right: 20, left: -10, bottom: 10 }}
+              layout="vertical"
+            >
+              <defs>
+                <linearGradient id="studentBarGradient" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#22c55e" stopOpacity={1} />
+                  <stop offset="100%" stopColor="#16a34a" stopOpacity={1} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={false} />
+              <XAxis type="number" tick={{ fill: '#6b7280', fontSize: 12 }} tickLine={false} axisLine={false} />
+              <YAxis
+                type="category"
+                dataKey="name"
+                tick={{ fill: '#6b7280', fontSize: 11, fontWeight: 500 }}
+                tickLine={false}
+                axisLine={false}
+                width={90}
+              />
+              <Tooltip
+                contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                formatter={(value) => [`${formatNumber(value)} kg`, t('reports.totalWaste')]}
+              />
+              <Bar dataKey="value" fill="url(#studentBarGradient)" radius={[0, 8, 8, 0]} maxBarSize={32}>
+                <LabelList dataKey="value" position="right" offset={8}
+                  style={{ fill: '#16a34a', fontSize: '11px', fontWeight: 600 }}
+                  formatter={(val) => formatNumber(val)}
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 

@@ -13,14 +13,6 @@ import {
 import { BarChart3 } from 'lucide-react';
 import { formatNumber } from '../../utils/portalHelpers';
 
-const defaultData = [
-  { name: '6A', value: 85.4 },
-  { name: '6B', value: 63.2 },
-  { name: '6C', value: 48.6 },
-  { name: '7A', value: 28.7 },
-  { name: '7B', value: 19.3 },
-];
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -35,7 +27,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function ClassPerformanceChart({ data, isLoading }) {
   const { t } = useTranslation();
-  const chartData = data && data.length > 0 ? data : defaultData;
+  const chartData = data || [];
 
   if (isLoading) {
     return (

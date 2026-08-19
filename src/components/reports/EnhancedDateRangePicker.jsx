@@ -37,7 +37,7 @@ const presets = [
 export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, onRefresh, pdfData, filters, reportType, classDropdown, classValue, classOnChange }) {
   const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(dateRange.from);
+  const [currentMonth, setCurrentMonth] = useState(dateRange.from || new Date());
   const [selecting, setSelecting] = useState('from');
   const [tempRange, setTempRange] = useState({ from: dateRange.from, to: dateRange.to });
   const locale = i18n.language === 'id' ? id : undefined;
@@ -162,7 +162,10 @@ export default function EnhancedDateRangePicker({ dateRange, onDateRangeChange, 
             <div className="text-left">
               <div className="text-xs text-gray-500 font-medium">{t('reports.dateRange')}</div>
               <div className="text-sm font-semibold text-gray-900">
-                {format(tempRange.from, 'MMM d, yyyy', { locale })} – {format(tempRange.to, 'MMM d, yyyy', { locale })}
+                {tempRange.from && tempRange.to 
+                  ? `${format(tempRange.from, 'MMM d, yyyy', { locale })} – ${format(tempRange.to, 'MMM d, yyyy', { locale })}`
+                  : t('reports.allDates') || 'All Dates'
+                }
               </div>
             </div>
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />

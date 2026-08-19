@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
@@ -23,6 +24,24 @@ const CustomTooltip = ({ active, payload, label }) => {
     );
   }
   return null;
+};
+
+// Custom label renderer to show value above each data point
+const DataPointLabel = (props) => {
+  const { x, y, value } = props;
+  if (value === null || value === undefined) return null;
+  return (
+    <text
+      x={x}
+      y={y - 10}
+      fill="#16a34a"
+      textAnchor="middle"
+      fontSize={10}
+      fontWeight={600}
+    >
+      {value}
+    </text>
+  );
 };
 
 export default function WasteTrendChart({ dailyData = [], weeklyData = [], monthlyData = [], isLoading }) {
@@ -48,19 +67,19 @@ export default function WasteTrendChart({ dailyData = [], weeklyData = [], month
 
   if (isLoading) {
     return (
-      <Card className="h-[340px]">
+      <Card className="h-[380px]">
         <CardHeader className="pb-2">
           <div className="animate-pulse h-5 w-40 bg-gray-100 rounded" />
         </CardHeader>
         <CardContent>
-          <div className="animate-pulse h-[240px] bg-gray-100 rounded-xl" />
+          <div className="animate-pulse h-[280px] bg-gray-100 rounded-xl" />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="h-[340px]">
+    <Card className="h-[380px]">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -103,8 +122,8 @@ export default function WasteTrendChart({ dailyData = [], weeklyData = [], month
             {t('dashboard.noDataAvailable')}
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={data} margin={{ top: 20, right: 30, left: -10, bottom: 40 }}>
               <defs>
                 <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#22c55e" />
@@ -114,10 +133,19 @@ export default function WasteTrendChart({ dailyData = [], weeklyData = [], month
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis
                 dataKey="date"
-                tick={{ fill: '#6b7280', fontSize: 11 }}
+                tick={{ fill: '#6b7280', fontSize: 10 }}
                 tickLine={false}
                 axisLine={{ stroke: '#e5e7eb' }}
                 dy={10}
+                interval={0}
+                angle={-45}
+                textAnchor="end"
+                height={60}
+                tickFormatter={(val) => {
+                  const parts = val.split('-');
+                  if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                  return val;
+                }}
               />
               <YAxis
                 tick={{ fill: '#6b7280', fontSize: 11 }}
@@ -134,6 +162,7 @@ export default function WasteTrendChart({ dailyData = [], weeklyData = [], month
                 strokeWidth={2.5}
                 dot={{ fill: '#22c55e', strokeWidth: 0, r: 4 }}
                 activeDot={{ r: 6, fill: '#16a34a', stroke: '#fff', strokeWidth: 2 }}
+                label={<DataPointLabel />}
               />
             </LineChart>
           </ResponsiveContainer>

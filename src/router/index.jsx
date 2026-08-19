@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
 import LoginPage from '../pages/LoginPage';
-import SeedPage from '../pages/SeedPage';
 import WasteTypesPage from '../pages/WasteTypesPage';
 import StudentsPage from '../pages/StudentsPage';
 import StudentDetailPage from '../pages/StudentDetailPage';
@@ -23,7 +22,6 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/dev/seed" element={<SeedPage />} />
       
       <Route path="/" element={<PublicPortal />} />
       

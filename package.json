@@ -6,8 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:zip": "vite build && powershell Remove-Item -Force -ErrorAction SilentlyContinue dist.zip; powershell Compress-Archive -Path dist/* -DestinationPath dist.zip",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:rules": "npx firebase-tools deploy --only firestore:rules",
+    "deploy:indexes": "npx firebase-tools deploy --only firestore:indexes"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -46,6 +49,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "netlify-cli": "^26.1.0",
     "vite": "^8.0.10"
   }
 }
