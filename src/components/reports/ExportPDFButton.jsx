@@ -63,6 +63,7 @@ export default function ExportPDFButton({ reportType, data, filters }) {
     locale: i18n.language,
     subtotal: t('pdf.subtotal'),
     grandTotal: t('pdf.grandTotal'),
+    entriesByDate: t('classReport.entriesByDate'),
     dateEntries: t('pdf.dateEntries'),
   };
 

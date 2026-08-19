@@ -172,24 +172,30 @@ export async function getStudentReportData(studentId, dateRange, comparisonRange
 
   const student = { id: studentDoc.id, ...studentDoc.data() };
 
-  const entriesQuery = query(
-    wasteEntriesCollection,
-    where('studentId', '==', studentId),
-    where('date', '>=', toTimestamp(dateRange.from)),
-    where('date', '<=', toTimestamp(dateRange.to)),
-    orderBy('date', 'desc')
-  );
+  // Build queries - skip date filters if dates are null (show all)
+  const baseConstraints = [where('studentId', '==', studentId)];
+  if (dateRange.from) baseConstraints.push(where('date', '>=', toTimestamp(dateRange.from)));
+  if (dateRange.to) baseConstraints.push(where('date', '<=', toTimestamp(dateRange.to)));
+  baseConstraints.push(orderBy('date', 'desc'));
 
-  const prevEntriesQuery = query(
-    wasteEntriesCollection,
-    where('studentId', '==', studentId),
-    where('date', '>=', toTimestamp(comparisonRange.from)),
-    where('date', '<=', toTimestamp(comparisonRange.to))
-  );
+  const entriesQuery = query(wasteEntriesCollection, ...baseConstraints);
 
-  const [entriesSnapshot, prevSnapshot, allStudentsSnapshot] = await Promise.all([
+  // Previous period query - only if comparisonRange exists
+  let prevSnapshot;
+  if (comparisonRange && comparisonRange.from && comparisonRange.to) {
+    const prevQuery = query(
+      wasteEntriesCollection,
+      where('studentId', '==', studentId),
+      where('date', '>=', toTimestamp(comparisonRange.from)),
+      where('date', '<=', toTimestamp(comparisonRange.to))
+    );
+    prevSnapshot = await getDocs(prevQuery);
+  } else {
+    prevSnapshot = { docs: [] };
+  }
+
+  const [entriesSnapshot, allStudentsSnapshot] = await Promise.all([
     getDocs(entriesQuery),
-    getDocs(prevEntriesQuery),
     getDocs(studentsCollection)
   ]);
 

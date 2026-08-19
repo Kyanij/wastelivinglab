@@ -12,12 +12,12 @@ export function useReportFilters() {
 
     if (from && to) {
       hasInteracted.current = true;
+      const fromDate = isValid(parseISO(from)) ? parseISO(from) : null;
+      const toDate = isValid(parseISO(to)) ? parseISO(to) : null;
+      return { from: fromDate, to: toDate };
     }
 
-    const fromDate = from && isValid(parseISO(from)) ? parseISO(from) : startOfMonth(new Date());
-    const toDate = to && isValid(parseISO(to)) ? parseISO(to) : endOfMonth(new Date());
-
-    return { from: fromDate, to: toDate };
+    return { from: null, to: null };
   };
 
   const [dateRange, setDateRange] = useState(getInitialDates);
@@ -36,14 +36,15 @@ export function useReportFilters() {
     if (!hasInteracted.current) return;
 
     const params = new URLSearchParams();
-    params.set('from', format(dateRange.from, 'yyyy-MM-dd'));
-    params.set('to', format(dateRange.to, 'yyyy-MM-dd'));
+    if (dateRange.from) params.set('from', format(dateRange.from, 'yyyy-MM-dd'));
+    if (dateRange.to) params.set('to', format(dateRange.to, 'yyyy-MM-dd'));
     if (selectedClass !== 'all') params.set('class', selectedClass);
     if (selectedWasteType !== 'all') params.set('type', selectedWasteType);
     setSearchParams(params, { replace: true });
   }, [dateRange, selectedClass, selectedWasteType, setSearchParams]);
 
   const comparisonRange = useMemo(() => {
+    if (!dateRange.from || !dateRange.to) return null;
     const diff = dateRange.to.getTime() - dateRange.from.getTime();
     const to = subMonths(dateRange.from, 1);
     const from = new Date(to.getTime() - diff);
@@ -67,7 +68,7 @@ export function useReportFilters() {
 
   const resetFilters = () => {
     hasInteracted.current = true;
-    setDateRange({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) });
+    setDateRange({ from: null, to: null });
     setSelectedClass('all');
     setSelectedWasteType('all');
   };

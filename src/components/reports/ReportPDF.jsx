@@ -937,6 +937,7 @@ export const ClassWastePDF = ({ data, filters, translations }) => {
   const kpis = data?.kpis || {};
   const wasteTypeBreakdown = data?.wasteTypeBreakdown || [];
   const isClassSelected = data?.isClassSelected;
+  const dateGroupedData = data?.dateGroupedData || [];
   const trans = { ...defaultTrans, ...translations };
   const dateRangeStr = `${formatDate(dateFrom, trans.locale)} - ${formatDate(dateTo, trans.locale)}`;
   const classLabel = selectedClass && selectedClass !== 'all' ? selectedClass : trans.all;
@@ -1028,6 +1029,56 @@ export const ClassWastePDF = ({ data, filters, translations }) => {
                 );
               })}
             </View>
+          </View>
+        )}
+
+        {isClassSelected && dateGroupedData.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{trans.entriesByDate}</Text>
+            {dateGroupedData.map((dateGroup, dIdx) => (
+              <View key={dateGroup.dateKey} style={{ marginBottom: 12 }}>
+                {/* Date header */}
+                <View style={[styles.typeRow, { backgroundColor: '#ecfdf5', borderBottom: 'none' }]}>
+                  <Text style={[styles.col, { flex: 2, fontWeight: 'bold', fontSize: 10, color: '#065f46' }]}>
+                    {formatDate(dateGroup.dateKey, trans.locale)}
+                  </Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right', fontSize: 9, color: '#065f46' }]}>
+                    {dateGroup.entryCount} {trans.dateEntries}
+                  </Text>
+                  <Text style={[styles.col, { flex: 0.8, textAlign: 'right', fontSize: 9, fontWeight: 'bold', color: '#065f46' }]}>
+                    {formatNumber(dateGroup.totalWeight)} {trans.kg}
+                  </Text>
+                  <Text style={[styles.col, { flex: 1, textAlign: 'right', fontSize: 9, fontWeight: 'bold', color: '#065f46' }]}>
+                    {formatCurrency(dateGroup.totalEarnings)}
+                  </Text>
+                </View>
+                {/* Entry rows */}
+                <View style={styles.table}>
+                  <TableHeader
+                    cols={[
+                      { label: trans.tableWasteType, width: 1.5 },
+                      { label: trans.tableWeight, width: 0.8, align: 'right' },
+                      { label: trans.tablePrice, width: 1, align: 'right' },
+                      { label: trans.tableAmount, width: 1, align: 'right' },
+                    ]}
+                  />
+                  {dateGroup.entries.map((entry, eIdx) => (
+                    <View key={entry.id || eIdx} style={[styles.typeRow, { backgroundColor: eIdx % 2 === 0 ? '#f9fafb' : '#ffffff' }]}>
+                      <Text style={[styles.col, { flex: 1.5, fontSize: 9 }]}>{entry.wasteTypeName}</Text>
+                      <Text style={[styles.col, { flex: 0.8, textAlign: 'right', fontSize: 9 }]}>
+                        {formatNumber(entry.weight)} {trans.kg}
+                      </Text>
+                      <Text style={[styles.col, { flex: 1, textAlign: 'right', fontSize: 9 }]}>
+                        {formatCurrency(entry.price)}/{trans.kg}
+                      </Text>
+                      <Text style={[styles.col, { flex: 1, textAlign: 'right', fontSize: 9, fontWeight: 'bold' }]}>
+                        {formatCurrency(entry.amount)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ))}
           </View>
         )}
 

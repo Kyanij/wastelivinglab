@@ -37,7 +37,9 @@ export default function StudentReport() {
     if (!studentId) return;
     setLoading(true);
     try {
-      const studentData = await getStudentReportData(studentId, dateRange, comparisonRange);
+      const safeDateRange = dateRange || { from: null, to: null };
+      const safeComparisonRange = comparisonRange || null;
+      const studentData = await getStudentReportData(studentId, safeDateRange, safeComparisonRange);
       setData(studentData);
     } catch (error) {
       console.error('Error loading student data:', error);

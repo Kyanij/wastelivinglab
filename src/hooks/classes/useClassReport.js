@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { getAllClassWasteEntries, getAllClasses } from '../../firebase/classes';
 import { getAllWasteEntries } from '../../firebase/wasteEntries';
+import { getAllStudents } from '../../firebase/students';
 import { format, startOfWeek } from 'date-fns';
 
 // Cache date parsing - converts Firestore Timestamp or Date to a Date object once
@@ -15,6 +16,58 @@ function toDate(d) {
 function dateKey(d) {
   const date = toDate(d);
   return date ? format(date, 'yyyy-MM-dd') : null;
+}
+
+// Build date-grouped data for expandable table
+function buildDateGroupedData(entries, filters) {
+  const { dateFrom, dateTo, classFilter } = filters;
+  const dateMap = {};
+
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i];
+    
+    // Apply filters
+    if (dateFrom || dateTo || (classFilter && classFilter !== 'all')) {
+      const d = toDate(e.date);
+      if (!d) continue;
+      if (dateFrom && d < dateFrom) continue;
+      if (dateTo && d > dateTo) continue;
+      if (classFilter && classFilter !== 'all' && e.className !== classFilter) continue;
+    }
+
+    const key = dateKey(e.date);
+    if (!key) continue;
+
+    if (!dateMap[key]) {
+      dateMap[key] = {
+        dateKey: key,
+        date: toDate(e.date),
+        entries: [],
+        totalWeight: 0,
+        totalEarnings: 0,
+      };
+    }
+
+    const group = dateMap[key];
+    group.entries.push({
+      id: e.id,
+      wasteTypeName: e.wasteTypeName || 'Unknown',
+      weight: e.weight || 0,
+      price: e.price || 0,
+      amount: e.amount || 0,
+    });
+    group.totalWeight += e.weight || 0;
+    group.totalEarnings += e.amount || 0;
+  }
+
+  return Object.values(dateMap)
+    .map(g => ({
+      ...g,
+      totalWeight: Math.round(g.totalWeight * 100) / 100,
+      totalEarnings: Math.round(g.totalEarnings * 100) / 100,
+      entryCount: g.entries.length,
+    }))
+    .sort((a, b) => b.dateKey.localeCompare(a.dateKey));
 }
 
 // Single-pass filter + transform for entries
@@ -118,12 +171,14 @@ function filterAndGroup(entries, filters) {
       .map(([date, waste]) => ({ date, waste: Math.round(waste * 100) / 100 }))
       .sort((a, b) => a.date.localeCompare(b.date)),
     classParticipationMap,
+    dateGroupedData: classFilter && classFilter !== 'all' ? buildDateGroupedData(entries, filters) : [],
   };
 }
 
 export function useClassReport(filters = {}) {
   const [classEntries, setClassEntries] = useState([]);
   const [studentEntries, setStudentEntries] = useState([]);
+  const [allStudents, setAllStudents] = useState([]);
   const [allClasses, setAllClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -167,12 +222,27 @@ export function useClassReport(filters = {}) {
     return filterAndGroup(classEntries, filters);
   }, [classEntries, filters]);
 
-  // Compute student participation separately (from different collection)
+  // Compute student participation: students from the selected class who submitted entries
   const participationTrendData = useMemo(() => {
     const studentMap = {};
     const dateFrom = filters.dateFrom;
     const dateTo = filters.dateTo;
+    const classFilter = filters.classFilter;
 
+    // Get student IDs for the selected class (enrolled students)
+    // Match case-insensitively since classes collection uses normalized names
+    let classStudentIds = new Set();
+    if (classFilter && classFilter !== 'all') {
+      const normalizedClass = classFilter.toLowerCase().trim().replace(/\s+/g, '');
+      allStudents.forEach(s => {
+        const studentClass = (s.class || '').toLowerCase().trim().replace(/\s+/g, '');
+        if (studentClass === normalizedClass) {
+          classStudentIds.add(s.id);
+        }
+      });
+    }
+
+    // Count unique students per date from wasteEntries
     for (let i = 0; i < studentEntries.length; i++) {
       const e = studentEntries[i];
       const d = toDate(e.date);
@@ -180,9 +250,15 @@ export function useClassReport(filters = {}) {
       if (dateFrom && d < dateFrom) continue;
       if (dateTo && d > dateTo) continue;
       
+      const studentId = e.studentId;
+      if (!studentId) continue;
+
+      // If class filter is active, only count students enrolled in that class
+      if (classFilter && classFilter !== 'all' && !classStudentIds.has(studentId)) continue;
+
       const key = format(d, 'yyyy-MM-dd');
       if (!studentMap[key]) studentMap[key] = new Set();
-      studentMap[key].add(e.studentId || e.id);
+      studentMap[key].add(studentId);
     }
 
     // Merge class + student participation data
@@ -194,14 +270,15 @@ export function useClassReport(filters = {}) {
         classes: computed.classParticipationMap[date] ? computed.classParticipationMap[date].size : 0,
         students: studentMap[date] ? studentMap[date].size : 0,
       }));
-  }, [studentEntries, computed.classParticipationMap, filters.dateFrom, filters.dateTo]);
+  }, [studentEntries, allStudents, computed.classParticipationMap, filters.dateFrom, filters.dateTo, filters.classFilter]);
 
   const refetch = useCallback(() => {
     setLoading(true);
-    Promise.all([getAllClassWasteEntries(), getAllWasteEntries()])
-      .then(([entries, students]) => {
+    Promise.all([getAllClassWasteEntries(), getAllWasteEntries(), getAllStudents()])
+      .then(([entries, students, studentsData]) => {
         setClassEntries(entries);
         setStudentEntries(students);
+        setAllStudents(studentsData);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -215,6 +292,7 @@ export function useClassReport(filters = {}) {
     weeklyTrendData: computed.weekData,
     monthlyTrendData: computed.monthData,
     wasteTypeBreakdown: computed.wasteTypeBreakdown,
+    dateGroupedData: computed.dateGroupedData,
     participationTrendData,
     allClasses,
     refetch,

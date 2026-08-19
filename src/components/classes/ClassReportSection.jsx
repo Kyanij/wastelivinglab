@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { BarChart3, TrendingUp, Package, Wallet, FileText, RotateCcw, Download } from 'lucide-react';
+import { BarChart3, TrendingUp, Package, Wallet, FileText, RotateCcw, Download, ChevronDown, ChevronRight } from 'lucide-react';
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Legend,
 } from 'recharts';
@@ -36,7 +36,7 @@ const WASTE_TYPE_GRADIENTS = {
   'EWaste': 'from-purple-500 to-violet-600',
 };
 
-const BarTooltip = useMemo(() => ({ active, payload, label }) => {
+const BarTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white border border-gray-100 rounded-lg px-3 py-2 shadow-md">
@@ -46,7 +46,7 @@ const BarTooltip = useMemo(() => ({ active, payload, label }) => {
     );
   }
   return null;
-}, []);
+};
 
 
 // Skeleton loader component for smooth UX
@@ -134,12 +134,117 @@ function WasteTypeTable({ data }) {
   );
 }
 
+const DATE_COLORS = [
+  { bg: 'from-emerald-50 to-green-100', border: 'border-emerald-200', text: 'text-emerald-700', badge: 'bg-emerald-500' },
+  { bg: 'from-green-50 to-emerald-100', border: 'border-green-200', text: 'text-green-700', badge: 'bg-green-500' },
+  { bg: 'from-teal-50 to-green-100', border: 'border-teal-200', text: 'text-teal-700', badge: 'bg-teal-500' },
+];
+
+function DateGroupedTable({ data, expandedDates, toggleDate }) {
+  const { t } = useTranslation();
+
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+  };
+
+  if (!data || data.length === 0) return null;
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center gap-2">
+          <div className="p-2 rounded-xl bg-emerald-50">
+            <Package className="w-4 h-4 text-emerald-600" />
+          </div>
+          <div>
+            <CardTitle className="text-base">{t('classReport.entriesByDate')}</CardTitle>
+            <p className="text-xs text-gray-500 mt-0.5">{t('classReport.entriesByDateDesc')}</p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {data.map((dateGroup, idx) => {
+            const colors = DATE_COLORS[idx % DATE_COLORS.length];
+            const isExpanded = expandedDates.has(dateGroup.dateKey);
+
+            return (
+              <div key={dateGroup.dateKey} className={`bg-gradient-to-r ${colors.bg} rounded-xl border ${colors.border} overflow-hidden transition-all duration-200`}>
+                {/* Date header row */}
+                <div
+                  className="flex items-center justify-between p-3 md:p-4 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => toggleDate(dateGroup.dateKey)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-white/60 shadow-sm transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'}`}>
+                      {isExpanded ? (
+                        <ChevronDown className={`w-4 h-4 ${colors.text}`} />
+                      ) : (
+                        <ChevronRight className={`w-4 h-4 ${colors.text}`} />
+                      )}
+                    </div>
+                    <div>
+                      <h4 className={`font-semibold text-sm ${colors.text}`}>{formatDate(dateGroup.dateKey)}</h4>
+                      <p className="text-xs text-gray-500">{dateGroup.entryCount} {t('classReport.entries')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400">{t('classReport.weight')}</p>
+                      <p className={`font-bold text-sm ${colors.text}`}>{formatNumber(dateGroup.totalWeight)} kg</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-400">{t('classReport.earnings')}</p>
+                      <p className={`font-bold text-sm ${colors.text}`}>Rp {formatNumber(dateGroup.totalEarnings)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Expanded entries table */}
+                {isExpanded && (
+                  <div className="bg-white/70 border-t border-white/50">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-emerald-50/80 text-emerald-700 text-xs font-bold uppercase tracking-wider">
+                          <th className="px-4 py-2.5 text-left">{t('classReport.wasteType')}</th>
+                          <th className="px-4 py-2.5 text-right">{t('classReport.weight')}</th>
+                          <th className="px-4 py-2.5 text-right">{t('classReport.pricePerKg')}</th>
+                          <th className="px-4 py-2.5 text-right">{t('classReport.amount')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {dateGroup.entries.map((entry, eIdx) => (
+                          <tr
+                            key={entry.id || eIdx}
+                            className="border-t border-emerald-100/50 hover:bg-emerald-50/50 transition-colors"
+                          >
+                            <td className="px-4 py-2.5 text-gray-900 font-medium text-sm">{entry.wasteTypeName}</td>
+                            <td className="px-4 py-2.5 text-right text-gray-700 text-sm">{formatNumber(entry.weight)} kg</td>
+                            <td className="px-4 py-2.5 text-right text-gray-700 text-sm">Rp {formatNumber(entry.price)}</td>
+                            <td className={`px-4 py-2.5 text-right font-semibold text-sm ${colors.text}`}>Rp {formatNumber(entry.amount)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ClassReportSection() {
   const { t } = useTranslation();
   const [dateFrom, setDateFrom] = useState(null);
   const [dateTo, setDateTo] = useState(null);
 
   const [classFilter, setClassFilter] = useState('all');
+  const [expandedDates, setExpandedDates] = useState(new Set());
 
   const {
     loading,
@@ -149,9 +254,22 @@ export default function ClassReportSection() {
     weeklyTrendData,
     monthlyTrendData,
     wasteTypeBreakdown,
+    dateGroupedData,
     participationTrendData,
     allClasses,
   } = useClassReport({ dateFrom, dateTo, classFilter });
+
+  const toggleDate = useCallback((dateKey) => {
+    setExpandedDates(prev => {
+      const next = new Set(prev);
+      if (next.has(dateKey)) {
+        next.delete(dateKey);
+      } else {
+        next.add(dateKey);
+      }
+      return next;
+    });
+  }, []);
 
   const hasFilters = classFilter !== 'all' || dateFrom !== null || dateTo !== null;
 
@@ -159,9 +277,9 @@ export default function ClassReportSection() {
 
   const pdfData = useMemo(() => {
     return prepareClassWasteDataFromHook({
-      kpis, wasteByClass, wasteTypeBreakdown, allClasses, classFilter, dateFrom, dateTo,
+      kpis, wasteByClass, wasteTypeBreakdown, dateGroupedData, allClasses, classFilter, dateFrom, dateTo,
     }, { dateFrom, dateTo, classFilter });
-  }, [kpis, wasteByClass, wasteTypeBreakdown, allClasses, classFilter, dateFrom, dateTo]);
+  }, [kpis, wasteByClass, wasteTypeBreakdown, dateGroupedData, allClasses, classFilter, dateFrom, dateTo]);
 
   const pdfFilters = useMemo(() => ({
     dateFrom,
@@ -399,6 +517,15 @@ export default function ClassReportSection() {
       {/* Waste Type Breakdown Table */}
       {hasFilters && wasteTypeBreakdown.length > 0 && (
         <WasteTypeTable data={wasteTypeBreakdown} />
+      )}
+
+      {/* Date-Grouped Entries Table (only when class is selected) */}
+      {dateGroupedData.length > 0 && (
+        <DateGroupedTable
+          data={dateGroupedData}
+          expandedDates={expandedDates}
+          toggleDate={toggleDate}
+        />
       )}
     </div>
   );

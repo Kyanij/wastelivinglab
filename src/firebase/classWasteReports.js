@@ -115,7 +115,7 @@ export async function getClassWasteReportData({ dateFrom, dateTo, classFilter = 
 }
 
 export function prepareClassWasteDataFromHook(hookData, filters) {
-  const { kpis, wasteByClass, wasteTypeBreakdown, allClasses, classFilter, dateFrom, dateTo } = hookData;
+  const { kpis, wasteByClass, wasteTypeBreakdown, dateGroupedData, allClasses, classFilter, dateFrom, dateTo } = hookData;
   const totalWaste = kpis.totalWaste || 0;
   const maxWaste = wasteByClass.length > 0 ? Math.max(...wasteByClass.map(w => w.value)) : 1;
   const maxTypeWeight = wasteTypeBreakdown.length > 0
@@ -145,6 +145,7 @@ export function prepareClassWasteDataFromHook(hookData, filters) {
     allClasses,
     selectedClass: classFilter || 'all',
     isClassSelected: classFilter && classFilter !== 'all',
+    dateGroupedData: dateGroupedData || [],
     topClass: wasteByClass[0] || null,
     topClassPercent: totalWaste > 0 && wasteByClass[0]
       ? Math.round((wasteByClass[0].value / totalWaste) * 100) : 0,
