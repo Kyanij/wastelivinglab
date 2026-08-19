@@ -16,6 +16,8 @@ dist-ssr
 
 references/
 wastelivinglab/
+nul
+opencode.json
 .claude/
 .qwen/
 .agents/
