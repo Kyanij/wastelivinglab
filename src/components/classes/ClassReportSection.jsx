@@ -395,7 +395,7 @@ export default function ClassReportSection() {
                 <BarChart3 className="w-4 h-4 text-emerald-600" />
               </div>
               <CardTitle className="text-base font-semibold text-gray-900">
-                {hasFilters ? t('classReport.wasteByType') : t('classReport.wasteByClass')}
+                {t('classReport.wasteByClass')}
               </CardTitle>
               <span className="ml-2 px-2 py-0.5 text-xs font-medium text-white bg-emerald-500 rounded-md">
                 {t('classReport.kg')}
