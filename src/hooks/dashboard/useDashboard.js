@@ -179,12 +179,14 @@ export function useDashboard(filters = {}) {
   const wasteByClass = useMemo(() => {
     const map = {};
     filteredEntries.forEach(e => {
-      const cls = e.studentClass || 'Unknown';
+      const cls = (e.studentClass || '').trim();
+      if (!cls) return;
       if (!map[cls]) map[cls] = 0;
       map[cls] += e.weight || 0;
     });
     filteredClassEntries.forEach(e => {
-      const cls = e.className || 'Unknown';
+      const cls = (e.className || '').trim();
+      if (!cls) return;
       if (!map[cls]) map[cls] = 0;
       map[cls] += e.weight || 0;
     });
