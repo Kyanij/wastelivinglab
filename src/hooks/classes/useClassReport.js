@@ -49,9 +49,11 @@ function buildDateGroupedData(entries, filters) {
     }
 
     const group = dateMap[key];
+    const wName = (e.wasteTypeName || '').trim();
+    if (!wName) return;
     group.entries.push({
       id: e.id,
-      wasteTypeName: e.wasteTypeName || 'Unknown',
+      wasteTypeName: wName,
       weight: e.weight || 0,
       price: e.price || 0,
       amount: e.amount || 0,
@@ -97,8 +99,9 @@ function filterAndGroup(entries, filters) {
 
     const weight = e.weight || 0;
     const amount = e.amount || 0;
-    const cls = e.className || 'Unknown';
-    const type = e.wasteTypeName || 'Unknown';
+    const cls = (e.className || '').trim();
+    const type = (e.wasteTypeName || '').trim();
+    if (!cls || !type) continue;
     const key = dateKey(e.date);
 
     totalWaste += weight;

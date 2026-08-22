@@ -40,7 +40,8 @@ export async function getClassWasteReportData({ dateFrom, dateTo, classFilter = 
 
   const classStats = {};
   entries.forEach(e => {
-    const cls = e.className || 'Unknown';
+    const cls = (e.className || '').trim();
+    if (!cls) return;
     if (!classStats[cls]) classStats[cls] = { totalWaste: 0, totalEarnings: 0, entryCount: 0 };
     classStats[cls].totalWaste += e.weight || 0;
     classStats[cls].totalEarnings += e.amount || 0;
@@ -60,7 +61,8 @@ export async function getClassWasteReportData({ dateFrom, dateTo, classFilter = 
 
   const wasteByType = {};
   entries.forEach(e => {
-    const type = e.wasteTypeName || 'Unknown';
+    const type = (e.wasteTypeName || '').trim();
+    if (!type) return;
     if (!wasteByType[type]) wasteByType[type] = { weight: 0, earnings: 0 };
     wasteByType[type].weight += e.weight || 0;
     wasteByType[type].earnings += e.amount || 0;

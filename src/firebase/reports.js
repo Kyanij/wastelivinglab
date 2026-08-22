@@ -92,14 +92,19 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   const prevAvgPerStudent = prevActiveStudents > 0 ? prevWaste / prevActiveStudents : 0;
   const avgChange = prevAvgPerStudent > 0 ? ((avgPerStudent - prevAvgPerStudent) / prevAvgPerStudent) * 100 : 0;
 
+  const studentsById = new Map(students.map(s => [s.id, s]));
+  const wasteTypesById = new Map(wasteTypes.map(w => [w.id, w]));
   const wasteByType = {};
   const dailyData = {};
   
   filteredCurrentEntries.forEach(entry => {
-    const typeName = entry.wasteTypeName || 'Unknown';
+    if (!entry.date) return;
+    const rawType = (entry.wasteTypeName || '').trim() || wasteTypesById.get(entry.wasteTypeId)?.name?.trim() || '';
+    if (!rawType) return;
+    const typeName = rawType;
     wasteByType[typeName] = (wasteByType[typeName] || 0) + (entry.weight || 0);
 
-    const dateKey = entry.date ? format(fromTimestamp(entry.date), 'MMM d') : 'Unknown';
+    const dateKey = format(fromTimestamp(entry.date), 'MMM d');
     dailyData[dateKey] = (dailyData[dateKey] || 0) + (entry.weight || 0);
   });
 
@@ -116,11 +121,15 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   const studentStats = {};
   filteredCurrentEntries.forEach(entry => {
     const sid = entry.studentId;
+    if (!sid) return;
+    const resolvedName = (entry.studentName || '').trim() || studentsById.get(sid)?.name?.trim() || '';
+    if (!resolvedName) return;
+    const resolvedClass = (entry.studentClass || '').trim() || studentsById.get(sid)?.class?.trim() || 'N/A';
     if (!studentStats[sid]) {
       studentStats[sid] = { 
         studentId: sid, 
-        studentName: entry.studentName || 'Unknown',
-        studentClass: entry.studentClass || 'N/A',
+        studentName: resolvedName,
+        studentClass: resolvedClass,
         totalWaste: 0, 
         totalEarnings: 0 
       };
@@ -143,7 +152,8 @@ export async function getOverviewData(dateRange, comparisonRange, selectedClass 
   const topClass = uniqueClasses.length > 0 ? uniqueClasses[0] : 'N/A';
   const classStats = {};
   filteredCurrentEntries.forEach(entry => {
-    const cls = entry.studentClass || 'Unknown';
+    const cls = (entry.studentClass || '').trim() || studentsById.get(entry.studentId)?.class?.trim() || '';
+    if (!cls) return;
     if (!classStats[cls]) classStats[cls] = 0;
     classStats[cls] += entry.weight || 0;
   });
@@ -236,10 +246,13 @@ export async function getStudentReportData(studentId, dateRange, comparisonRange
   const wasteByType = {};
 
   entries.forEach(entry => {
-    const dateKey = entry.date ? format(fromTimestamp(entry.date), 'MMM d') : 'Unknown';
+    if (!entry.date) return;
+    const dateKey = format(fromTimestamp(entry.date), 'MMM d');
     dailyData[dateKey] = (dailyData[dateKey] || 0) + (entry.weight || 0);
 
-    const typeName = entry.wasteTypeName || 'Unknown';
+    const rawType = (entry.wasteTypeName || '').trim();
+    if (!rawType) return;
+    const typeName = rawType;
     wasteByType[typeName] = (wasteByType[typeName] || 0) + (entry.weight || 0);
   });
 
@@ -266,7 +279,8 @@ export async function getStudentReportData(studentId, dateRange, comparisonRange
   const comparisonToAvg = avgWasteAll > 0 ? ((totalWaste - avgWasteAll) / avgWasteAll) * 100 : 0;
 
   const groupedEntries = entries.reduce((acc, entry) => {
-    const dateKey = entry.date ? format(fromTimestamp(entry.date), 'yyyy-MM-dd') : 'unknown';
+    if (!entry.date) return acc;
+    const dateKey = format(fromTimestamp(entry.date), 'yyyy-MM-dd');
     if (!acc[dateKey]) acc[dateKey] = [];
     acc[dateKey].push({ ...entry, date: fromTimestamp(entry.date) });
     return acc;
@@ -354,12 +368,14 @@ export async function getClassReportData(dateRange, comparisonRange, selectedCla
   const classStudentCount = {};
 
   students.forEach(s => {
-    const cls = s.class || 'Unknown';
+    const cls = (s.class || '').trim();
+    if (!cls) return;
     classStudentCount[cls] = (classStudentCount[cls] || 0) + 1;
   });
 
   entries.forEach(entry => {
-    const cls = entry.studentClass || 'Unknown';
+    const cls = (entry.studentClass || '').trim();
+    if (!cls) return;
     if (!classStats[cls]) {
       classStats[cls] = { totalWaste: 0, studentIds: new Set() };
     }
@@ -367,10 +383,10 @@ export async function getClassReportData(dateRange, comparisonRange, selectedCla
     classStats[cls].studentIds.add(entry.studentId);
   });
 
-  // Previous period stats for comparison
   const prevClassStats = {};
   prevEntries.forEach(entry => {
-    const cls = entry.studentClass || 'Unknown';
+    const cls = (entry.studentClass || '').trim();
+    if (!cls) return;
     if (!prevClassStats[cls]) {
       prevClassStats[cls] = 0;
     }
@@ -416,13 +432,18 @@ export async function getClassReportData(dateRange, comparisonRange, selectedCla
   // Student stats for selected class
   let studentStats = {};
   if (selectedClass && selectedClass !== 'all') {
+    const studentsByIdSel = new Map(students.map(s => [s.id, s]));
     entries.forEach(entry => {
       const sid = entry.studentId;
+      if (!sid) return;
+      const rName = (entry.studentName || '').trim() || studentsByIdSel.get(sid)?.name?.trim() || '';
+      if (!rName) return;
+      const rClass = (entry.studentClass || '').trim() || studentsByIdSel.get(sid)?.class?.trim() || 'N/A';
       if (!studentStats[sid]) {
         studentStats[sid] = {
           studentId: sid,
-          studentName: entry.studentName || 'Unknown',
-          studentClass: entry.studentClass || 'N/A',
+          studentName: rName,
+          studentClass: rClass,
           totalWaste: 0,
           totalEarnings: 0
         };
@@ -431,14 +452,15 @@ export async function getClassReportData(dateRange, comparisonRange, selectedCla
       studentStats[sid].totalEarnings += entry.amount || 0;
     });
 
-    // Add students with zero waste (from the selected class)
     students
       .filter(s => s.class === selectedClass)
       .forEach(s => {
         if (!studentStats[s.id]) {
+          const sName = (s.name || '').trim();
+          if (!sName) return;
           studentStats[s.id] = {
             studentId: s.id,
-            studentName: s.name || 'Unknown',
+            studentName: sName,
             studentClass: s.class || 'N/A',
             totalWaste: 0,
             totalEarnings: 0
@@ -494,10 +516,10 @@ export async function getClassReportData(dateRange, comparisonRange, selectedCla
     ? Math.round((topClassData.totalWaste / totalAllClassesWaste) * 100) 
     : 0;
 
-  // Waste by type for insights
   const wasteByType = {};
   entries.forEach(entry => {
-    const typeName = entry.wasteTypeName || 'Unknown';
+    const typeName = (entry.wasteTypeName || '').trim();
+    if (!typeName) return;
     wasteByType[typeName] = (wasteByType[typeName] || 0) + (entry.weight || 0);
   });
   const wasteTypeData = Object.entries(wasteByType)
@@ -583,14 +605,16 @@ export async function getWasteAnalysisData(dateRange, comparisonRange) {
   const dailyByType = {};
 
   entries.forEach(entry => {
-    const typeName = entry.wasteTypeName || 'Unknown';
+    const typeName = (entry.wasteTypeName || '').trim();
+    if (!typeName) return;
     if (!typeStats[typeName]) {
       typeStats[typeName] = { weight: 0, earnings: 0 };
     }
     typeStats[typeName].weight += entry.weight || 0;
     typeStats[typeName].earnings += entry.amount || 0;
 
-    const dateKey = entry.date ? format(fromTimestamp(entry.date), 'MMM d') : 'Unknown';
+    if (!entry.date) return;
+    const dateKey = format(fromTimestamp(entry.date), 'MMM d');
     if (!dailyByType[dateKey]) dailyByType[dateKey] = {};
     dailyByType[dateKey][typeName] = (dailyByType[dateKey][typeName] || 0) + (entry.weight || 0);
   });
@@ -606,7 +630,7 @@ export async function getWasteAnalysisData(dateRange, comparisonRange) {
   const donutData = summaryData.map(s => ({ name: s.name, value: s.weight }));
 
   const typeNames = Object.keys(typeStats);
-  const sortedDates = [...new Set(entries.map(e => e.date ? format(fromTimestamp(e.date), 'MMM d') : 'Unknown'))].sort((a, b) => new Date(a) - new Date(b));
+  const sortedDates = [...new Set(entries.filter(e => e.date).map(e => format(fromTimestamp(e.date), 'MMM d')))].sort((a, b) => new Date(a) - new Date(b));
 
   const multiLineData = sortedDates.map(date => {
     const row = { date };

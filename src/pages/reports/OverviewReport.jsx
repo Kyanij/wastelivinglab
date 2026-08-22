@@ -146,6 +146,7 @@ export default function OverviewReport() {
 
 function WasteByStudentChart({ data, isLoading }) {
   const { t } = useTranslation();
+  const filtered = (data || []).filter(d => (d.name || '').trim().toLowerCase() !== 'unknown' && (d.name || '').trim() !== '');
 
   if (isLoading) {
     return (
@@ -174,14 +175,14 @@ function WasteByStudentChart({ data, isLoading }) {
         </div>
       </CardHeader>
       <CardContent>
-        {data.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="flex items-center justify-center h-[280px] text-gray-400 text-sm">
             {t('common.noData')}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <BarChart
-              data={data}
+              data={filtered}
               margin={{ top: 20, right: 20, left: -10, bottom: 10 }}
               layout="vertical"
             >

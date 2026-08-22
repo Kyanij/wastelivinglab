@@ -107,9 +107,11 @@ export default function StudentReport() {
     const flatEntries = [];
     data.entries.forEach((entry) => {
       entry.items.forEach((item) => {
+        const wName = (item.wasteTypeName || '').trim();
+        if (!wName) return;
         flatEntries.push({
           date: entry.date,
-          wasteTypeName: item.wasteTypeName || 'Unknown',
+          wasteTypeName: wName,
           weight: item.weight || 0,
           rate: item.rate || 0,
           amount: item.amount || 0,
@@ -138,9 +140,9 @@ export default function StudentReport() {
     if (!data?.entries) return [];
     return (data.entries || []).map(entry => ({
       dateKey: entry.date,
-      entries: (entry.items || []).map(item => ({
-        id: `${entry.date}-${item.wasteTypeName || 'unknown'}-${Math.random().toString(36).slice(2, 6)}`,
-        wasteTypeName: item.wasteTypeName || 'Unknown',
+      entries: (entry.items || []).filter(i => (i.wasteTypeName || '').trim()).map(item => ({
+        id: `${entry.date}-${item.wasteTypeName}-${Math.random().toString(36).slice(2, 6)}`,
+        wasteTypeName: item.wasteTypeName,
         weight: item.weight || 0,
         rate: item.rate || 0,
         amount: item.amount || 0,

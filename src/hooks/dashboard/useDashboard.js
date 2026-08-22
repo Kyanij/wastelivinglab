@@ -267,7 +267,7 @@ export function useDashboard(filters = {}) {
 
   const recentActivity = useMemo(() => {
     return entries
-      .filter(e => e.createdAt)
+      .filter(e => e.createdAt && (e.studentName || '').trim() && (e.wasteTypeName || '').trim())
       .sort((a, b) => {
         const ta = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
         const tb = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
@@ -276,8 +276,8 @@ export function useDashboard(filters = {}) {
       .slice(0, 10)
       .map(e => ({
         id: e.id,
-        studentName: e.studentName || 'Unknown',
-        wasteType: e.wasteTypeName || 'Unknown',
+        studentName: e.studentName,
+        wasteType: e.wasteTypeName,
         weight: e.weight || 0,
         amount: e.amount || 0,
         date: e.date,
@@ -287,7 +287,7 @@ export function useDashboard(filters = {}) {
 
   const recentClassActivity = useMemo(() => {
     return classEntries
-      .filter(e => e.createdAt)
+      .filter(e => e.createdAt && (e.className || '').trim() && (e.wasteTypeName || '').trim())
       .sort((a, b) => {
         const ta = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
         const tb = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
@@ -296,8 +296,8 @@ export function useDashboard(filters = {}) {
       .slice(0, 10)
       .map(e => ({
         id: e.id,
-        className: e.className || 'Unknown',
-        wasteType: e.wasteTypeName || 'Unknown',
+        className: e.className,
+        wasteType: e.wasteTypeName,
         weight: e.weight || 0,
         amount: e.amount || 0,
         date: e.date,

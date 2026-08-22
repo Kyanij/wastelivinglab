@@ -103,7 +103,7 @@ export default function PortalDateGroupRow({ dateGroup, isExpanded, onToggle }) 
                           ${getWasteTypeBadgeClass(entry.wasteTypeName || entry.wasteType)}
                         `}>
                           <span className="text-base">{getWasteTypeIcon(entry.wasteTypeName || entry.wasteType)}</span>
-                          {getTranslatedWasteType(entry.wasteTypeName || entry.wasteType || 'Unknown')}
+                          {getTranslatedWasteType(entry.wasteTypeName || entry.wasteType || '')}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
