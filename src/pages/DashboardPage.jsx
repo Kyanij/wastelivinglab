@@ -179,7 +179,7 @@ export default function DashboardPage() {
         />
         <StatCard
           icon={BarChart2}
-          label={t('dashboard.avgPerStudent')}
+          label={t('dashboard.averageWaste')}
           value={kpis.avgWastePerStudent}
           trend={kpis.trends.avg}
           suffix=" kg"
